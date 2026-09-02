@@ -100,6 +100,17 @@ const wardrobeAssetById = new Map(wardrobeAssets.map((asset) => [asset.id, asset
 
 type PickGroup = keyof typeof wardrobe;
 type Picks = Record<PickGroup, string>;
+type ClothingGroup = Exclude<PickGroup, 'buddies'>;
+type GarmentColors = Record<string, string>;
+type SavedLook = { id: string; name: string; picks: Picks; character: { style: string; skin: string; hair: string; eyes: string }; colors: GarmentColors };
+
+const CLOSET_GROUPS: ClothingGroup[] = ['bottoms', 'tops', 'layers', 'shoes', 'accessories'];
+const LAYERS = { base: 0, hairBack: 10, bottom: 20, top: 30, dress: 35, shoes: 40, outerwear: 50, hairFront: 60, accessory: 70, hat: 80 } as const;
+const GARMENT_PALETTES: Record<ClothingGroup, string[]> = {
+  tops: ['#ee6757', '#4c8ca5', '#a386ce', '#35a5a0'], bottoms: ['#47739b', '#e96f78', '#62a886', '#876da0'],
+  layers: ['#f1bd42', '#df8e76', '#5585a6', '#39a29a'], shoes: ['#db4f43', '#e8aa31', '#3d9b91', '#8765ba'],
+  accessories: ['#e67b43', '#39a29a', '#8765ba', '#e96f78'],
+};
 
 const gameSheets: Record<PickGroup, string> = {
   tops: '/little-jetter/game-tops.png', bottoms: '/little-jetter/game-bottoms.png', layers: '/little-jetter/game-layers.png',
@@ -126,7 +137,7 @@ const characterOptions = {
   eyes: [{ id: 'brown', color: '#5a3827' }, { id: 'hazel', color: '#8d7440' }, { id: 'green', color: '#4e8060' }, { id: 'blue', color: '#4887aa' }, { id: 'gray', color: '#718088' }],
 };
 
-function ClassicDoll({ picks, character }: { picks: Picks; character: { style: string; skin: string; hair: string; eyes: string } }) {
+function ClassicDoll({ picks, character, garmentColors }: { picks: Picks; character: { style: string; skin: string; hair: string; eyes: string }; garmentColors: GarmentColors }) {
   const skin = characterOptions.skin.find((option) => option.id === character.skin)?.color ?? '#bd7656';
   const hair = characterOptions.hair.find((option) => option.id === character.hair)?.color ?? '#573629';
   const eyes = characterOptions.eyes.find((option) => option.id === character.eyes)?.color ?? '#5a3827';
@@ -134,12 +145,12 @@ function ClassicDoll({ picks, character }: { picks: Picks; character: { style: s
   const bottomColors: Record<string,string> = { 'travel-jeans':'#47739b', 'coral-skirt':'#e96f78', 'adventure-shorts':'#62a886', 'wide-leg-pants':'#876da0', 'play-skirt':'#e8aa31' };
   const layerColors: Record<string,string> = { rain:'#f1bd42', denim:'#5585a6', cardigan:'#df8e76', windbreaker:'#39a29a' };
   const shoeColors: Record<string,string> = { sneakers:'#db4f43', boots:'#e8aa31', sandals:'#3d9b91', 'high-tops':'#8765ba', 'trail-shoes':'#55745c' };
-  const top = topColors[picks.tops] ?? '#ee6757'; const bottom = bottomColors[picks.bottoms] ?? '#47739b'; const layer = layerColors[picks.layers]; const shoes = shoeColors[picks.shoes] ?? '#db4f43';
+  const top = garmentColors[picks.tops] ?? topColors[picks.tops] ?? '#ee6757'; const bottom = garmentColors[picks.bottoms] ?? bottomColors[picks.bottoms] ?? '#47739b'; const layer = picks.layers === 'none' ? undefined : garmentColors[picks.layers] ?? layerColors[picks.layers]; const shoes = garmentColors[picks.shoes] ?? shoeColors[picks.shoes] ?? '#db4f43';
   const isSkirt = picks.bottoms === 'coral-skirt' || picks.bottoms === 'play-skirt';
   const isShorts = picks.bottoms === 'adventure-shorts';
   const isDress = picks.tops === 'dress';
   const isSweater = picks.tops === 'sweater' || picks.tops === 'adventure-shirt';
-  return <svg className="little-aligned-doll" viewBox="0 0 600 900" role="img" aria-label={`Doll in a base outfit wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
+  return <svg className="little-aligned-doll" viewBox="0 0 600 900" data-layer-map={JSON.stringify(LAYERS)} role="img" aria-label={`Doll in a base outfit wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
     <defs><radialGradient id="skinGlow" cx="36%" cy="24%" r="78%"><stop stopColor="#fff" stopOpacity=".34"/><stop offset=".48" stopColor={skin}/><stop offset="1" stopColor="#70432f" stopOpacity=".24"/></radialGradient><linearGradient id="hairShade" x1=".2" y1="0" x2=".8" y2="1"><stop stopColor="#fff" stopOpacity=".2"/><stop offset=".3" stopColor={hair}/><stop offset="1" stopColor="#211a19" stopOpacity=".42"/></linearGradient><linearGradient id="topShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".45" stopColor={top}/><stop offset="1" stopColor="#173a47" stopOpacity=".2"/></linearGradient><linearGradient id="bottomShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".26"/><stop offset=".42" stopColor={bottom}/><stop offset="1" stopColor="#173a47" stopOpacity=".25"/></linearGradient><linearGradient id="layerShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".48" stopColor={layer}/><stop offset="1" stopColor="#173a47" stopOpacity=".22"/></linearGradient><linearGradient id="shoeShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".3"/><stop offset=".44" stopColor={shoes}/><stop offset="1" stopColor="#173a47" stopOpacity=".28"/></linearGradient><filter id="softShadow"><feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#173a47" floodOpacity=".18"/></filter></defs>
     <g transform="scale(1.5)"><ellipse cx="200" cy="564" rx="88" ry="17" fill="#173a47" opacity=".14"/>
     <g data-layer="base"><path d="M162 210q38-22 76 0l25 139-22 126h-82l-22-126z" fill={skin} stroke="#173a47" strokeWidth="5"/><circle cx="200" cy="145" r="62" fill={skin} stroke="#173a47" strokeWidth="5"/><circle cx="200" cy="145" r="56" fill="url(#skinGlow)"/><path d="M168 146q10-8 20 0M212 146q10-8 20 0" fill="none" stroke="#173a47" strokeWidth="3"/><circle cx="178" cy="155" r="6" fill={eyes}/><circle cx="222" cy="155" r="6" fill={eyes}/><circle cx="176" cy="153" r="2" fill="white"/><circle cx="220" cy="153" r="2" fill="white"/><path d="M184 180q16 13 32 0" fill="none" stroke="#9b4d46" strokeWidth="4" strokeLinecap="round"/><circle cx="163" cy="173" r="8" fill="#ef8f80" opacity=".25"/><circle cx="237" cy="173" r="8" fill="#ef8f80" opacity=".25"/></g>
@@ -164,6 +175,9 @@ export function LittleJetterApp() {
   const [started, setStarted] = useState(false);
   const [gameStep, setGameStep] = useState(1);
   const [picks, setPicks] = useState<Picks>({ tops: 'stripe', bottoms: 'travel-jeans', layers: 'rain', shoes: 'sneakers', accessories: 'travel-cap', buddies: 'bunny' });
+  const [garmentColors, setGarmentColors] = useState<GarmentColors>({});
+  const [savedLooks, setSavedLooks] = useState<SavedLook[]>([]);
+  const [dropActive, setDropActive] = useState(false);
   const [dollId, setDollId] = useState('curls');
   const [character, setCharacter] = useState({ style: 'girl', skin: 'golden', hair: 'brown', eyes: 'brown' });
   const [packed, setPacked] = useState<string[]>([]);
@@ -194,6 +208,7 @@ export function LittleJetterApp() {
       setStarted(true);
     }
     setSavedProducts(JSON.parse(window.localStorage.getItem('little-jetter-saved-picks') ?? '[]'));
+    setSavedLooks(JSON.parse(window.localStorage.getItem('little-jetter-saved-looks') ?? '[]'));
     return () => { document.documentElement.style.colorScheme = ''; };
   }, []);
 
@@ -226,6 +241,29 @@ export function LittleJetterApp() {
     const nextGroup = closetGroups[closetGroups.indexOf(group) + 1];
     if (nextGroup) window.setTimeout(() => setOpenClosetDrawer(nextGroup), 260);
     triggerCelebration(18);
+  }
+
+  function clearLook() {
+    setPicks((current) => ({ ...current, tops: 'stripe', bottoms: 'travel-jeans', layers: 'none', shoes: 'sneakers', accessories: 'travel-cap' }));
+    setGarmentColors({});
+    setOpenClosetDrawer('tops');
+    triggerCelebration(12);
+  }
+
+  function saveLook() {
+    const look: SavedLook = { id: `${Date.now()}`, name: `${selected.city} look ${savedLooks.length + 1}`, picks: { ...picks }, character: { ...character }, colors: { ...garmentColors } };
+    setSavedLooks((current) => { const next = [look, ...current].slice(0, 6); window.localStorage.setItem('little-jetter-saved-looks', JSON.stringify(next)); return next; });
+    triggerCelebration([20, 30, 45]);
+  }
+
+  function restoreLook(look: SavedLook) {
+    setPicks(look.picks); setCharacter(look.character); setGarmentColors(look.colors); triggerCelebration([18, 25, 18]);
+  }
+
+  function dropOnDoll(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault(); setDropActive(false);
+    const [group, id] = event.dataTransfer.getData('text/little-jetter-item').split(':');
+    if (CLOSET_GROUPS.includes(group as ClothingGroup) && wardrobe[group as ClothingGroup].some((item) => item.id === id)) choose(group as ClothingGroup, id);
   }
 
   function togglePacked(id: string) {
@@ -460,9 +498,10 @@ export function LittleJetterApp() {
                     <details><summary><span>03</span><strong>Hair color</strong><b>Open / close</b></summary><div className="little-character-options little-swatch-options">{characterOptions.hair.map((option) => <button type="button" aria-label={`${option.id} hair`} aria-pressed={character.hair === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, hair: option.id })); triggerCelebration(12); }} key={option.id} />)}</div></details>
                     <details><summary><span>04</span><strong>Eyes</strong><b>Open / close</b></summary><div className="little-character-options little-swatch-options">{characterOptions.eyes.map((option) => <button type="button" aria-label={`${option.id} eyes`} aria-pressed={character.eyes === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, eyes: option.id })); triggerCelebration(12); }} key={option.id} />)}</div></details>
                   </div>
-                  <div className={`little-avatar little-doll-stage character-${character.style}`} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
+                  <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
                     <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{selected.id === 'tokyo' && <img src="/little-jetter/tokyo-doll-backdrop.png" alt="" />}<span>{selected.city}</span><i /><b /></div>
-                    <ClassicDoll key={`${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}`} picks={picks} character={character} />
+                    <ClassicDoll key={`${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} picks={picks} character={character} garmentColors={garmentColors} />
+                    {dropActive && <div className="little-drop-message">Drop to dress</div>}
                     <div className="little-dressed-confirmation" aria-live="polite">Now wearing {chosen('tops').name}</div>
                   </div>
                   <h3>{selected.city} explorer</h3>
@@ -470,15 +509,17 @@ export function LittleJetterApp() {
                 </aside>
                 <div className="little-closet">
                   <div className="little-closet-intro"><span>01</span><div><small>Start at the doll</small><strong>Build the look one drawer at a time.</strong></div></div>
-                  <div className="little-surprise-bar"><div><small>Need a little magic?</small><strong>Let Little Jetter make a surprise look.</strong></div><button type="button" onClick={surpriseMe}>Surprise me</button></div>
+                  <div className="little-surprise-bar"><div><small>My paper-doll closet</small><strong>Tap a piece or drag it onto the doll.</strong></div><div className="little-look-actions"><button type="button" onClick={surpriseMe}>Surprise me</button><button type="button" onClick={clearLook}>Clear look</button><button type="button" onClick={saveLook}>Save my look</button></div></div>
                   {(['tops', 'bottoms', 'layers', 'shoes', 'accessories'] as PickGroup[]).map((group, index) => (
                     <details className="little-task-drawer" open={openClosetDrawer === group} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer(group); }} key={group}>
                       <summary><span>{picks[group] ? '✓' : String(index + 1).padStart(2, '0')}</span><strong>{group === 'tops' ? 'Pick the main piece' : group === 'bottoms' ? 'Choose a bottom' : group === 'layers' ? 'Add a layer' : group === 'shoes' ? 'Choose exploring shoes' : 'Finish with an accessory'}</strong><b>{openClosetDrawer === group ? 'Close' : 'Open'}</b></summary>
                       <div className="little-item-row">
-                        {availableWardrobe(group as Exclude<PickGroup, 'buddies'>).map((item) => <button type="button" aria-pressed={picks[group] === item.id} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview group={group} itemId={item.id} /><strong>{item.name}</strong><small>{item.note}</small></button>)}
+                        {availableWardrobe(group as ClothingGroup).map((item) => <button type="button" draggable aria-pressed={picks[group] === item.id} onDragStart={(event) => { event.dataTransfer.setData('text/little-jetter-item', `${group}:${item.id}`); event.dataTransfer.effectAllowed = 'copy'; }} onDragEnd={() => setDropActive(false)} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview group={group} itemId={item.id} /><strong>{item.name}</strong><small>{item.note}</small></button>)}
                       </div>
+                      <div className="little-color-swatches" aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{GARMENT_PALETTES[group as ClothingGroup].map((color) => <button type="button" aria-label={`Use ${color}`} aria-pressed={(garmentColors[picks[group]] ?? GARMENT_PALETTES[group as ClothingGroup][0]) === color} style={{ '--swatch': color } as React.CSSProperties} onClick={() => { setGarmentColors((current) => ({ ...current, [picks[group]]: color })); triggerCelebration(10); }} key={color} />)}</div>
                     </details>
                   ))}
+                  <details className="little-task-drawer little-my-looks"><summary><span>★</span><strong>My saved looks</strong><b>Open</b></summary><div>{savedLooks.length ? savedLooks.map((look) => <button type="button" onClick={() => restoreLook(look)} key={look.id}><strong>{look.name}</strong><small>Tap to wear again</small></button>) : <p>Save a look and it will wait here on this device.</p>}</div></details>
                   <details className="little-task-drawer" open={openClosetDrawer === 'parent'} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer('parent'); }}><summary><span>06</span><strong>Parent product matches</strong><b>{openClosetDrawer === 'parent' ? 'Close' : 'Open'}</b></summary><div className="little-real-look">
                     <div><small>Your Little Jetter picks</small><strong>Real pieces inspired by this look</strong></div>
                     <div>{realLook.length ? realLook.map((product) => { const inspiredItem = (Object.keys(wardrobe) as PickGroup[]).flatMap((group) => wardrobe[group]).find((item) => item.id === product.playItemId); return <button type="button" key={product.id} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}><img src={product.imageUrl} alt="" /><span><small>{inspiredItem ? `Inspired by ${inspiredItem.name}` : 'Inspired by this look'}</small>{product.name}</span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>; }) : <p>Choose another piece to discover a real-life match.</p>}</div>
