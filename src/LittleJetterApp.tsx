@@ -169,6 +169,7 @@ function GarmentPreview({ group, itemId }: { group: PickGroup; itemId: string })
 }
 
 export function LittleJetterApp() {
+  const [currentStep, setCurrentStep] = useState<'destination' | 'style' | 'explore'>('destination');
   const [selectedId, setSelectedId] = useState('tokyo');
   const [regionFilter, setRegionFilter] = useState('All regions');
   const [destinationTypeFilter, setDestinationTypeFilter] = useState('All types');
@@ -215,8 +216,19 @@ export function LittleJetterApp() {
   function beginTrip() {
     window.localStorage.setItem(STORAGE_KEY, selected.id);
     setStarted(true);
+    setCurrentStep('style');
+    setGameStep(1);
     triggerCelebration([25, 40, 25]);
     window.setTimeout(() => document.getElementById('adventure-studio')?.scrollIntoView({ behavior: 'smooth' }), 30);
+  }
+
+  function showStep(step: 'destination' | 'style' | 'explore') {
+    setCurrentStep(step);
+    if (step !== 'destination') setStarted(true);
+    if (step === 'style') setGameStep(1);
+    if (step === 'explore') setGameStep(2);
+    playHaptic(12);
+    window.setTimeout(() => document.querySelector(`[data-app-view="${step}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 20);
   }
 
   function selectDestination(destination: Destination) {
@@ -338,23 +350,23 @@ export function LittleJetterApp() {
             <h1 id="little-title">Where are you<br /><em>jetting off to?</em></h1>
             <p>Pick a place. We’ll discover it, choose what to wear, and pack everything you need.</p>
           </div>
-          <div className="little-route" aria-label="Your adventure has three parts">
-            {['Destination', 'Style', 'Explore'].map((step, index) => (
-              <div className={index === 0 ? 'is-current' : ''} key={step}>
+          <nav className="little-route" aria-label="Adventure views">
+            {(['destination', 'style', 'explore'] as const).map((step, index) => (
+              <button type="button" aria-current={currentStep === step ? 'step' : undefined} className={currentStep === step ? 'is-current' : ''} onClick={() => showStep(step)} key={step}>
                 <span>{index + 1}</span>{step}
-              </div>
+              </button>
             ))}
-          </div>
+          </nav>
           {travelMode && <div className="little-travel-sky" aria-hidden="true"><span className="little-flying-plane">✈</span><span className="little-moving-train">🚆</span><span className="little-cloud cloud-one">☁</span><span className="little-cloud cloud-two">☁</span></div>}
         </section>
 
         {travelMode && <section className="little-travel-console" aria-label="Travel mode">
           <div className="little-compass"><span>N</span><span>E</span><span>S</span><span>W</span><i>➤</i><strong>Explore!</strong></div>
           <div className="little-departure-board"><p className="little-kicker">Now boarding</p><h2>{selected.city} adventure</h2><div><span>✈ Fly</span><span>🚆 Ride</span><span>🧭 Explore</span></div><small>{destinationTypes[selected.id]} · {selected.region} · {selected.country}</small></div>
-          <div className="little-route-adventure"><span>01</span><strong>Destination</strong><i>→</i><span>02</span><strong>Style</strong><i>→</i><span>03</span><strong>Explore</strong></div>
+          <nav className="little-route-adventure" aria-label="Choose an adventure view">{(['destination','style','explore'] as const).map((step,index)=><button type="button" aria-current={currentStep===step?'step':undefined} className={currentStep===step?'is-current':''} onClick={()=>showStep(step)} key={step}><span>0{index+1}</span><strong>{step}</strong></button>)}</nav>
         </section>}
 
-        <section className="little-chooser" aria-labelledby="choose-title">
+        <section className="little-chooser little-tab-view" data-app-view="destination" hidden={currentStep !== 'destination'} aria-labelledby="choose-title">
           <div className="little-section-heading">
             <div><p className="little-kicker">First stop</p><h2 id="choose-title">Choose your destination</h2></div>
             <p>{destinations.length} places. A new way to get ready for each one.</p>
@@ -411,7 +423,7 @@ export function LittleJetterApp() {
           {started && <p className="little-saved-note" role="status">✓ Your {selected.city} adventure is saved on this device. Next up: explore the destination.</p>}
         </section>
 
-        <section className="little-shop" aria-labelledby="shop-title">
+        <section className="little-shop little-tab-view" data-app-view="explore" hidden={currentStep !== 'explore'} aria-labelledby="shop-title">
           <div className="little-shop-heading">
             <div><p className="little-kicker">Real picks, just for looking</p><h2 id="shop-title">The Jetter Shop</h2></div>
             <p>Window-shop the travel pieces saved in our LTK closet. Kids can heart favorites—prices, carts, and checkout stay out of the game.</p>
@@ -458,7 +470,7 @@ export function LittleJetterApp() {
         </div>}
 
         {started && (
-          <section id="adventure-studio" className="little-studio" aria-labelledby="studio-title">
+          <section id="adventure-studio" className="little-studio little-tab-view" data-app-view={currentStep} hidden={currentStep === 'destination'} aria-labelledby="studio-title">
             <div className="little-studio-heading">
               <div>
                 <p className="little-kicker">Today in {selected.city}</p>
@@ -469,9 +481,9 @@ export function LittleJetterApp() {
             </div>
 
             <nav className="little-game-steps" aria-label="Adventure progress">
-              <button type="button" className="is-done" onClick={() => { document.querySelector('.little-chooser')?.scrollIntoView({ behavior: 'smooth' }); playHaptic(12); }}><span>1</span>Destination</button>
-              <button type="button" className={gameStep === 1 ? 'is-active' : 'is-done'} onClick={() => { setGameStep(1); playHaptic(12); }}><span>2</span>Style</button>
-              <button type="button" className={gameStep > 1 ? 'is-active' : ''} onClick={() => { setGameStep(2); playHaptic(12); }}><span>3</span>Explore</button>
+              <button type="button" className={currentStep === 'destination' ? 'is-active' : 'is-done'} onClick={() => showStep('destination')}><span>1</span>Destination</button>
+              <button type="button" className={currentStep === 'style' ? 'is-active' : 'is-done'} onClick={() => showStep('style')}><span>2</span>Style</button>
+              <button type="button" className={currentStep === 'explore' ? 'is-active' : ''} onClick={() => showStep('explore')}><span>3</span>Explore</button>
             </nav>
 
             {gameStep === 2 && (
@@ -525,7 +537,7 @@ export function LittleJetterApp() {
                     <div>{realLook.length ? realLook.map((product) => { const inspiredItem = (Object.keys(wardrobe) as PickGroup[]).flatMap((group) => wardrobe[group]).find((item) => item.id === product.playItemId); return <button type="button" key={product.id} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}><img src={product.imageUrl} alt="" /><span><small>{inspiredItem ? `Inspired by ${inspiredItem.name}` : 'Inspired by this look'}</small>{product.name}</span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>; }) : <p>Choose another piece to discover a real-life match.</p>}</div>
                     <small>Kids save the look. A parent decides whether to shop it.</small>
                   </div></details>
-                  <button type="button" className="little-next" onClick={() => setGameStep(2)}>Explore my travel journal <span>→</span></button>
+                  <button type="button" className="little-next" onClick={() => showStep('explore')}>Explore my travel journal <span>→</span></button>
                 </div>
               </div>
             )}
