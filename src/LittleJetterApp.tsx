@@ -515,7 +515,7 @@ export function LittleJetterApp() {
             {gameStep === 1 && (
               <div className="little-dress-layout little-game-panel">
                 <aside className="little-look-preview">
-                  <div className="little-closet-heading"><p className="little-kicker">Virtual closet</p><strong>Tap it. Wear it.</strong></div>
+                  <div className="little-closet-heading"><p className="little-kicker">02 Avatar</p><strong>Make your Little Jetter.</strong></div>
                   <div className="little-character-drawers" aria-label="Build your doll">
                     <details open><summary><span>01</span><strong>Style</strong><b>Open / close</b></summary><div className="little-character-options little-style-options">{characterOptions.style.map((option) => <button type="button" aria-pressed={character.style === option.id} onClick={() => { setCharacter((current) => ({ ...current, style: option.id })); triggerCelebration(12); }} key={option.id}>{option.label}</button>)}</div></details>
                     <details><summary><span>02</span><strong>Skin</strong><b>Open / close</b></summary><div className="little-character-options little-swatch-options">{characterOptions.skin.map((option, index) => <button type="button" aria-label={`${option.id} skin`} aria-pressed={character.skin === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, skin: option.id })); setDollId(index < 2 ? 'freckles' : index < 4 ? 'curls' : 'coils'); triggerCelebration(12); }} key={option.id} />)}</div></details>
@@ -532,7 +532,7 @@ export function LittleJetterApp() {
                   <div key={`${picks.layers}-${picks.shoes}`} className={`little-outfit-reaction is-${outfitFeedback.mood}`} role="status"><span aria-hidden="true" /><div><strong>{outfitFeedback.title}</strong><p>{outfitFeedback.message}</p></div></div>
                 </aside>
                 <div className="little-closet">
-                  <div className="little-closet-intro"><span>01</span><div><small>Start at the doll</small><strong>Build the look one drawer at a time.</strong></div></div>
+                  <div className="little-closet-intro"><span>03</span><div><small>Closet</small><strong>Build the look one drawer at a time.</strong></div></div>
                   <div className="little-surprise-bar"><div><small>My paper-doll closet</small><strong>Tap a piece or drag it onto the doll.</strong></div><div className="little-look-actions"><button type="button" onClick={surpriseMe}>Surprise me</button><button type="button" onClick={clearLook}>Clear look</button><button type="button" onClick={saveLook}>Save my look</button></div></div>
                   {(['tops', 'bottoms', 'layers', 'shoes', 'accessories'] as PickGroup[]).map((group, index) => (
                     <details className="little-task-drawer" open={openClosetDrawer === group} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer(group); }} key={group}>
