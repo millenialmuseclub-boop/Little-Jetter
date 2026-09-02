@@ -51,6 +51,7 @@ const allDestinationTypes = ['All types', ...Array.from(new Set(Object.values(de
 const adventureTemperatures: Record<string, string> = { tokyo: '55°F', honolulu: '79°F', london: '52°F', cartagena: '84°F', paris: '59°F', nairobi: '72°F', 'mexico-city': '66°F', rome: '73°F', sydney: '70°F', 'san-jose': '75°F', 'new-york': '61°F', barcelona: '71°F', 'cape-town': '65°F', vancouver: '54°F', seoul: '57°F' };
 
 const STORAGE_KEY = 'little-jetter-first-trip';
+const PASSPORT_KEY = 'little-jetter-passport-stamps';
 
 const wardrobe = {
   tops: [
@@ -156,7 +157,7 @@ function ClassicDoll({ picks, character, garmentColors, onlyLayer, previewViewBo
   const isDress = picks.tops === 'dress';
   const isSweater = picks.tops === 'sweater' || picks.tops === 'adventure-shirt';
   const hairStyle = character.hairStyle ?? 'curls';
-  return <svg className={`little-aligned-doll ${onlyLayer ? 'little-garment-canvas' : ''}`} viewBox={previewViewBox} data-master-canvas="600x900" data-only-layer={onlyLayer} data-layer-map={JSON.stringify(LAYERS)} role="img" aria-label={onlyLayer ? `${onlyLayer} garment preview` : `Doll in a base outfit wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
+  return <svg className={`little-aligned-doll ${onlyLayer ? 'little-garment-canvas' : ''}`} viewBox={previewViewBox} style={{ '--top-fill': top, '--bottom-fill': bottom, '--layer-fill': layer ?? 'transparent', '--shoe-fill': shoes } as React.CSSProperties} data-master-canvas="600x900" data-only-layer={onlyLayer} data-layer-map={JSON.stringify(LAYERS)} role="img" aria-label={onlyLayer ? `${onlyLayer} garment preview` : `Doll in a base outfit wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
     <defs><radialGradient id="skinGlow" cx="34%" cy="20%" r="82%"><stop stopColor="#fff" stopOpacity=".48"/><stop offset=".42" stopColor={skin}/><stop offset=".82" stopColor={skin}/><stop offset="1" stopColor="#70432f" stopOpacity=".3"/></radialGradient><linearGradient id="skinBody" x1=".18" y1="0" x2=".82" y2="1"><stop stopColor="#fff" stopOpacity=".3"/><stop offset=".3" stopColor={skin}/><stop offset="1" stopColor="#70432f" stopOpacity=".23"/></linearGradient><linearGradient id="underTop" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#fffdf6"/><stop offset=".55" stopColor="#fff3d8"/><stop offset="1" stopColor="#dfc397"/></linearGradient><linearGradient id="underBottom" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#8eabc2"/><stop offset=".55" stopColor="#607f9d"/><stop offset="1" stopColor="#405f7c"/></linearGradient><linearGradient id="hairShade" x1=".2" y1="0" x2=".8" y2="1"><stop stopColor="#fff" stopOpacity=".24"/><stop offset=".28" stopColor={hair}/><stop offset="1" stopColor="#211a19" stopOpacity=".46"/></linearGradient><linearGradient id="topShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".45" stopColor={top}/><stop offset="1" stopColor="#173a47" stopOpacity=".2"/></linearGradient><linearGradient id="bottomShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".26"/><stop offset=".42" stopColor={bottom}/><stop offset="1" stopColor="#173a47" stopOpacity=".25"/></linearGradient><linearGradient id="layerShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".48" stopColor={layer}/><stop offset="1" stopColor="#173a47" stopOpacity=".22"/></linearGradient><linearGradient id="shoeShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".3"/><stop offset=".44" stopColor={shoes}/><stop offset="1" stopColor="#173a47" stopOpacity=".28"/></linearGradient><filter id="softShadow"><feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#173a47" floodOpacity=".18"/></filter></defs>
     <g transform="scale(1.5)"><ellipse cx="200" cy="520" rx="82" ry="13" fill="#173a47" opacity=".16" filter="url(#softShadow)"/>
     <g data-layer="base"><path d="M157 220q-24 24-35 83l-8 83q-2 20 14 23 17 2 20-17l12-75 15-53zm86 0q24 24 35 83l8 83q2 20-14 23-17 2-20-17l-12-75-15-53z" fill="url(#skinBody)"/><path d="M174 329l-15 145-8 31q-4 17 12 22 16 4 23-14l14-54 14 54q7 18 23 14 16-5 12-22l-8-31-15-145z" fill="url(#skinBody)"/><path d="M184 194h32l6 32h-44z" fill="url(#skinBody)"/><ellipse cx="143" cy="151" rx="12" ry="18" fill="url(#skinBody)"/><ellipse cx="257" cy="151" rx="12" ry="18" fill="url(#skinBody)"/><circle cx="200" cy="145" r="63" fill="url(#skinGlow)"/><ellipse cx="182" cy="155" rx="12" ry="14" fill="#fffaf4"/><ellipse cx="218" cy="155" rx="12" ry="14" fill="#fffaf4"/><circle cx="182" cy="157" r="7" fill={eyes}/><circle cx="218" cy="157" r="7" fill={eyes}/><circle cx="179" cy="153" r="2.7" fill="white"/><circle cx="215" cy="153" r="2.7" fill="white"/><path d="M169 136q13-8 25 0m12 0q12-8 25 0" fill="none" stroke={hair} strokeOpacity=".7" strokeWidth="4" strokeLinecap="round"/><path d="M201 157q-5 11 1 15" fill="none" stroke="#8d5847" strokeOpacity=".45" strokeWidth="2.5" strokeLinecap="round"/><path d="M184 181q16 15 32 0" fill="#c85f61" fillOpacity=".16" stroke="#9b4d46" strokeWidth="3.2" strokeLinecap="round"/><ellipse cx="163" cy="174" rx="12" ry="7" fill="#ef8f80" opacity=".26"/><ellipse cx="237" cy="174" rx="12" ry="7" fill="#ef8f80" opacity=".26"/>{character.style === 'girl' && <><path d="M169 150l-5-3m68 3 5-3" stroke={hair} strokeWidth="2.5" strokeLinecap="round"/><circle cx="171" cy="173" r="1.5" fill="#9b5b4b" opacity=".5"/><circle cx="176" cy="176" r="1.4" fill="#9b5b4b" opacity=".45"/><circle cx="229" cy="173" r="1.5" fill="#9b5b4b" opacity=".5"/><circle cx="224" cy="176" r="1.4" fill="#9b5b4b" opacity=".45"/></>}</g>
@@ -191,6 +192,9 @@ export function LittleJetterApp() {
   const [picks, setPicks] = useState<Picks>({ tops: 'stripe', bottoms: 'travel-jeans', layers: 'rain', shoes: 'sneakers', accessories: 'crossbody', buddies: 'bunny' });
   const [garmentColors, setGarmentColors] = useState<GarmentColors>({});
   const [savedLooks, setSavedLooks] = useState<SavedLook[]>([]);
+  const [passportStamps, setPassportStamps] = useState<string[]>([]);
+  const [transitioning, setTransitioning] = useState(false);
+  const [travelConfirmation, setTravelConfirmation] = useState('');
   const [dropActive, setDropActive] = useState(false);
   const [character, setCharacter] = useState<Character>({ style: 'girl', skin: 'golden', hair: 'brown', hairStyle: 'curls', eyes: 'brown' });
   const [packed, setPacked] = useState<string[]>([]);
@@ -223,6 +227,7 @@ export function LittleJetterApp() {
     }
     setSavedProducts(JSON.parse(window.localStorage.getItem('little-jetter-saved-picks') ?? '[]'));
     setSavedLooks(JSON.parse(window.localStorage.getItem('little-jetter-saved-looks') ?? '[]'));
+    setPassportStamps(JSON.parse(window.localStorage.getItem(PASSPORT_KEY) ?? '[]'));
     return () => { document.documentElement.style.colorScheme = ''; };
   }, []);
 
@@ -230,19 +235,23 @@ export function LittleJetterApp() {
   function beginTrip() {
     window.localStorage.setItem(STORAGE_KEY, selected.id);
     setStarted(true);
-    setCurrentStep('style');
-    setGameStep(1);
+    showStep('style');
     triggerCelebration([25, 40, 25]);
     window.setTimeout(() => document.getElementById('adventure-studio')?.scrollIntoView({ behavior: 'smooth' }), 30);
   }
 
   function showStep(step: 'destination' | 'style' | 'explore' | 'shop') {
-    setCurrentStep(step);
+    if (step === currentStep || transitioning) return;
+    setTransitioning(true);
     if (step !== 'destination') setStarted(true);
-    if (step === 'style') setGameStep(1);
-    if (step === 'explore') setGameStep(2);
     playHaptic(12);
-    window.setTimeout(() => document.querySelector(`[data-app-view="${step}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 20);
+    window.setTimeout(() => {
+      setCurrentStep(step);
+      if (step === 'style') setGameStep(1);
+      if (step === 'explore') setGameStep(2);
+      setTransitioning(false);
+      window.setTimeout(() => document.querySelector(`[data-app-view="${step}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 20);
+    }, 220);
   }
 
   function selectDestination(destination: Destination) {
@@ -257,16 +266,37 @@ export function LittleJetterApp() {
   }
 
   function toggleNotice(label: string) {
-    setFoundNotices((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
+    if (foundNotices.includes(label)) return;
+    setFoundNotices((current) => [...current, label]);
+    showTravelConfirmation(`Discovery stamped: ${label}`);
     triggerCelebration(14);
+  }
+
+  function showTravelConfirmation(message: string) {
+    setTravelConfirmation(message);
+    window.setTimeout(() => setTravelConfirmation(''), 1800);
+  }
+
+  function stampPassport() {
+    setPassportStamps((current) => {
+      const next = current.includes(selected.id) ? current : [...current, selected.id];
+      window.localStorage.setItem(PASSPORT_KEY, JSON.stringify(next));
+      return next;
+    });
+    setGameStep(5);
+    showTravelConfirmation(`${selected.city} added to your passport`);
+    triggerCelebration([35,30,35,30,80]);
   }
 
   function choose(group: PickGroup, id: string) {
     setPicks((current) => ({ ...current, [group]: id }));
-    const closetGroups: PickGroup[] = ['tops', 'bottoms', 'layers', 'shoes', 'accessories'];
-    const nextGroup = closetGroups[closetGroups.indexOf(group) + 1];
-    if (nextGroup) window.setTimeout(() => setOpenClosetDrawer(nextGroup), 260);
     triggerCelebration(18);
+  }
+
+  function recolor(group: ClothingGroup, color: string) {
+    const activeItemId = picks[group];
+    setGarmentColors((current) => ({ ...current, [activeItemId]: color }));
+    triggerCelebration(10);
   }
 
   function clearLook() {
@@ -279,6 +309,7 @@ export function LittleJetterApp() {
   function saveLook() {
     const look: SavedLook = { id: `${Date.now()}`, name: `${selected.city} look ${savedLooks.length + 1}`, picks: { ...picks }, character: { ...character }, colors: { ...garmentColors } };
     setSavedLooks((current) => { const next = [look, ...current].slice(0, 6); window.localStorage.setItem('little-jetter-saved-looks', JSON.stringify(next)); return next; });
+    showTravelConfirmation(`${look.name} stamped and saved`);
     triggerCelebration([20, 30, 45]);
   }
 
@@ -343,6 +374,8 @@ export function LittleJetterApp() {
 
   return (
     <div className={`little-jetter-shell ${travelMode ? 'is-travel-mode' : ''}`}>
+      {transitioning && <div className="little-travel-transition" role="status" aria-live="polite"><div className="little-compass" aria-hidden="true"><span>N</span><span>E</span><span>S</span><span>W</span><i>➤</i><strong>Explore!</strong></div><p>Stamping your boarding pass…</p></div>}
+      {travelConfirmation && <div className="little-travel-confirmation" role="status"><span aria-hidden="true">LJ</span><strong>{travelConfirmation}</strong></div>}
       <div className="little-confetti" key={celebration} aria-hidden="true">{celebration > 0 && Array.from({length:18},(_,index) => <i key={index} style={{'--i':index} as React.CSSProperties}>✦</i>)}</div>
       <a className="little-skip" href="#little-main">Skip to the adventure</a>
       <header className="little-header">
@@ -351,7 +384,7 @@ export function LittleJetterApp() {
           <span>Little Jetter</span>
         </a>
         <div className="little-passport-pill" aria-label="Passport progress">
-          <span aria-hidden="true">◎</span> My passport <strong>{started ? '1' : '0'}/{destinations.length}</strong>
+          <span aria-hidden="true">◎</span> My passport <strong>{passportStamps.length}/{destinations.length}</strong>
         </div>
         <button type="button" className="little-travel-toggle" aria-pressed={travelMode} onClick={() => { setTravelMode((value) => !value); triggerCelebration([25,35,25]); }}><span aria-hidden="true">🧭</span>{travelMode ? 'Travel mode on' : 'Start travel mode'}</button>
       </header>
@@ -506,8 +539,9 @@ export function LittleJetterApp() {
                 <div className="little-section-art little-explore-art" aria-hidden="true"><img src="/little-jetter/explore-postcard.png" alt="" /><span>My travel journal · {selected.city}</span></div>
                 <div className="little-journal-progress"><div><small>Journal mission</small><strong>{foundNotices.length}/4 discoveries collected</strong></div><span><i style={{ width: `${foundNotices.length * 25}%` }} /></span></div>
                 <details className="little-task-drawer" open><summary><span>01</span><strong>Today’s journal page</strong><b>Open / close</b></summary><div className="little-postcard little-journal-page" style={{ backgroundColor: selected.color }}><span className="little-postcard-mark" aria-hidden="true" /><small>{destinationTypes[selected.id]} · {selected.country}</small><strong>Dear travel journal...</strong><p>{selected.adventure}</p><em>{selected.passportPhrase}</em></div></details>
-                <details className="little-task-drawer" open><summary><span>02</span><strong>Tap what you discover</strong><b>Open / close</b></summary><div className="little-notice-grid">
-                  {selected.notices.map((item, index) => <button type="button" aria-pressed={foundNotices.includes(item.label)} onClick={() => toggleNotice(item.label)} key={item.label}><span className={`little-notice-art notice-${index + 1}`} aria-hidden="true" /><b>{foundNotices.includes(item.label) ? 'Found' : `Clue ${index + 1}`}</b>{item.label}</button>)}
+                <details className="little-task-drawer" open><summary><span>02</span><strong>Tap what you discover</strong><b>Open / close</b></summary><div className="little-find-game">
+                  <div className="little-find-scene"><img src="/little-jetter/explore-postcard.png" alt={`Find four hidden discoveries in the ${selected.city} travel illustration.`} />{selected.notices.map((item, index) => <button type="button" className={`little-hotspot hotspot-${index + 1} ${foundNotices.includes(item.label) ? 'is-found' : ''}`} aria-label={`Find ${item.label}`} aria-pressed={foundNotices.includes(item.label)} onClick={() => toggleNotice(item.label)} key={item.label}><span>{foundNotices.includes(item.label) ? '✓' : '?'}</span></button>)}</div>
+                  <div className="little-notice-grid">{selected.notices.map((item, index) => <div className={foundNotices.includes(item.label) ? 'is-found' : ''} key={item.label}><span className={`little-notice-art notice-${index + 1}`} aria-hidden="true" /><b>{foundNotices.includes(item.label) ? 'Found' : `Clue ${index + 1}`}</b>{item.label}</div>)}</div>
                 </div></details>
                 <details className="little-task-drawer" open><summary><span>03</span><strong>Finish the memory</strong><b>Open / close</b></summary><div className="little-journal-prompts"><p>The best part of this adventure would be...</p>{['Something I spotted', 'Something I tasted', 'Something I learned', 'Someone I met'].map((choice) => <button type="button" aria-pressed={journalChoice === choice} onClick={() => { setJournalChoice(choice); triggerCelebration(18); }} key={choice}>{choice}</button>)}{journalChoice && <strong>Saved to your {selected.city} journal.</strong>}</div></details>
                 <details className="little-task-drawer"><summary><span>04</span><strong>Real-life look for a parent</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realLook.map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><img src={product.imageUrl} alt="" /><strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : `Inspired by ${chosen('tops').name}`}</small></button>)}</div></details>
@@ -545,7 +579,7 @@ export function LittleJetterApp() {
                       <div className="little-item-row">
                         {availableWardrobe(group as ClothingGroup).map((item) => <button type="button" draggable aria-pressed={picks[group] === item.id} onDragStart={(event) => { event.dataTransfer.setData('text/little-jetter-item', `${group}:${item.id}`); event.dataTransfer.effectAllowed = 'copy'; }} onDragEnd={() => setDropActive(false)} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview group={group as ClothingGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} /><strong>{wardrobeLabel(item)}</strong><small>{item.note}</small></button>)}
                       </div>
-                      <div className="little-color-swatches" aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{GARMENT_PALETTES[group as ClothingGroup].map((color) => <button type="button" aria-label={`Use ${color}`} aria-pressed={(garmentColors[picks[group]] ?? GARMENT_PALETTES[group as ClothingGroup][0]) === color} style={{ '--swatch': color } as React.CSSProperties} onClick={() => { setGarmentColors((current) => ({ ...current, [picks[group]]: color })); triggerCelebration(10); }} key={color} />)}</div>
+                      <div className="little-color-swatches" data-color-slot={group} aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{GARMENT_PALETTES[group as ClothingGroup].map((color) => <button type="button" aria-label={`Use ${color} for ${chosen(group).name}`} aria-pressed={(garmentColors[picks[group]] ?? GARMENT_PALETTES[group as ClothingGroup][0]) === color} style={{ '--swatch': color } as React.CSSProperties} onClick={() => recolor(group as ClothingGroup, color)} key={color} />)}</div>
                     </details>
                   ))}
                   <details className="little-task-drawer little-my-looks"><summary><span>★</span><strong>My saved looks</strong><b>Open</b></summary><div>{savedLooks.length ? savedLooks.map((look) => <button type="button" onClick={() => restoreLook(look)} key={look.id}><strong>{look.name}</strong><small>Tap to wear again</small></button>) : <p>Save a look and it will wait here on this device.</p>}</div></details>
@@ -575,7 +609,7 @@ export function LittleJetterApp() {
                 <details className="little-task-drawer" open><summary><span>01</span><strong>Your suitcase</strong><b>Open / close</b></summary><div className="little-suitcase"><p>Packed <strong>{packed.length}/6</strong></p><div>{packed.map((id) => { const group = (Object.keys(wardrobe) as PickGroup[]).find((key) => wardrobe[key].some((entry) => entry.id === id)); const item = group ? wardrobe[group].find((entry) => entry.id === id) : undefined; return item && group ? <span className="little-packed-art" style={gameItemStyle(group, item.id)} key={id} title={item.name} /> : <span className="little-packed-essential" key={id}>{id === 'book' ? 'BOOK' : 'KIT'}</span>; })}</div><small>{packed.length < 4 ? 'Choose at least four things for the adventure.' : 'Everything fits. Nicely packed!'}</small></div></details>
                 <details className="little-task-drawer" open><summary><span>02</span><strong>Pack each piece</strong><b>Open / close</b></summary><div className="little-pack-list">
                   {([chosen('tops'), chosen('bottoms'), chosen('layers'), chosen('shoes'), chosen('accessories'), chosen('buddies'), { id:'toothbrush',icon:'',name:'Travel kit',note:'A getting-ready essential' }, { id:'book',icon:'',name:'Travel book',note:'For quiet moments' }] as Array<{id:string;name:string;note:string}>).map((item) => { const group = (Object.keys(wardrobe) as PickGroup[]).find((key) => wardrobe[key].some((entry) => entry.id === item.id)); return <button type="button" aria-pressed={packed.includes(item.id)} onClick={() => togglePacked(item.id)} key={item.id}><span className={group ? 'little-pack-art' : 'little-pack-essential'} style={group ? gameItemStyle(group, item.id) : undefined}>{group ? '' : item.id === 'book' ? 'BOOK' : 'KIT'}</span><div><strong>{item.name}</strong><small>{item.note}</small></div><b>{packed.includes(item.id) ? 'Packed' : 'Add'}</b></button>; })}
-                  <button type="button" className="little-next" disabled={!readyToStamp} onClick={() => { setGameStep(5); triggerCelebration([35,30,35,30,80]); }}>Stamp my passport <span>→</span></button>
+                  <button type="button" className="little-next" disabled={!readyToStamp} onClick={stampPassport}>Stamp my passport <span>→</span></button>
                 </div></details>
               </div>
             )}
