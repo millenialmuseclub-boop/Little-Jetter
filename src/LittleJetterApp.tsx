@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import './little-jetter.css';
 import { realProductCatalog } from './catalog';
-import classicWardrobeAssets from './data/classicWardrobeAssets.json';
+import dressUpCatalog from './data/dressUpCatalog.json';
 
 type Destination = {
   id: string;
@@ -53,57 +53,14 @@ const adventureTemperatures: Record<string, string> = { tokyo: '55°F', honolulu
 const STORAGE_KEY = 'little-jetter-first-trip';
 const PASSPORT_KEY = 'little-jetter-passport-stamps';
 
-const wardrobe = {
-  tops: [
-    { id: 'stripe', icon: '👕', name: 'Striped tee', note: 'Easy for a busy day' },
-    { id: 'sweater', icon: '🧥', name: 'Cloud-soft sweater', note: 'Cozy when it cools down' },
-    { id: 'dress', icon: '👗', name: 'Twirl dress', note: 'Ready for something special' },
-    { id: 'sunset-tee', icon: '', name: 'Sunset tee', note: 'A bright everyday favorite' },
-    { id: 'adventure-shirt', icon: '', name: 'Adventure shirt', note: 'Polished but ready to play' },
-  ],
-  bottoms: [
-    { id: 'travel-jeans', icon: '', name: 'Cuffed travel jeans', note: 'Ready for a full day out' },
-    { id: 'coral-skirt', icon: '', name: 'Coral swing skirt', note: 'A colorful city choice' },
-    { id: 'adventure-shorts', icon: '', name: 'Adventure shorts', note: 'Pockets for tiny finds' },
-    { id: 'wide-leg-pants', icon: '', name: 'Wide-leg pants', note: 'Easy movement for long days' },
-    { id: 'play-skirt', icon: '', name: 'Play-all-day skirt', note: 'Colorful and comfortable' },
-  ],
-  layers: [
-    { id: 'rain', icon: '🧥', name: 'Sunny raincoat', note: 'A clever Tokyo layer' },
-    { id: 'denim', icon: '🧥', name: 'Denim jacket', note: 'Light and easy to carry' },
-    { id: 'none', icon: '✦', name: 'No layer', note: 'Bold choice—check the weather' },
-    { id: 'cardigan', icon: '', name: 'Pocket cardigan', note: 'Soft and easy to carry' },
-    { id: 'windbreaker', icon: '', name: 'Color-block windbreaker', note: 'Ready for a breezy ride' },
-  ],
-  shoes: [
-    { id: 'sneakers', icon: '👟', name: 'Red sneakers', note: 'Made for exploring' },
-    { id: 'boots', icon: '🥾', name: 'Puddle boots', note: 'Ready for a rainy turn' },
-    { id: 'sandals', icon: '🩴', name: 'Sunny sandals', note: 'Maybe chilly today' },
-    { id: 'high-tops', icon: '', name: 'Colorful high-tops', note: 'Made for city steps' },
-    { id: 'trail-shoes', icon: '', name: 'Little trail shoes', note: 'Ready for nature paths' },
-  ],
-  accessories: [
-    { id: 'travel-cap', icon: '', name: 'Explorer cap', note: 'A colorful shade-maker' },
-    { id: 'crossbody', icon: '', name: 'Adventure bag', note: 'Carries tiny discoveries' },
-    { id: 'sun-glasses', icon: '', name: 'Sunshine glasses', note: 'Made for bright arrivals' },
-    { id: 'bucket-hat', icon: '', name: 'Patchwork bucket hat', note: 'A playful travel topper' },
-    { id: 'mini-camera', icon: '', name: 'Mini travel camera', note: 'For pretend photo stories' },
-  ],
-  buddies: [
-    { id: 'bunny', icon: '🐰', name: 'Pocket Bunny', note: 'Loves window seats' },
-    { id: 'robot', icon: '🤖', name: 'Mini Robot', note: 'Excellent map reader' },
-    { id: 'camera', icon: '📷', name: 'Kid camera', note: 'Collects tiny memories' },
-  ],
-};
+type CatalogVariant = { id: string; swatch: string; imageUrl: string };
+type CatalogItem = { id: string; name: string; description: string; imageUrl: string; slot: 'top' | 'bottom' | 'outerwear' | 'shoes' | 'accessory' | 'buddy'; tags: string[]; variants?: CatalogVariant[] };
+type CatalogDestination = { tops: CatalogItem[]; bottoms: CatalogItem[]; layers: CatalogItem[]; shoes: CatalogItem[]; accessories: CatalogItem[]; buddies: CatalogItem[] };
+type DressUpCatalog = { schemaVersion: number; template: { id: string; width: number; height: number; anchors: Record<string, number> }; destinations: Record<string, Partial<CatalogDestination>> & { all: CatalogDestination } };
+const catalog = dressUpCatalog as unknown as DressUpCatalog;
+const wardrobe = catalog.destinations.all;
 
-type ClassicWardrobeAsset = { id: string; type: string; destinations: string[]; canvas: { width: number; height: number }; anchors: { centerX: number; shoulderY: number; waistY: number; feetY: number }; thumbnailUrl: string; overlayUrl: string };
-const wardrobeAssets = (classicWardrobeAssets as Omit<ClassicWardrobeAsset, 'thumbnailUrl' | 'overlayUrl' | 'anchors'>[]).map((asset) => {
-  const artworkUrl = `little-jetter-layer://${asset.type}/${asset.id}`;
-  return { ...asset, anchors: { centerX: 300, shoulderY: 240, waistY: 430, feetY: 850 }, thumbnailUrl: artworkUrl, overlayUrl: artworkUrl };
-});
-const wardrobeAssetById = new Map(wardrobeAssets.map((asset) => [asset.id, asset]));
-
-type PickGroup = keyof typeof wardrobe;
+type PickGroup = keyof CatalogDestination;
 type Picks = Record<PickGroup, string>;
 type ClothingGroup = Exclude<PickGroup, 'buddies'>;
 type GarmentColors = Record<string, string>;
@@ -112,16 +69,6 @@ type SavedLook = { id: string; name: string; picks: Picks; character: Character;
 
 const CLOSET_GROUPS: ClothingGroup[] = ['bottoms', 'tops', 'layers', 'shoes', 'accessories'];
 const LAYERS = { base: 0, hairBack: 10, bottom: 20, top: 30, dress: 35, shoes: 40, outerwear: 50, hairFront: 60, accessory: 70, hat: 80 } as const;
-const GARMENT_PALETTES: Record<ClothingGroup, string[]> = {
-  tops: ['#ee6757', '#4c8ca5', '#a386ce', '#35a5a0'], bottoms: ['#47739b', '#e96f78', '#62a886', '#876da0'],
-  layers: ['#f1bd42', '#df8e76', '#5585a6', '#39a29a'], shoes: ['#db4f43', '#e8aa31', '#3d9b91', '#8765ba'],
-  accessories: ['#e67b43', '#39a29a', '#8765ba', '#e96f78'],
-};
-const DESTINATION_WARDROBE_NAMES: Record<string, Record<string, string>> = {
-  tokyo: { stripe: 'Tokyo stripe layer tee', sweater: 'Sakura cloud knit', 'sunset-tee': 'Neon sunset tee', 'adventure-shirt': 'Harajuku utility shirt', 'wide-leg-pants': 'Tokyo wide-leg trousers', rain: 'Japanese rain slicker', windbreaker: 'Neon color-block jacket', 'high-tops': 'Street-style high-tops', 'bucket-hat': 'Sakura patchwork hat' },
-  paris: { stripe: 'Left Bank stripe tee', dress: 'Garden twirl dress', 'coral-skirt': 'Paris swing skirt', cardigan: 'Pocket café cardigan', denim: 'Seine denim jacket', sneakers: 'Walking-day sneakers', crossbody: 'Little gallery bag', 'mini-camera': 'Montmartre camera' },
-  london: { stripe: 'Classic stripe tee', sweater: 'Cloudy-day knit', 'wide-leg-pants': 'Tailored travel trousers', rain: 'London raincoat', boots: 'Bright puddle boots', crossbody: 'Museum-day satchel', 'mini-camera': 'City explorer camera' },
-};
 
 const gameSheets: Record<PickGroup, string> = {
   tops: '/little-jetter/game-tops.png', bottoms: '/little-jetter/game-bottoms.png', layers: '/little-jetter/game-layers.png',
@@ -143,7 +90,17 @@ const characterOptions = {
   eyes: [{ id: 'brown', color: '#5a3827' }, { id: 'hazel', color: '#8d7440' }, { id: 'green', color: '#4e8060' }, { id: 'blue', color: '#4887aa' }, { id: 'gray', color: '#718088' }],
 };
 
-function ClassicDoll({ picks, character, garmentColors, onlyLayer, previewViewBox = '0 0 600 900' }: { picks: Picks; character: Character; garmentColors: GarmentColors; onlyLayer?: 'top' | 'bottom' | 'outerwear' | 'shoes' | 'accessory'; previewViewBox?: string }) {
+function catalogItemFor(destinationId: string, group: PickGroup, itemId: string) {
+  const destinationItem = catalog.destinations[destinationId]?.[group]?.find((item) => item.id === itemId);
+  return destinationItem ?? wardrobe[group].find((item) => item.id === itemId);
+}
+
+function catalogImageFor(item: CatalogItem | undefined, selectedSwatch?: string) {
+  if (!item) return '';
+  return item.variants?.find((variant) => variant.swatch.toLowerCase() === selectedSwatch?.toLowerCase())?.imageUrl ?? item.imageUrl;
+}
+
+function ClassicDoll({ picks, character, garmentColors, onlyLayer, previewViewBox = '0 0 600 900', hiddenLayers = [] }: { picks: Picks; character: Character; garmentColors: GarmentColors; onlyLayer?: 'top' | 'bottom' | 'outerwear' | 'shoes' | 'accessory'; previewViewBox?: string; hiddenLayers?: string[] }) {
   const skin = characterOptions.skin.find((option) => option.id === character.skin)?.color ?? '#bd7656';
   const hair = characterOptions.hair.find((option) => option.id === character.hair)?.color ?? '#573629';
   const eyes = characterOptions.eyes.find((option) => option.id === character.eyes)?.color ?? '#5a3827';
@@ -157,7 +114,7 @@ function ClassicDoll({ picks, character, garmentColors, onlyLayer, previewViewBo
   const isDress = picks.tops === 'dress';
   const isSweater = picks.tops === 'sweater' || picks.tops === 'adventure-shirt';
   const hairStyle = character.hairStyle ?? 'curls';
-  return <svg className={`little-aligned-doll ${onlyLayer ? 'little-garment-canvas' : ''}`} viewBox={previewViewBox} style={{ '--top-fill': top, '--bottom-fill': bottom, '--layer-fill': layer ?? 'transparent', '--shoe-fill': shoes } as React.CSSProperties} data-master-canvas="600x900" data-only-layer={onlyLayer} data-layer-map={JSON.stringify(LAYERS)} role="img" aria-label={onlyLayer ? `${onlyLayer} garment preview` : `Doll in a base outfit wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
+  return <svg className={`little-aligned-doll ${onlyLayer ? 'little-garment-canvas' : ''}`} viewBox={previewViewBox} style={{ '--top-fill': top, '--bottom-fill': bottom, '--layer-fill': layer ?? 'transparent', '--shoe-fill': shoes } as React.CSSProperties} data-master-canvas="600x900" data-hidden-layers={hiddenLayers.join(' ')} data-only-layer={onlyLayer} data-layer-map={JSON.stringify(LAYERS)} role="img" aria-label={onlyLayer ? `${onlyLayer} garment preview` : `Doll in a base outfit wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
     <defs><radialGradient id="skinGlow" cx="34%" cy="20%" r="82%"><stop stopColor="#fff" stopOpacity=".48"/><stop offset=".42" stopColor={skin}/><stop offset=".82" stopColor={skin}/><stop offset="1" stopColor="#70432f" stopOpacity=".3"/></radialGradient><linearGradient id="skinBody" x1=".18" y1="0" x2=".82" y2="1"><stop stopColor="#fff" stopOpacity=".3"/><stop offset=".3" stopColor={skin}/><stop offset="1" stopColor="#70432f" stopOpacity=".23"/></linearGradient><linearGradient id="underTop" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#fffdf6"/><stop offset=".55" stopColor="#fff3d8"/><stop offset="1" stopColor="#dfc397"/></linearGradient><linearGradient id="underBottom" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#8eabc2"/><stop offset=".55" stopColor="#607f9d"/><stop offset="1" stopColor="#405f7c"/></linearGradient><linearGradient id="hairShade" x1=".2" y1="0" x2=".8" y2="1"><stop stopColor="#fff" stopOpacity=".24"/><stop offset=".28" stopColor={hair}/><stop offset="1" stopColor="#211a19" stopOpacity=".46"/></linearGradient><linearGradient id="topShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".45" stopColor={top}/><stop offset="1" stopColor="#173a47" stopOpacity=".2"/></linearGradient><linearGradient id="bottomShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".26"/><stop offset=".42" stopColor={bottom}/><stop offset="1" stopColor="#173a47" stopOpacity=".25"/></linearGradient><linearGradient id="layerShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".48" stopColor={layer}/><stop offset="1" stopColor="#173a47" stopOpacity=".22"/></linearGradient><linearGradient id="shoeShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".3"/><stop offset=".44" stopColor={shoes}/><stop offset="1" stopColor="#173a47" stopOpacity=".28"/></linearGradient><filter id="softShadow"><feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#173a47" floodOpacity=".18"/></filter></defs>
     <g transform="scale(1.5)"><ellipse cx="200" cy="520" rx="82" ry="13" fill="#173a47" opacity=".16" filter="url(#softShadow)"/>
     <g data-layer="base"><path d="M157 220q-24 24-35 83l-8 83q-2 20 14 23 17 2 20-17l12-75 15-53zm86 0q24 24 35 83l8 83q2 20-14 23-17 2-20-17l-12-75-15-53z" fill="url(#skinBody)"/><path d="M174 329l-15 145-8 31q-4 17 12 22 16 4 23-14l14-54 14 54q7 18 23 14 16-5 12-22l-8-31-15-145z" fill="url(#skinBody)"/><path d="M184 194h32l6 32h-44z" fill="url(#skinBody)"/><ellipse cx="143" cy="151" rx="12" ry="18" fill="url(#skinBody)"/><ellipse cx="257" cy="151" rx="12" ry="18" fill="url(#skinBody)"/><circle cx="200" cy="145" r="63" fill="url(#skinGlow)"/><ellipse cx="182" cy="155" rx="12" ry="14" fill="#fffaf4"/><ellipse cx="218" cy="155" rx="12" ry="14" fill="#fffaf4"/><circle cx="182" cy="157" r="7" fill={eyes}/><circle cx="218" cy="157" r="7" fill={eyes}/><circle cx="179" cy="153" r="2.7" fill="white"/><circle cx="215" cy="153" r="2.7" fill="white"/><path d="M169 136q13-8 25 0m12 0q12-8 25 0" fill="none" stroke={hair} strokeOpacity=".7" strokeWidth="4" strokeLinecap="round"/><path d="M201 157q-5 11 1 15" fill="none" stroke="#8d5847" strokeOpacity=".45" strokeWidth="2.5" strokeLinecap="round"/><path d="M184 181q16 15 32 0" fill="#c85f61" fillOpacity=".16" stroke="#9b4d46" strokeWidth="3.2" strokeLinecap="round"/><ellipse cx="163" cy="174" rx="12" ry="7" fill="#ef8f80" opacity=".26"/><ellipse cx="237" cy="174" rx="12" ry="7" fill="#ef8f80" opacity=".26"/>{character.style === 'girl' && <><path d="M169 150l-5-3m68 3 5-3" stroke={hair} strokeWidth="2.5" strokeLinecap="round"/><circle cx="171" cy="173" r="1.5" fill="#9b5b4b" opacity=".5"/><circle cx="176" cy="176" r="1.4" fill="#9b5b4b" opacity=".45"/><circle cx="229" cy="173" r="1.5" fill="#9b5b4b" opacity=".5"/><circle cx="224" cy="176" r="1.4" fill="#9b5b4b" opacity=".45"/></>}</g>
@@ -176,10 +133,22 @@ function ClassicDoll({ picks, character, garmentColors, onlyLayer, previewViewBo
   </svg>;
 }
 
-function GarmentPreview({ group, itemId, picks, character, garmentColors }: { group: ClothingGroup; itemId: string; picks: Picks; character: Character; garmentColors: GarmentColors }) {
+function CatalogDoll({ destinationId, picks, character, garmentColors }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors }) {
+  const illustrated = CLOSET_GROUPS.map((group) => ({ group, item: catalogItemFor(destinationId, group, picks[group]) }))
+    .filter(({ item }) => Boolean(catalogImageFor(item, item ? garmentColors[item.id] : undefined)));
+  const hiddenLayers = illustrated.map(({ item }) => item?.slot ?? '');
+  return <div className="little-catalog-doll" data-template={catalog.template.id}>
+    <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
+    {illustrated.map(({ group, item }) => item && <img className={`little-illustrated-layer layer-${item.slot}`} src={catalogImageFor(item, garmentColors[item.id])} alt="" aria-hidden="true" key={`${group}-${item.id}-${garmentColors[item.id] ?? 'default'}`} />)}
+  </div>;
+}
+
+function GarmentPreview({ destinationId, group, itemId, picks, character, garmentColors }: { destinationId: string; group: ClothingGroup; itemId: string; picks: Picks; character: Character; garmentColors: GarmentColors }) {
   const layerByGroup: Record<ClothingGroup, 'top' | 'bottom' | 'outerwear' | 'shoes' | 'accessory'> = { tops: 'top', bottoms: 'bottom', layers: 'outerwear', shoes: 'shoes', accessories: 'accessory' };
   const viewBoxes: Record<ClothingGroup, string> = { tops: '120 285 360 260', bottoms: '150 455 300 285', layers: '105 280 390 310', shoes: '135 650 330 150', accessories: itemId === 'crossbody' || itemId === 'mini-camera' ? '300 390 190 270' : itemId === 'sun-glasses' ? '220 180 160 130' : '175 85 250 210' };
-  return <span className="little-game-item little-garment-preview" aria-hidden="true"><ClassicDoll picks={{ ...picks, [group]: itemId }} character={character} garmentColors={garmentColors} onlyLayer={layerByGroup[group]} previewViewBox={viewBoxes[group]} /></span>;
+  const item = catalogItemFor(destinationId, group, itemId);
+  const imageUrl = catalogImageFor(item, item ? garmentColors[item.id] : undefined);
+  return <span className={`little-game-item little-garment-preview preview-${group}`} aria-hidden="true">{imageUrl ? <img className="little-catalog-preview" src={imageUrl} alt="" /> : <ClassicDoll picks={{ ...picks, [group]: itemId }} character={character} garmentColors={garmentColors} onlyLayer={layerByGroup[group]} previewViewBox={viewBoxes[group]} />}</span>;
 }
 
 export function LittleJetterApp() {
@@ -211,11 +180,9 @@ export function LittleJetterApp() {
   const [openClosetDrawer, setOpenClosetDrawer] = useState<string>('tops');
   const selected = useMemo(() => destinations.find((item) => item.id === selectedId) ?? destinations[0], [selectedId]);
   const visibleDestinations = destinations.filter((item) => (regionFilter === 'All regions' || item.region === regionFilter) && (destinationTypeFilter === 'All types' || destinationTypes[item.id] === destinationTypeFilter));
-  const availableWardrobe = (group: Exclude<PickGroup, 'buddies'>) => wardrobe[group].filter((item) => {
-    const destinationsForItem = wardrobeAssetById.get(item.id)?.destinations ?? ['all'];
-    return destinationsForItem.includes('all') || destinationsForItem.includes(selected.id);
-  });
-  const wardrobeLabel = (item: { id: string; name: string }) => DESTINATION_WARDROBE_NAMES[selected.id]?.[item.id] ?? item.name;
+  const availableWardrobe = (group: Exclude<PickGroup, 'buddies'>) => wardrobe[group]
+    .filter((item) => item.tags.includes('destination:all') || item.tags.includes(`destination:${selected.id}`))
+    .map((item) => catalogItemFor(selected.id, group, item.id) ?? item);
 
   useEffect(() => {
     document.title = 'Little Jetter · The trip starts before you leave';
@@ -352,7 +319,11 @@ export function LittleJetterApp() {
     triggerCelebration([30, 40, 30, 40, 60]);
   }
 
-  const chosen = (group: PickGroup) => wardrobe[group].find((item) => item.id === picks[group])!;
+  const chosen = (group: PickGroup) => {
+    const item = catalogItemFor(selected.id, group, picks[group]) ?? wardrobe[group][0];
+    return { ...item, note: item.description };
+  };
+  const colorVariants = (group: ClothingGroup) => catalogItemFor(selected.id, group, picks[group])?.variants ?? [];
   const readyToStamp = packed.length >= 4;
   const ltkCollectionUrl = import.meta.env.VITE_LTK_COLLECTION_URL as string | undefined;
   const matchedRealLook = realProductCatalog.filter((product) => [picks.tops, picks.layers, picks.shoes].includes(product.playItemId));
@@ -562,7 +533,7 @@ export function LittleJetterApp() {
                   </div>
                   <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
                     <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{selected.id === 'tokyo' && <img src="/little-jetter/tokyo-doll-backdrop.png" alt="" />}<span>{selected.city}</span><i /><b /></div>
-                    <ClassicDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} picks={picks} character={character} garmentColors={garmentColors} />
+                    <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} />
                     <div className="little-dress-sparkles" key={`sparkles-${celebration}`} aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--spark': index } as React.CSSProperties}>✦</i>)}</div>
                     {dropActive && <div className="little-drop-message">Drop to dress</div>}
                     <div className="little-dressed-confirmation" aria-live="polite">Now wearing {chosen('tops').name}</div>
@@ -577,9 +548,9 @@ export function LittleJetterApp() {
                     <details className="little-task-drawer" open={openClosetDrawer === group} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer(group); }} key={group}>
                       <summary><span>{picks[group] ? '✓' : String(index + 1).padStart(2, '0')}</span><strong>{group === 'tops' ? 'Pick the main piece' : group === 'bottoms' ? 'Choose a bottom' : group === 'layers' ? 'Add a layer' : group === 'shoes' ? 'Choose exploring shoes' : 'Finish with an accessory'}</strong><b>{openClosetDrawer === group ? 'Close' : 'Open'}</b></summary>
                       <div className="little-item-row">
-                        {availableWardrobe(group as ClothingGroup).map((item) => <button type="button" draggable aria-pressed={picks[group] === item.id} onDragStart={(event) => { event.dataTransfer.setData('text/little-jetter-item', `${group}:${item.id}`); event.dataTransfer.effectAllowed = 'copy'; }} onDragEnd={() => setDropActive(false)} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview group={group as ClothingGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} /><strong>{wardrobeLabel(item)}</strong><small>{item.note}</small></button>)}
+                        {availableWardrobe(group as ClothingGroup).map((item) => <button type="button" draggable aria-pressed={picks[group] === item.id} onDragStart={(event) => { event.dataTransfer.setData('text/little-jetter-item', `${group}:${item.id}`); event.dataTransfer.effectAllowed = 'copy'; }} onDragEnd={() => setDropActive(false)} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview destinationId={selected.id} group={group as ClothingGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} /><strong>{item.name}</strong><small>{item.description}</small></button>)}
                       </div>
-                      <div className="little-color-swatches" data-color-slot={group} aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{GARMENT_PALETTES[group as ClothingGroup].map((color) => <button type="button" aria-label={`Use ${color} for ${chosen(group).name}`} aria-pressed={(garmentColors[picks[group]] ?? GARMENT_PALETTES[group as ClothingGroup][0]) === color} style={{ '--swatch': color } as React.CSSProperties} onClick={() => recolor(group as ClothingGroup, color)} key={color} />)}</div>
+                      {colorVariants(group as ClothingGroup).length > 1 && <div className="little-color-swatches" data-color-slot={group} aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{colorVariants(group as ClothingGroup).map((variant) => <button type="button" aria-label={`Use ${variant.id} for ${chosen(group).name}`} aria-pressed={(garmentColors[picks[group]] ?? colorVariants(group as ClothingGroup)[0].swatch) === variant.swatch} style={{ '--swatch': variant.swatch } as React.CSSProperties} onClick={() => recolor(group as ClothingGroup, variant.swatch)} key={variant.id} />)}</div>}
                     </details>
                   ))}
                   <details className="little-task-drawer little-my-looks"><summary><span>★</span><strong>My saved looks</strong><b>Open</b></summary><div>{savedLooks.length ? savedLooks.map((look) => <button type="button" onClick={() => restoreLook(look)} key={look.id}><strong>{look.name}</strong><small>Tap to wear again</small></button>) : <p>Save a look and it will wait here on this device.</p>}</div></details>
@@ -597,7 +568,7 @@ export function LittleJetterApp() {
               <div className="little-buddy-panel little-game-panel">
                 <div className="little-section-art little-buddy-art" aria-hidden="true"><img src="/little-jetter/packing-buddies.png" alt="" /><span>Pick a tiny copilot</span></div>
                 <div><p className="little-kicker">Toys can travel too</p><h3>Who gets the window seat?</h3><p>Pick one small buddy to bring along. A good traveler makes room for what matters.</p></div>
-                <details className="little-task-drawer" open><summary><span>01</span><strong>Choose a travel buddy</strong><b>Open / close</b></summary><div className="little-buddy-grid">{wardrobe.buddies.map((item) => <button type="button" aria-pressed={picks.buddies === item.id} onClick={() => choose('buddies', item.id)} key={item.id}><span className="little-game-item" style={gameItemStyle('buddies', item.id)} aria-hidden="true" /><strong>{item.name}</strong><small>{item.note}</small></button>)}</div></details>
+                <details className="little-task-drawer" open><summary><span>01</span><strong>Choose a travel buddy</strong><b>Open / close</b></summary><div className="little-buddy-grid">{wardrobe.buddies.map((item) => <button type="button" aria-pressed={picks.buddies === item.id} onClick={() => choose('buddies', item.id)} key={item.id}><span className="little-game-item" style={gameItemStyle('buddies', item.id)} aria-hidden="true" /><strong>{item.name}</strong><small>{item.description}</small></button>)}</div></details>
                 <details className="little-task-drawer"><summary><span>02</span><strong>Parent toy preview</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realProductCatalog.filter((product) => product.category === 'toy').map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><img src={product.imageUrl} alt="" /><strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : 'Save this real pick'}</small></button>)}</div></details>
                 <button type="button" className="little-next" onClick={() => setGameStep(4)}>Pack my suitcase <span>→</span></button>
               </div>
