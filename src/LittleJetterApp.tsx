@@ -121,6 +121,27 @@ const characterOptions = {
   eyes: [{ id: 'brown', color: '#5a3827' }, { id: 'hazel', color: '#8d7440' }, { id: 'green', color: '#4e8060' }, { id: 'blue', color: '#4887aa' }, { id: 'gray', color: '#718088' }],
 };
 
+function ClassicDoll({ picks, character }: { picks: Picks; character: { style: string; skin: string; hair: string; eyes: string } }) {
+  const skin = characterOptions.skin.find((option) => option.id === character.skin)?.color ?? '#bd7656';
+  const hair = characterOptions.hair.find((option) => option.id === character.hair)?.color ?? '#573629';
+  const eyes = characterOptions.eyes.find((option) => option.id === character.eyes)?.color ?? '#5a3827';
+  const topColors: Record<string,string> = { stripe:'#ee6757', sweater:'#a386ce', dress:'#35a5a0', 'sunset-tee':'#ef944b', 'adventure-shirt':'#4c8ca5' };
+  const bottomColors: Record<string,string> = { 'travel-jeans':'#47739b', 'coral-skirt':'#e96f78', 'adventure-shorts':'#62a886', 'wide-leg-pants':'#876da0', 'play-skirt':'#e8aa31' };
+  const layerColors: Record<string,string> = { rain:'#f1bd42', denim:'#5585a6', cardigan:'#df8e76', windbreaker:'#39a29a' };
+  const shoeColors: Record<string,string> = { sneakers:'#db4f43', boots:'#e8aa31', sandals:'#3d9b91', 'high-tops':'#8765ba', 'trail-shoes':'#55745c' };
+  const top = topColors[picks.tops] ?? '#ee6757'; const bottom = bottomColors[picks.bottoms] ?? '#47739b'; const layer = layerColors[picks.layers]; const shoes = shoeColors[picks.shoes] ?? '#db4f43';
+  return <svg className="little-aligned-doll" viewBox="0 0 400 600" role="img" aria-label={`Doll wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
+    <ellipse cx="200" cy="564" rx="88" ry="17" fill="#173a47" opacity=".14"/>
+    <g data-layer="base"><path d="M162 210q38-22 76 0l25 139-22 126h-82l-22-126z" fill={skin} stroke="#173a47" strokeWidth="5"/><circle cx="200" cy="145" r="62" fill={skin} stroke="#173a47" strokeWidth="5"/><circle cx="178" cy="153" r="6" fill={eyes}/><circle cx="222" cy="153" r="6" fill={eyes}/><path d="M184 178q16 13 32 0" fill="none" stroke="#9b4d46" strokeWidth="4" strokeLinecap="round"/></g>
+    <g data-layer="hair"><path d={character.style==='boy'?'M143 145q2-71 57-71 58 0 57 73-18-38-57-38-38 0-57 36z':'M139 147q-5-81 61-81 68 0 62 84-17-47-62-47-43 0-61 44z'} fill={hair} stroke="#173a47" strokeWidth="5"/><circle cx="145" cy="109" r={character.style==='boy'?12:23} fill={hair}/><circle cx="255" cy="109" r={character.style==='boy'?12:23} fill={hair}/></g>
+    <g data-layer="bottom"><path d="M154 332h92l12 136h-45l-13-103-13 103h-45z" fill={bottom} stroke="#173a47" strokeWidth="4"/></g>
+    <g data-layer="top"><path d="M147 225q53-20 106 0l21 90q-74 39-148 0z" fill={top} stroke="#173a47" strokeWidth="4"/><path d="M147 233l-35 42 25 18 26-39m90-21 35 42-25 18-26-39" fill={top} stroke="#173a47" strokeWidth="4"/>{picks.tops==='stripe'&&[253,276,299].map(y=><path key={y} d={`M137 ${y}q63 13 126 0`} stroke="#fff8e8" strokeWidth="10"/>)}</g>
+    <g data-layer="shoes"><path d="M137 463h58v42q-49 18-76-2zm68 0h58l18 40q-28 20-76 2z" fill={shoes} stroke="#173a47" strokeWidth="5"/></g>
+    {layer&&<g data-layer="outerwear"><path d="M137 220q63-23 126 0l23 142-46 15-15-117-8 105h-34l-8-105-15 117-46-15z" fill={layer} fillOpacity=".93" stroke="#173a47" strokeWidth="5"/><path d="M200 216v150" stroke="#fff8e8" strokeWidth="5"/></g>}
+    <g data-layer="accessory">{picks.accessories==='sun-glasses'?<><circle cx="178" cy="154" r="22" fill="none" stroke="#173a47" strokeWidth="8"/><circle cx="222" cy="154" r="22" fill="none" stroke="#173a47" strokeWidth="8"/></>:picks.accessories==='crossbody'?<><path d="M255 292l42 15-13 92-58-15z" fill="#9b6448" stroke="#173a47" strokeWidth="5"/><path d="M238 294q13-50 45 3" fill="none" stroke="#173a47" strokeWidth="6"/></>:<><path d="M151 109q49-47 98 0l8 43H143z" fill="#e67b43" stroke="#173a47" strokeWidth="5"/><path d="M145 145q69-18 121 8" fill="none" stroke="#173a47" strokeWidth="9"/></>}</g>
+  </svg>;
+}
+
 export function LittleJetterApp() {
   const [selectedId, setSelectedId] = useState('tokyo');
   const [regionFilter, setRegionFilter] = useState('All regions');
@@ -409,13 +430,7 @@ export function LittleJetterApp() {
                     <details><summary><span>04</span><strong>Eyes</strong><b>Open / close</b></summary><div className="little-character-options little-swatch-options">{characterOptions.eyes.map((option) => <button type="button" aria-label={`${option.id} eyes`} aria-pressed={character.eyes === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, eyes: option.id })); triggerCelebration(12); }} key={option.id} />)}</div></details>
                   </div>
                   <div className={`little-avatar little-doll-stage character-${character.style}`} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
-                    <img className="little-dress-doll" src={jetterDolls.find((doll) => doll.id === dollId)?.src} alt="Selected Little Jetter dress-up doll" />
-                    <span className="little-eye-color" aria-hidden="true" />
-                    <span key={picks.bottoms} className="little-worn-piece little-worn-bottom" style={gameItemStyle('bottoms', picks.bottoms)} aria-hidden="true" />
-                    <span key={picks.tops} className="little-worn-piece little-worn-top" style={gameItemStyle('tops', picks.tops)} aria-hidden="true" />
-                    <span key={picks.layers} className="little-worn-piece little-worn-layer" style={gameItemStyle('layers', picks.layers)} aria-hidden="true" />
-                    <span key={picks.shoes} className="little-worn-piece little-worn-shoes" style={gameItemStyle('shoes', picks.shoes)} aria-hidden="true" />
-                    <span key={picks.accessories} className={`little-worn-piece little-worn-accessory accessory-${picks.accessories}`} style={gameItemStyle('accessories', picks.accessories)} aria-hidden="true" />
+                    <ClassicDoll picks={picks} character={character} />
                     <div className="little-dressed-confirmation" aria-live="polite">Now wearing {chosen('tops').name}</div>
                   </div>
                   <h3>{selected.city} explorer</h3>
