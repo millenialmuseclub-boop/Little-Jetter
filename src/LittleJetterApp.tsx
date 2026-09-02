@@ -153,8 +153,8 @@ function ClassicDoll({ picks, character }: { picks: Picks; character: { style: s
   </svg>;
 }
 
-function DollItemPreview({ group, itemId, picks, character }: { group: PickGroup; itemId: string; picks: Picks; character: { style: string; skin: string; hair: string; eyes: string } }) {
-  return <span className="little-game-item little-item-doll-preview" aria-hidden="true"><ClassicDoll picks={{ ...picks, [group]: itemId }} character={character} /></span>;
+function GarmentPreview({ group, itemId }: { group: PickGroup; itemId: string }) {
+  return <span className="little-game-item little-garment-preview" style={gameItemStyle(group, itemId)} aria-hidden="true" />;
 }
 
 export function LittleJetterApp() {
@@ -462,7 +462,7 @@ export function LittleJetterApp() {
                   </div>
                   <div className={`little-avatar little-doll-stage character-${character.style}`} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
                     <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true"><span>{selected.city}</span><i /><b /></div>
-                    <ClassicDoll picks={picks} character={character} />
+                    <ClassicDoll key={`${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}`} picks={picks} character={character} />
                     <div className="little-dressed-confirmation" aria-live="polite">Now wearing {chosen('tops').name}</div>
                   </div>
                   <h3>{selected.city} explorer</h3>
@@ -475,7 +475,7 @@ export function LittleJetterApp() {
                     <details className="little-task-drawer" open={openClosetDrawer === group} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer(group); }} key={group}>
                       <summary><span>{picks[group] ? '✓' : String(index + 1).padStart(2, '0')}</span><strong>{group === 'tops' ? 'Pick the main piece' : group === 'bottoms' ? 'Choose a bottom' : group === 'layers' ? 'Add a layer' : group === 'shoes' ? 'Choose exploring shoes' : 'Finish with an accessory'}</strong><b>{openClosetDrawer === group ? 'Close' : 'Open'}</b></summary>
                       <div className="little-item-row">
-                        {availableWardrobe(group as Exclude<PickGroup, 'buddies'>).map((item) => <button type="button" aria-pressed={picks[group] === item.id} onClick={() => choose(group, item.id)} key={item.id}><DollItemPreview group={group} itemId={item.id} picks={picks} character={character} /><strong>{item.name}</strong><small>{item.note}</small></button>)}
+                        {availableWardrobe(group as Exclude<PickGroup, 'buddies'>).map((item) => <button type="button" aria-pressed={picks[group] === item.id} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview group={group} itemId={item.id} /><strong>{item.name}</strong><small>{item.note}</small></button>)}
                       </div>
                     </details>
                   ))}
