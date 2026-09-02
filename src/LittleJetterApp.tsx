@@ -94,10 +94,10 @@ const wardrobe = {
   ],
 };
 
-type ClassicWardrobeAsset = { id: string; type: string; destinations: string[]; canvas: { width: number; height: number }; thumbnailUrl: string; overlayUrl: string };
-const wardrobeAssets = (classicWardrobeAssets as Omit<ClassicWardrobeAsset, 'thumbnailUrl' | 'overlayUrl'>[]).map((asset) => {
+type ClassicWardrobeAsset = { id: string; type: string; destinations: string[]; canvas: { width: number; height: number }; anchors: { centerX: number; shoulderY: number; waistY: number; feetY: number }; thumbnailUrl: string; overlayUrl: string };
+const wardrobeAssets = (classicWardrobeAssets as Omit<ClassicWardrobeAsset, 'thumbnailUrl' | 'overlayUrl' | 'anchors'>[]).map((asset) => {
   const artworkUrl = `little-jetter-layer://${asset.type}/${asset.id}`;
-  return { ...asset, thumbnailUrl: artworkUrl, overlayUrl: artworkUrl };
+  return { ...asset, anchors: { centerX: 300, shoulderY: 240, waistY: 430, feetY: 850 }, thumbnailUrl: artworkUrl, overlayUrl: artworkUrl };
 });
 const wardrobeAssetById = new Map(wardrobeAssets.map((asset) => [asset.id, asset]));
 
@@ -223,6 +223,7 @@ export function LittleJetterApp() {
     setSavedLooks(JSON.parse(window.localStorage.getItem('little-jetter-saved-looks') ?? '[]'));
     return () => { document.documentElement.style.colorScheme = ''; };
   }, []);
+
 
   function beginTrip() {
     window.localStorage.setItem(STORAGE_KEY, selected.id);
