@@ -22,7 +22,7 @@ Every illustrated doll asset uses the same `little-jetter-neutral-v1` coordinate
 | Bottom | 170 | 465 | 260 | 305 | 20 |
 | Outerwear | 130 | 300 | 340 | 275 | 50 |
 | Shoes | 170 | 710 | 260 | 105 | 40 |
-| Accessory | 175 | 300 | 300 | 340 | 70 |
+| Accessory | 275 | 330 | 190 | 270 | 70 |
 
 Artwork must stay inside its slot-safe bound but remain on the full 600 × 900 canvas. Never crop an export to the visible garment. Do not add a cast shadow outside the garment; the application owns inter-layer depth.
 

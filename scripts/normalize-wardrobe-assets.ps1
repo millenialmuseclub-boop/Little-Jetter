@@ -12,7 +12,7 @@ $Slots = @{
   bottom = [System.Drawing.Rectangle]::new(170, 465, 260, 305)
   outerwear = [System.Drawing.Rectangle]::new(130, 300, 340, 275)
   shoes = [System.Drawing.Rectangle]::new(170, 710, 260, 105)
-  accessory = [System.Drawing.Rectangle]::new(175, 300, 300, 340)
+  accessory = [System.Drawing.Rectangle]::new(275, 330, 190, 270)
   hair = [System.Drawing.Rectangle]::new(190, 70, 220, 245)
 }
 
