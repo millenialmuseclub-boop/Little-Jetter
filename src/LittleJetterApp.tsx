@@ -167,6 +167,7 @@ export function LittleJetterApp() {
   const [travelMode, setTravelMode] = useState(true);
   const [foundNotices, setFoundNotices] = useState<string[]>([]);
   const [journalChoice, setJournalChoice] = useState('');
+  const [openClosetDrawer, setOpenClosetDrawer] = useState<string>('tops');
   const selected = useMemo(() => destinations.find((item) => item.id === selectedId) ?? destinations[0], [selectedId]);
   const visibleDestinations = destinations.filter((item) => (regionFilter === 'All regions' || item.region === regionFilter) && (destinationTypeFilter === 'All types' || destinationTypes[item.id] === destinationTypeFilter));
 
@@ -206,6 +207,9 @@ export function LittleJetterApp() {
 
   function choose(group: PickGroup, id: string) {
     setPicks((current) => ({ ...current, [group]: id }));
+    const closetGroups: PickGroup[] = ['tops', 'bottoms', 'layers', 'shoes', 'accessories'];
+    const nextGroup = closetGroups[closetGroups.indexOf(group) + 1];
+    if (nextGroup) window.setTimeout(() => setOpenClosetDrawer(nextGroup), 260);
     triggerCelebration(18);
   }
 
@@ -243,6 +247,13 @@ export function LittleJetterApp() {
   const ltkCollectionUrl = import.meta.env.VITE_LTK_COLLECTION_URL as string | undefined;
   const matchedRealLook = realProductCatalog.filter((product) => [picks.tops, picks.layers, picks.shoes].includes(product.playItemId));
   const realLook = (matchedRealLook.length ? matchedRealLook : realProductCatalog).slice(0, 6);
+  const outfitFeedback = !selected.sandalsFriendly && picks.shoes === 'sandals'
+    ? { mood: 'brrr', title: 'Brrr—tiny toes alert!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Try sneakers or puddle boots for this adventure.` }
+    : selected.needsLayer && picks.layers === 'none'
+      ? { mood: 'brrr', title: 'A breeze is coming!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Add a jacket you can carry.` }
+      : selected.sandalsFriendly && picks.shoes === 'boots'
+        ? { mood: 'warm', title: 'Those boots may feel warm!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Sandals or sneakers could be comfier.` }
+        : { mood: 'ready', title: 'Adventure match!', message: `${chosen('shoes').name} and ${chosen('layers').name.toLowerCase()} work beautifully for ${selected.city}.` };
   const shopDrawers = [
     { id: 'clothing', number: '01', name: 'Clothes for the journey', note: 'Soft layers and easy travel outfits' },
     { id: 'shoes', number: '02', name: 'Exploring shoes', note: 'Pairs made for busy travel days' },
@@ -439,22 +450,22 @@ export function LittleJetterApp() {
                     <div className="little-dressed-confirmation" aria-live="polite">Now wearing {chosen('tops').name}</div>
                   </div>
                   <h3>{selected.city} explorer</h3>
-                  <p>{(selected.needsLayer && picks.layers === 'none') || (!selected.sandalsFriendly && picks.shoes === 'sandals') ? 'That’s a fun look. Check the forecast and consider a comfy backup.' : 'This look makes sense for your adventure—and it still feels like you.'}</p>
+                  <div key={`${picks.layers}-${picks.shoes}`} className={`little-outfit-reaction is-${outfitFeedback.mood}`} role="status"><span aria-hidden="true" /><div><strong>{outfitFeedback.title}</strong><p>{outfitFeedback.message}</p></div></div>
                 </aside>
                 <div className="little-closet">
                   <div className="little-closet-intro"><span>01</span><div><small>Start at the doll</small><strong>Build the look one drawer at a time.</strong></div></div>
                   <div className="little-surprise-bar"><div><small>Need a little magic?</small><strong>Let Little Jetter make a surprise look.</strong></div><button type="button" onClick={surpriseMe}>Surprise me</button></div>
                   {(['tops', 'bottoms', 'layers', 'shoes', 'accessories'] as PickGroup[]).map((group, index) => (
-                    <details className="little-task-drawer" open={index === 0} key={group}>
-                      <summary><span>{String(index + 1).padStart(2, '0')}</span><strong>{group === 'tops' ? 'Pick the main piece' : group === 'bottoms' ? 'Choose a bottom' : group === 'layers' ? 'Add a layer' : group === 'shoes' ? 'Choose exploring shoes' : 'Finish with an accessory'}</strong><b>Open / close</b></summary>
+                    <details className="little-task-drawer" open={openClosetDrawer === group} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer(group); }} key={group}>
+                      <summary><span>{picks[group] ? '✓' : String(index + 1).padStart(2, '0')}</span><strong>{group === 'tops' ? 'Pick the main piece' : group === 'bottoms' ? 'Choose a bottom' : group === 'layers' ? 'Add a layer' : group === 'shoes' ? 'Choose exploring shoes' : 'Finish with an accessory'}</strong><b>{openClosetDrawer === group ? 'Close' : 'Open'}</b></summary>
                       <div className="little-item-row">
                         {wardrobe[group].map((item) => <button type="button" aria-pressed={picks[group] === item.id} onClick={() => choose(group, item.id)} key={item.id}><span className="little-game-item" style={gameItemStyle(group, item.id)} aria-hidden="true" /><strong>{item.name}</strong><small>{item.note}</small></button>)}
                       </div>
                     </details>
                   ))}
-                  <details className="little-task-drawer"><summary><span>06</span><strong>Parent product matches</strong><b>Open / close</b></summary><div className="little-real-look">
+                  <details className="little-task-drawer" open={openClosetDrawer === 'parent'} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer('parent'); }}><summary><span>06</span><strong>Parent product matches</strong><b>{openClosetDrawer === 'parent' ? 'Close' : 'Open'}</b></summary><div className="little-real-look">
                     <div><small>Your Little Jetter picks</small><strong>Real pieces inspired by this look</strong></div>
-                    <div>{realLook.length ? realLook.map((product) => <button type="button" key={product.id} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}><img src={product.imageUrl} alt="" /><span>{product.name}</span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>) : <p>Choose another piece to discover a real-life match.</p>}</div>
+                    <div>{realLook.length ? realLook.map((product) => { const inspiredItem = (Object.keys(wardrobe) as PickGroup[]).flatMap((group) => wardrobe[group]).find((item) => item.id === product.playItemId); return <button type="button" key={product.id} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}><img src={product.imageUrl} alt="" /><span><small>{inspiredItem ? `Inspired by ${inspiredItem.name}` : 'Inspired by this look'}</small>{product.name}</span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>; }) : <p>Choose another piece to discover a real-life match.</p>}</div>
                     <small>Kids save the look. A parent decides whether to shop it.</small>
                   </div></details>
                   <button type="button" className="little-next" onClick={() => setGameStep(2)}>Explore my travel journal <span>→</span></button>
