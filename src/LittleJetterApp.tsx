@@ -94,8 +94,11 @@ const wardrobe = {
   ],
 };
 
-type ClassicWardrobeAsset = { id: string; type: string; destinations: string[]; canvas: { width: number; height: number } };
-const wardrobeAssets = classicWardrobeAssets as ClassicWardrobeAsset[];
+type ClassicWardrobeAsset = { id: string; type: string; destinations: string[]; canvas: { width: number; height: number }; thumbnailUrl: string; overlayUrl: string };
+const wardrobeAssets = (classicWardrobeAssets as Omit<ClassicWardrobeAsset, 'thumbnailUrl' | 'overlayUrl'>[]).map((asset) => {
+  const artworkUrl = `little-jetter-layer://${asset.type}/${asset.id}`;
+  return { ...asset, thumbnailUrl: artworkUrl, overlayUrl: artworkUrl };
+});
 const wardrobeAssetById = new Map(wardrobeAssets.map((asset) => [asset.id, asset]));
 
 type PickGroup = keyof typeof wardrobe;
@@ -137,7 +140,7 @@ const characterOptions = {
   eyes: [{ id: 'brown', color: '#5a3827' }, { id: 'hazel', color: '#8d7440' }, { id: 'green', color: '#4e8060' }, { id: 'blue', color: '#4887aa' }, { id: 'gray', color: '#718088' }],
 };
 
-function ClassicDoll({ picks, character, garmentColors }: { picks: Picks; character: { style: string; skin: string; hair: string; eyes: string }; garmentColors: GarmentColors }) {
+function ClassicDoll({ picks, character, garmentColors, onlyLayer }: { picks: Picks; character: { style: string; skin: string; hair: string; eyes: string }; garmentColors: GarmentColors; onlyLayer?: 'top' | 'bottom' | 'outerwear' | 'shoes' | 'accessory' }) {
   const skin = characterOptions.skin.find((option) => option.id === character.skin)?.color ?? '#bd7656';
   const hair = characterOptions.hair.find((option) => option.id === character.hair)?.color ?? '#573629';
   const eyes = characterOptions.eyes.find((option) => option.id === character.eyes)?.color ?? '#5a3827';
@@ -150,7 +153,7 @@ function ClassicDoll({ picks, character, garmentColors }: { picks: Picks; charac
   const isShorts = picks.bottoms === 'adventure-shorts';
   const isDress = picks.tops === 'dress';
   const isSweater = picks.tops === 'sweater' || picks.tops === 'adventure-shirt';
-  return <svg className="little-aligned-doll" viewBox="0 0 600 900" data-layer-map={JSON.stringify(LAYERS)} role="img" aria-label={`Doll in a base outfit wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
+  return <svg className={`little-aligned-doll ${onlyLayer ? 'little-garment-canvas' : ''}`} viewBox="0 0 600 900" data-only-layer={onlyLayer} data-layer-map={JSON.stringify(LAYERS)} role="img" aria-label={onlyLayer ? `${onlyLayer} garment preview` : `Doll in a base outfit wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
     <defs><radialGradient id="skinGlow" cx="36%" cy="24%" r="78%"><stop stopColor="#fff" stopOpacity=".34"/><stop offset=".48" stopColor={skin}/><stop offset="1" stopColor="#70432f" stopOpacity=".24"/></radialGradient><linearGradient id="hairShade" x1=".2" y1="0" x2=".8" y2="1"><stop stopColor="#fff" stopOpacity=".2"/><stop offset=".3" stopColor={hair}/><stop offset="1" stopColor="#211a19" stopOpacity=".42"/></linearGradient><linearGradient id="topShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".45" stopColor={top}/><stop offset="1" stopColor="#173a47" stopOpacity=".2"/></linearGradient><linearGradient id="bottomShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".26"/><stop offset=".42" stopColor={bottom}/><stop offset="1" stopColor="#173a47" stopOpacity=".25"/></linearGradient><linearGradient id="layerShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".48" stopColor={layer}/><stop offset="1" stopColor="#173a47" stopOpacity=".22"/></linearGradient><linearGradient id="shoeShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".3"/><stop offset=".44" stopColor={shoes}/><stop offset="1" stopColor="#173a47" stopOpacity=".28"/></linearGradient><filter id="softShadow"><feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#173a47" floodOpacity=".18"/></filter></defs>
     <g transform="scale(1.5)"><ellipse cx="200" cy="564" rx="88" ry="17" fill="#173a47" opacity=".14"/>
     <g data-layer="base"><path d="M162 210q38-22 76 0l25 139-22 126h-82l-22-126z" fill={skin} stroke="#173a47" strokeWidth="5"/><circle cx="200" cy="145" r="62" fill={skin} stroke="#173a47" strokeWidth="5"/><circle cx="200" cy="145" r="56" fill="url(#skinGlow)"/><path d="M168 146q10-8 20 0M212 146q10-8 20 0" fill="none" stroke="#173a47" strokeWidth="3"/><circle cx="178" cy="155" r="6" fill={eyes}/><circle cx="222" cy="155" r="6" fill={eyes}/><circle cx="176" cy="153" r="2" fill="white"/><circle cx="220" cy="153" r="2" fill="white"/><path d="M184 180q16 13 32 0" fill="none" stroke="#9b4d46" strokeWidth="4" strokeLinecap="round"/><circle cx="163" cy="173" r="8" fill="#ef8f80" opacity=".25"/><circle cx="237" cy="173" r="8" fill="#ef8f80" opacity=".25"/></g>
@@ -164,8 +167,9 @@ function ClassicDoll({ picks, character, garmentColors }: { picks: Picks; charac
   </svg>;
 }
 
-function GarmentPreview({ group, itemId }: { group: PickGroup; itemId: string }) {
-  return <span className="little-game-item little-garment-preview" style={gameItemStyle(group, itemId)} aria-hidden="true" />;
+function GarmentPreview({ group, itemId, picks, character, garmentColors }: { group: ClothingGroup; itemId: string; picks: Picks; character: { style: string; skin: string; hair: string; eyes: string }; garmentColors: GarmentColors }) {
+  const layerByGroup: Record<ClothingGroup, 'top' | 'bottom' | 'outerwear' | 'shoes' | 'accessory'> = { tops: 'top', bottoms: 'bottom', layers: 'outerwear', shoes: 'shoes', accessories: 'accessory' };
+  return <span className="little-game-item little-garment-preview" aria-hidden="true"><ClassicDoll picks={{ ...picks, [group]: itemId }} character={character} garmentColors={garmentColors} onlyLayer={layerByGroup[group]} /></span>;
 }
 
 export function LittleJetterApp() {
@@ -526,7 +530,7 @@ export function LittleJetterApp() {
                     <details className="little-task-drawer" open={openClosetDrawer === group} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer(group); }} key={group}>
                       <summary><span>{picks[group] ? '✓' : String(index + 1).padStart(2, '0')}</span><strong>{group === 'tops' ? 'Pick the main piece' : group === 'bottoms' ? 'Choose a bottom' : group === 'layers' ? 'Add a layer' : group === 'shoes' ? 'Choose exploring shoes' : 'Finish with an accessory'}</strong><b>{openClosetDrawer === group ? 'Close' : 'Open'}</b></summary>
                       <div className="little-item-row">
-                        {availableWardrobe(group as ClothingGroup).map((item) => <button type="button" draggable aria-pressed={picks[group] === item.id} onDragStart={(event) => { event.dataTransfer.setData('text/little-jetter-item', `${group}:${item.id}`); event.dataTransfer.effectAllowed = 'copy'; }} onDragEnd={() => setDropActive(false)} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview group={group} itemId={item.id} /><strong>{item.name}</strong><small>{item.note}</small></button>)}
+                        {availableWardrobe(group as ClothingGroup).map((item) => <button type="button" draggable aria-pressed={picks[group] === item.id} onDragStart={(event) => { event.dataTransfer.setData('text/little-jetter-item', `${group}:${item.id}`); event.dataTransfer.effectAllowed = 'copy'; }} onDragEnd={() => setDropActive(false)} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview group={group as ClothingGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} /><strong>{item.name}</strong><small>{item.note}</small></button>)}
                       </div>
                       <div className="little-color-swatches" aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{GARMENT_PALETTES[group as ClothingGroup].map((color) => <button type="button" aria-label={`Use ${color}`} aria-pressed={(garmentColors[picks[group]] ?? GARMENT_PALETTES[group as ClothingGroup][0]) === color} style={{ '--swatch': color } as React.CSSProperties} onClick={() => { setGarmentColors((current) => ({ ...current, [picks[group]]: color })); triggerCelebration(10); }} key={color} />)}</div>
                     </details>
