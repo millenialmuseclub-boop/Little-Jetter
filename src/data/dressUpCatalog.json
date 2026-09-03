@@ -168,6 +168,49 @@
             "destination:barcelona",
             "illustrated"
           ]
+        },
+        {
+          "id": "pink-floral-dress",
+          "name": "Pink floral dress",
+          "description": "Soft ruffles and painted blossoms",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-floral-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:honolulu",
+            "destination:cartagena",
+            "destination:rome",
+            "destination:sydney",
+            "destination:san-jose",
+            "destination:barcelona",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-button-dress",
+          "name": "Purple button dress",
+          "description": "A polished collared favorite",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-button-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "teal-wrap-dress",
+          "name": "Teal wrap dress",
+          "description": "Flowy with painted blossoms",
+          "imageUrl": "/little-jetter/catalog/tokyo/teal-wrap-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:honolulu",
+            "destination:cartagena",
+            "destination:rome",
+            "destination:sydney",
+            "destination:san-jose",
+            "destination:barcelona",
+            "illustrated"
+          ]
         }
       ],
       "bottoms": [
@@ -292,6 +335,39 @@
             "destination:honolulu",
             "destination:cartagena",
             "destination:rome",
+            "destination:sydney",
+            "destination:san-jose",
+            "destination:barcelona",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "denim-overalls",
+          "name": "Denim overalls",
+          "description": "A flower-patch pinafore for easy play",
+          "imageUrl": "/little-jetter/catalog/tokyo/denim-overalls/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "navy-overalls",
+          "name": "Navy overalls",
+          "description": "Classic pinafore over a blouse",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-overalls/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:paris",
+            "destination:nairobi",
+            "destination:mexico-city",
+            "destination:new-york",
+            "destination:cape-town",
+            "destination:vancouver",
+            "destination:seoul",
             "destination:sydney",
             "destination:san-jose",
             "destination:barcelona",
@@ -561,6 +637,121 @@
             "destination:barcelona",
             "illustrated"
           ]
+        },
+        {
+          "id": "cream-sneakers",
+          "name": "Cream sneakers",
+          "description": "Simple and easy to run in",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-sneakers/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "yellow-boots",
+          "name": "Yellow rain boots",
+          "description": "Ready for every puddle",
+          "imageUrl": "/little-jetter/catalog/tokyo/yellow-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:paris",
+            "destination:nairobi",
+            "destination:mexico-city",
+            "destination:new-york",
+            "destination:cape-town",
+            "destination:vancouver",
+            "destination:seoul",
+            "destination:sydney",
+            "destination:san-jose",
+            "destination:barcelona",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-boots",
+          "name": "Pink fleece boots",
+          "description": "Cozy for cooler days",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:paris",
+            "destination:nairobi",
+            "destination:mexico-city",
+            "destination:new-york",
+            "destination:cape-town",
+            "destination:vancouver",
+            "destination:seoul",
+            "destination:sydney",
+            "destination:san-jose",
+            "destination:barcelona",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "brown-hiking-boots",
+          "name": "Brown hiking boots",
+          "description": "Sturdy for a trail day",
+          "imageUrl": "/little-jetter/catalog/tokyo/brown-hiking-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:paris",
+            "destination:nairobi",
+            "destination:mexico-city",
+            "destination:new-york",
+            "destination:cape-town",
+            "destination:vancouver",
+            "destination:seoul",
+            "destination:sydney",
+            "destination:san-jose",
+            "destination:barcelona",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "black-mary-janes",
+          "name": "Black mary janes",
+          "description": "Polished and ready for anywhere",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-mary-janes/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "navy-sandals",
+          "name": "Navy buckle sandals",
+          "description": "Easy for a warm day out",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-sandals/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:honolulu",
+            "destination:cartagena",
+            "destination:rome",
+            "destination:sydney",
+            "destination:san-jose",
+            "destination:barcelona",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-flats",
+          "name": "Pink ballet flats",
+          "description": "Sweet and simple with a bow",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-flats/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
         }
       ],
       "accessories": [
@@ -668,6 +859,77 @@
           "name": "Floral headband",
           "description": "Sweet blossoms for any outfit",
           "imageUrl": "/little-jetter/catalog/tokyo/floral-headband/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-flower-cap",
+          "name": "Purple flower cap",
+          "description": "A cute cap with a painted bloom",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-flower-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "patchwork-bucket-hat-2",
+          "name": "Blue patchwork bucket hat",
+          "description": "Colorful patches all around",
+          "imageUrl": "/little-jetter/catalog/tokyo/patchwork-bucket-hat-2/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:honolulu",
+            "destination:cartagena",
+            "destination:rome",
+            "destination:sydney",
+            "destination:san-jose",
+            "destination:barcelona",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "puppy-cap",
+          "name": "Puppy cap",
+          "description": "A playful cap with a cartoon pup",
+          "imageUrl": "/little-jetter/catalog/tokyo/puppy-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-quilted-purse",
+          "name": "Pink quilted purse",
+          "description": "A sweet little bag for treasures",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-quilted-purse/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "black-quilted-purse",
+          "name": "Black quilted purse",
+          "description": "A little bag with a floral charm",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-quilted-purse/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "blue-backpack",
+          "name": "Blue backpack",
+          "description": "Roomy with a friendly patch",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-backpack/default.png",
           "slot": "accessory",
           "tags": [
             "destination:all",
