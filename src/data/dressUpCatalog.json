@@ -4,71 +4,591 @@
     "id": "little-jetter-neutral-v1",
     "width": 600,
     "height": 900,
-    "anchors": { "centerX": 300, "headCenterY": 218, "shoulderY": 330, "waistY": 475, "ankleY": 760, "groundY": 810 }
+    "anchors": {
+      "centerX": 300,
+      "headCenterY": 218,
+      "shoulderY": 330,
+      "waistY": 475,
+      "ankleY": 760,
+      "groundY": 810
+    }
   },
   "destinations": {
     "all": {
       "tops": [
-        { "id": "stripe", "name": "Striped tee", "description": "Easy for a busy day", "imageUrl": "", "slot": "top", "tags": ["destination:all", "everyday"] },
-        { "id": "sweater", "name": "Cloud-soft sweater", "description": "Cozy when it cools down", "imageUrl": "", "slot": "top", "tags": ["destination:tokyo", "destination:london", "destination:vancouver", "destination:seoul", "cool"] },
-        { "id": "dress", "name": "Twirl dress", "description": "Ready for something special", "imageUrl": "", "slot": "top", "tags": ["destination:paris", "destination:cartagena", "destination:honolulu", "destination:barcelona"] },
-        { "id": "sunset-tee", "name": "Sunset tee", "description": "A bright everyday favorite", "imageUrl": "", "slot": "top", "tags": ["destination:all", "everyday"] },
-        { "id": "adventure-shirt", "name": "Adventure shirt", "description": "Polished but ready to play", "imageUrl": "", "slot": "top", "tags": ["destination:tokyo", "destination:new-york", "destination:seoul"] }
+        {
+          "id": "stripe",
+          "name": "Striped tee",
+          "description": "Easy for a busy day",
+          "imageUrl": "",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "everyday"
+          ]
+        },
+        {
+          "id": "sweater",
+          "name": "Cloud-soft sweater",
+          "description": "Cozy when it cools down",
+          "imageUrl": "",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:vancouver",
+            "destination:seoul",
+            "cool"
+          ]
+        },
+        {
+          "id": "dress",
+          "name": "Twirl dress",
+          "description": "Ready for something special",
+          "imageUrl": "",
+          "slot": "top",
+          "tags": [
+            "destination:paris",
+            "destination:cartagena",
+            "destination:honolulu",
+            "destination:barcelona"
+          ]
+        },
+        {
+          "id": "sunset-tee",
+          "name": "Sunset tee",
+          "description": "A bright everyday favorite",
+          "imageUrl": "",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "everyday"
+          ]
+        },
+        {
+          "id": "adventure-shirt",
+          "name": "Adventure shirt",
+          "description": "Polished but ready to play",
+          "imageUrl": "",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "destination:new-york",
+            "destination:seoul"
+          ]
+        }
       ],
       "bottoms": [
-        { "id": "travel-jeans", "name": "Cuffed travel jeans", "description": "Ready for a full day out", "imageUrl": "", "slot": "bottom", "tags": ["destination:all", "everyday"] },
-        { "id": "coral-skirt", "name": "Coral swing skirt", "description": "A colorful city choice", "imageUrl": "", "slot": "bottom", "tags": ["destination:paris", "destination:cartagena", "destination:barcelona"] },
-        { "id": "adventure-shorts", "name": "Adventure shorts", "description": "Pockets for tiny finds", "imageUrl": "", "slot": "bottom", "tags": ["destination:honolulu", "destination:cartagena", "destination:sydney", "warm"] },
-        { "id": "wide-leg-pants", "name": "Wide-leg pants", "description": "Easy movement for long days", "imageUrl": "", "slot": "bottom", "tags": ["destination:tokyo", "destination:seoul", "destination:london"] },
-        { "id": "play-skirt", "name": "Play-all-day skirt", "description": "Colorful and comfortable", "imageUrl": "", "slot": "bottom", "tags": ["destination:all"] }
+        {
+          "id": "travel-jeans",
+          "name": "Cuffed travel jeans",
+          "description": "Ready for a full day out",
+          "imageUrl": "",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "everyday"
+          ]
+        },
+        {
+          "id": "coral-skirt",
+          "name": "Coral swing skirt",
+          "description": "A colorful city choice",
+          "imageUrl": "",
+          "slot": "bottom",
+          "tags": [
+            "destination:paris",
+            "destination:cartagena",
+            "destination:barcelona"
+          ]
+        },
+        {
+          "id": "adventure-shorts",
+          "name": "Adventure shorts",
+          "description": "Pockets for tiny finds",
+          "imageUrl": "",
+          "slot": "bottom",
+          "tags": [
+            "destination:honolulu",
+            "destination:cartagena",
+            "destination:sydney",
+            "warm"
+          ]
+        },
+        {
+          "id": "wide-leg-pants",
+          "name": "Wide-leg pants",
+          "description": "Easy movement for long days",
+          "imageUrl": "",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "destination:seoul",
+            "destination:london"
+          ]
+        },
+        {
+          "id": "play-skirt",
+          "name": "Play-all-day skirt",
+          "description": "Colorful and comfortable",
+          "imageUrl": "",
+          "slot": "bottom",
+          "tags": [
+            "destination:all"
+          ]
+        }
       ],
       "layers": [
-        { "id": "rain", "name": "Sunny raincoat", "description": "A clever rainy-day layer", "imageUrl": "", "slot": "outerwear", "tags": ["destination:tokyo", "destination:london", "destination:vancouver", "destination:san-jose", "rainy"] },
-        { "id": "denim", "name": "Denim jacket", "description": "Light and easy to carry", "imageUrl": "", "slot": "outerwear", "tags": ["destination:all", "cool"] },
-        { "id": "none", "name": "No layer", "description": "Bold choice—check the weather", "imageUrl": "", "slot": "outerwear", "tags": ["destination:all"] },
-        { "id": "cardigan", "name": "Pocket cardigan", "description": "Soft and easy to carry", "imageUrl": "", "slot": "outerwear", "tags": ["destination:paris", "destination:cape-town", "destination:sydney"] },
-        { "id": "windbreaker", "name": "Color-block windbreaker", "description": "Ready for a breezy ride", "imageUrl": "", "slot": "outerwear", "tags": ["destination:tokyo", "destination:vancouver", "destination:new-york"] }
+        {
+          "id": "rain",
+          "name": "Sunny raincoat",
+          "description": "A clever rainy-day layer",
+          "imageUrl": "",
+          "slot": "outerwear",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:vancouver",
+            "destination:san-jose",
+            "rainy"
+          ]
+        },
+        {
+          "id": "denim",
+          "name": "Denim jacket",
+          "description": "Light and easy to carry",
+          "imageUrl": "",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "cool"
+          ]
+        },
+        {
+          "id": "none",
+          "name": "No layer",
+          "description": "Bold choice—check the weather",
+          "imageUrl": "",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all"
+          ]
+        },
+        {
+          "id": "cardigan",
+          "name": "Pocket cardigan",
+          "description": "Soft and easy to carry",
+          "imageUrl": "",
+          "slot": "outerwear",
+          "tags": [
+            "destination:paris",
+            "destination:cape-town",
+            "destination:sydney"
+          ]
+        },
+        {
+          "id": "windbreaker",
+          "name": "Color-block windbreaker",
+          "description": "Ready for a breezy ride",
+          "imageUrl": "",
+          "slot": "outerwear",
+          "tags": [
+            "destination:tokyo",
+            "destination:vancouver",
+            "destination:new-york"
+          ]
+        }
       ],
       "shoes": [
-        { "id": "sneakers", "name": "Red sneakers", "description": "Made for exploring", "imageUrl": "", "slot": "shoes", "tags": ["destination:all", "walking"] },
-        { "id": "boots", "name": "Puddle boots", "description": "Ready for a rainy turn", "imageUrl": "", "slot": "shoes", "tags": ["destination:london", "destination:vancouver", "destination:san-jose", "destination:tokyo", "rainy"] },
-        { "id": "sandals", "name": "Sunny sandals", "description": "Maybe chilly today", "imageUrl": "", "slot": "shoes", "tags": ["destination:honolulu", "destination:cartagena", "destination:sydney", "destination:barcelona", "warm"] },
-        { "id": "high-tops", "name": "Colorful high-tops", "description": "Made for city steps", "imageUrl": "", "slot": "shoes", "tags": ["destination:tokyo", "destination:new-york", "destination:seoul"] },
-        { "id": "trail-shoes", "name": "Little trail shoes", "description": "Ready for nature paths", "imageUrl": "", "slot": "shoes", "tags": ["destination:nairobi", "destination:cape-town", "destination:san-jose", "destination:vancouver"] }
+        {
+          "id": "sneakers",
+          "name": "Red sneakers",
+          "description": "Made for exploring",
+          "imageUrl": "",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "walking"
+          ]
+        },
+        {
+          "id": "boots",
+          "name": "Puddle boots",
+          "description": "Ready for a rainy turn",
+          "imageUrl": "",
+          "slot": "shoes",
+          "tags": [
+            "destination:london",
+            "destination:vancouver",
+            "destination:san-jose",
+            "destination:tokyo",
+            "rainy"
+          ]
+        },
+        {
+          "id": "sandals",
+          "name": "Sunny sandals",
+          "description": "Maybe chilly today",
+          "imageUrl": "",
+          "slot": "shoes",
+          "tags": [
+            "destination:honolulu",
+            "destination:cartagena",
+            "destination:sydney",
+            "destination:barcelona",
+            "warm"
+          ]
+        },
+        {
+          "id": "high-tops",
+          "name": "Colorful high-tops",
+          "description": "Made for city steps",
+          "imageUrl": "",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "destination:new-york",
+            "destination:seoul"
+          ]
+        },
+        {
+          "id": "trail-shoes",
+          "name": "Little trail shoes",
+          "description": "Ready for nature paths",
+          "imageUrl": "",
+          "slot": "shoes",
+          "tags": [
+            "destination:nairobi",
+            "destination:cape-town",
+            "destination:san-jose",
+            "destination:vancouver"
+          ]
+        }
       ],
       "accessories": [
-        { "id": "travel-cap", "name": "Explorer cap", "description": "A colorful shade-maker", "imageUrl": "", "slot": "accessory", "tags": ["destination:all"] },
-        { "id": "crossbody", "name": "Adventure bag", "description": "Carries tiny discoveries", "imageUrl": "", "slot": "accessory", "tags": ["destination:all"] },
-        { "id": "sun-glasses", "name": "Sunshine glasses", "description": "Made for bright arrivals", "imageUrl": "", "slot": "accessory", "tags": ["destination:honolulu", "destination:cartagena", "destination:sydney", "destination:barcelona"] },
-        { "id": "bucket-hat", "name": "Patchwork bucket hat", "description": "A playful travel topper", "imageUrl": "", "slot": "accessory", "tags": ["destination:tokyo", "destination:honolulu", "destination:seoul"] },
-        { "id": "mini-camera", "name": "Mini travel camera", "description": "For pretend photo stories", "imageUrl": "", "slot": "accessory", "tags": ["destination:all"] }
+        {
+          "id": "travel-cap",
+          "name": "Explorer cap",
+          "description": "A colorful shade-maker",
+          "imageUrl": "",
+          "slot": "accessory",
+          "tags": [
+            "destination:all"
+          ]
+        },
+        {
+          "id": "crossbody",
+          "name": "Adventure bag",
+          "description": "Carries tiny discoveries",
+          "imageUrl": "",
+          "slot": "accessory",
+          "tags": [
+            "destination:all"
+          ]
+        },
+        {
+          "id": "sun-glasses",
+          "name": "Sunshine glasses",
+          "description": "Made for bright arrivals",
+          "imageUrl": "",
+          "slot": "accessory",
+          "tags": [
+            "destination:honolulu",
+            "destination:cartagena",
+            "destination:sydney",
+            "destination:barcelona"
+          ]
+        },
+        {
+          "id": "bucket-hat",
+          "name": "Patchwork bucket hat",
+          "description": "A playful travel topper",
+          "imageUrl": "",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "destination:honolulu",
+            "destination:seoul"
+          ]
+        },
+        {
+          "id": "mini-camera",
+          "name": "Mini travel camera",
+          "description": "For pretend photo stories",
+          "imageUrl": "",
+          "slot": "accessory",
+          "tags": [
+            "destination:all"
+          ]
+        }
       ],
       "buddies": [
-        { "id": "bunny", "name": "Pocket Bunny", "description": "Loves window seats", "imageUrl": "", "slot": "buddy", "tags": ["destination:all"] },
-        { "id": "robot", "name": "Mini Robot", "description": "Excellent map reader", "imageUrl": "", "slot": "buddy", "tags": ["destination:all"] },
-        { "id": "camera", "name": "Kid camera", "description": "Collects tiny memories", "imageUrl": "", "slot": "buddy", "tags": ["destination:all"] }
+        {
+          "id": "bunny",
+          "name": "Pocket Bunny",
+          "description": "Loves window seats",
+          "imageUrl": "",
+          "slot": "buddy",
+          "tags": [
+            "destination:all"
+          ]
+        },
+        {
+          "id": "robot",
+          "name": "Mini Robot",
+          "description": "Excellent map reader",
+          "imageUrl": "",
+          "slot": "buddy",
+          "tags": [
+            "destination:all"
+          ]
+        },
+        {
+          "id": "camera",
+          "name": "Kid camera",
+          "description": "Collects tiny memories",
+          "imageUrl": "",
+          "slot": "buddy",
+          "tags": [
+            "destination:all"
+          ]
+        }
       ]
     },
     "tokyo": {
       "tops": [
-        { "id": "stripe", "name": "Tokyo stripe layer tee", "description": "Soft stripes for a busy lantern-street day", "imageUrl": "/little-jetter/catalog/tokyo/stripe/coral.png", "slot": "top", "tags": ["destination:tokyo", "illustrated", "everyday"], "variants": [
-          { "id": "coral", "swatch": "#ee6757", "imageUrl": "/little-jetter/catalog/tokyo/stripe/coral.png" },
-          { "id": "blue", "swatch": "#4c8ca5", "imageUrl": "/little-jetter/catalog/tokyo/stripe/blue.png" },
-          { "id": "violet", "swatch": "#a386ce", "imageUrl": "/little-jetter/catalog/tokyo/stripe/violet.png" },
-          { "id": "teal", "swatch": "#35a5a0", "imageUrl": "/little-jetter/catalog/tokyo/stripe/teal.png" }
-        ] }
+        {
+          "id": "stripe",
+          "name": "Tokyo stripe layer tee",
+          "description": "Soft stripes for a busy lantern-street day",
+          "imageUrl": "/little-jetter/catalog/tokyo/stripe/coral.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated",
+            "everyday"
+          ],
+          "variants": [
+            {
+              "id": "coral",
+              "swatch": "#ee6757",
+              "imageUrl": "/little-jetter/catalog/tokyo/stripe/coral.png"
+            },
+            {
+              "id": "blue",
+              "swatch": "#4c8ca5",
+              "imageUrl": "/little-jetter/catalog/tokyo/stripe/blue.png"
+            },
+            {
+              "id": "violet",
+              "swatch": "#a386ce",
+              "imageUrl": "/little-jetter/catalog/tokyo/stripe/violet.png"
+            },
+            {
+              "id": "teal",
+              "swatch": "#35a5a0",
+              "imageUrl": "/little-jetter/catalog/tokyo/stripe/teal.png"
+            }
+          ]
+        },
+        {
+          "id": "sweater",
+          "name": "Cloud-soft sweater",
+          "description": "Cozy when it cools down",
+          "imageUrl": "/little-jetter/catalog/tokyo/sweater/red.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ],
+          "variants": [
+            {
+              "id": "red",
+              "swatch": "#e85849",
+              "imageUrl": "/little-jetter/catalog/tokyo/sweater/red.png"
+            },
+            {
+              "id": "blue",
+              "swatch": "#4c8ca5",
+              "imageUrl": "/little-jetter/catalog/tokyo/sweater/blue.png"
+            },
+            {
+              "id": "purple",
+              "swatch": "#a386ce",
+              "imageUrl": "/little-jetter/catalog/tokyo/sweater/purple.png"
+            },
+            {
+              "id": "teal",
+              "swatch": "#35a5a0",
+              "imageUrl": "/little-jetter/catalog/tokyo/sweater/teal.png"
+            }
+          ]
+        },
+        {
+          "id": "adventure-shirt",
+          "name": "Adventure shirt",
+          "description": "Polished but ready to play",
+          "imageUrl": "/little-jetter/catalog/tokyo/adventure-shirt/red.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ],
+          "variants": [
+            {
+              "id": "red",
+              "swatch": "#e85849",
+              "imageUrl": "/little-jetter/catalog/tokyo/adventure-shirt/red.png"
+            },
+            {
+              "id": "blue",
+              "swatch": "#4c8ca5",
+              "imageUrl": "/little-jetter/catalog/tokyo/adventure-shirt/blue.png"
+            },
+            {
+              "id": "purple",
+              "swatch": "#a386ce",
+              "imageUrl": "/little-jetter/catalog/tokyo/adventure-shirt/purple.png"
+            },
+            {
+              "id": "teal",
+              "swatch": "#35a5a0",
+              "imageUrl": "/little-jetter/catalog/tokyo/adventure-shirt/teal.png"
+            }
+          ]
+        }
       ],
       "bottoms": [
-        { "id": "travel-jeans", "name": "Tokyo cuffed travel jeans", "description": "Painterly denim made for all-day exploring", "imageUrl": "/little-jetter/catalog/tokyo/travel-jeans/default.png", "slot": "bottom", "tags": ["destination:tokyo", "illustrated", "everyday"] }
+        {
+          "id": "travel-jeans",
+          "name": "Tokyo cuffed travel jeans",
+          "description": "Painterly denim made for all-day exploring",
+          "imageUrl": "/little-jetter/catalog/tokyo/travel-jeans/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated",
+            "everyday"
+          ]
+        },
+        {
+          "id": "wide-leg-pants",
+          "name": "Wide-leg pants",
+          "description": "Easy movement for long days",
+          "imageUrl": "/little-jetter/catalog/tokyo/wide-leg-pants/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        }
       ],
       "layers": [
-        { "id": "rain", "name": "Japanese rain slicker", "description": "A bright tactile layer for a cool Tokyo turn", "imageUrl": "/little-jetter/catalog/tokyo/rain/default.png", "slot": "outerwear", "tags": ["destination:tokyo", "illustrated", "rainy"] }
+        {
+          "id": "rain",
+          "name": "Japanese rain slicker",
+          "description": "A bright tactile layer for a cool Tokyo turn",
+          "imageUrl": "/little-jetter/catalog/tokyo/rain/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:tokyo",
+            "illustrated",
+            "rainy"
+          ]
+        },
+        {
+          "id": "windbreaker",
+          "name": "Color-block windbreaker",
+          "description": "Ready for a breezy ride",
+          "imageUrl": "/little-jetter/catalog/tokyo/windbreaker/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        }
       ],
       "shoes": [
-        { "id": "sneakers", "name": "Tokyo red high-tops", "description": "Painterly canvas sneakers for city steps", "imageUrl": "/little-jetter/catalog/tokyo/sneakers/default.png", "slot": "shoes", "tags": ["destination:tokyo", "illustrated", "walking"] }
+        {
+          "id": "sneakers",
+          "name": "Tokyo red high-tops",
+          "description": "Painterly canvas sneakers for city steps",
+          "imageUrl": "/little-jetter/catalog/tokyo/sneakers/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated",
+            "walking"
+          ]
+        },
+        {
+          "id": "boots",
+          "name": "Puddle boots",
+          "description": "Ready for a rainy turn",
+          "imageUrl": "/little-jetter/catalog/tokyo/boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "high-tops",
+          "name": "Colorful high-tops",
+          "description": "Made for city steps",
+          "imageUrl": "/little-jetter/catalog/tokyo/high-tops/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        }
       ],
       "accessories": [
-        { "id": "crossbody", "name": "Tokyo adventure bag", "description": "A detailed travel bag for tiny discoveries", "imageUrl": "/little-jetter/catalog/tokyo/crossbody/default.png", "slot": "accessory", "tags": ["destination:tokyo", "illustrated"] }
+        {
+          "id": "crossbody",
+          "name": "Tokyo adventure bag",
+          "description": "A detailed travel bag for tiny discoveries",
+          "imageUrl": "/little-jetter/catalog/tokyo/crossbody/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "travel-cap",
+          "name": "Explorer cap",
+          "description": "A colorful shade-maker",
+          "imageUrl": "/little-jetter/catalog/tokyo/travel-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "bucket-hat",
+          "name": "Patchwork bucket hat",
+          "description": "A playful travel topper",
+          "imageUrl": "/little-jetter/catalog/tokyo/bucket-hat/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "mini-camera",
+          "name": "Mini travel camera",
+          "description": "For pretend photo stories",
+          "imageUrl": "/little-jetter/catalog/tokyo/mini-camera/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        }
       ]
     }
   }

@@ -1,0 +1,20 @@
+{
+  "destinationId": "tokyo",
+  "itemId": "adventure-shirt",
+  "slot": "top",
+  "color": "blue",
+  "filename": "blue.png",
+  "model": "gpt-image-2",
+  "styleVersion": "closet-style-v1",
+  "prompt": "Soft painterly children's-book illustration style, warm golden-hour lighting, gentle rounded shading with visible soft brushwork texture, not flat vector, not photoreal, warm and slightly desaturated palette, gentle drop shadow for depth, clean die-cut silhouette on a fully transparent background, no outline stroke, no background scenery, no character body visible, object only, centered, front-facing, straight-on, drawn worn — shaped by a standing child's body underneath it (shoulders, waist, and legs implied by the garment's silhouette) — not a flat-lay, not laid on a table, not a mannequin, not a 3/4-angle product photo.\nDestination palette: warm reds, soft indigo-blues, muted violet, and dusty teal, evoking lantern-lit city streets. If a motif fits naturally, use exactly one small tokyo motif such as a single small cherry blossom sprig or a red paper lantern silhouette or a subtle Tokyo Tower silhouette accent — never a motif from any other country or city.\nFramed to the torso, chest, and upper arms only, shaped as if worn on a standing child from shoulder line to waist line; no legs, no head.\nPrimary color for this piece: blue.\nItem: A polished-but-playful button-front shirt with rolled sleeves and a breast pocket.\nOutput canvas 600x900, true alpha transparency, garment/item only.",
+  "referenceAsset": "/little-jetter/catalog/tokyo/stripe/coral.png",
+  "timestamp": "2026-09-03T04:27:40.151Z",
+  "storageUrl": "/little-jetter/catalog/tokyo/adventure-shirt/blue.png",
+  "storageKey": "little-jetter/catalog/tokyo/adventure-shirt/blue.png",
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "warnings": []
+  },
+  "attempt": 2
+}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import './little-jetter.css';
 import { realProductCatalog } from './catalog';
 import dressUpCatalog from './data/dressUpCatalog.json';
+import { destinationAssetUrls } from './data/garmentManifest';
 
 type Destination = {
   id: string;
@@ -220,6 +221,10 @@ export function LittleJetterApp() {
       window.setTimeout(() => document.querySelector(`[data-app-view="${step}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 20);
     }, 220);
   }
+
+  useEffect(() => {
+    destinationAssetUrls(selected.id).forEach((url) => { const image = new Image(); image.src = url; });
+  }, [selected.id]);
 
   function selectDestination(destination: Destination) {
     setSelectedId(destination.id);
@@ -548,7 +553,7 @@ export function LittleJetterApp() {
                     <details className="little-task-drawer" open={openClosetDrawer === group} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer(group); }} key={group}>
                       <summary><span>{picks[group] ? '✓' : String(index + 1).padStart(2, '0')}</span><strong>{group === 'tops' ? 'Pick the main piece' : group === 'bottoms' ? 'Choose a bottom' : group === 'layers' ? 'Add a layer' : group === 'shoes' ? 'Choose exploring shoes' : 'Finish with an accessory'}</strong><b>{openClosetDrawer === group ? 'Close' : 'Open'}</b></summary>
                       <div className="little-item-row">
-                        {availableWardrobe(group as ClothingGroup).map((item) => <button type="button" draggable aria-pressed={picks[group] === item.id} onDragStart={(event) => { event.dataTransfer.setData('text/little-jetter-item', `${group}:${item.id}`); event.dataTransfer.effectAllowed = 'copy'; }} onDragEnd={() => setDropActive(false)} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview destinationId={selected.id} group={group as ClothingGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} /><strong>{item.name}</strong><small>{item.description}</small></button>)}
+                        {availableWardrobe(group as ClothingGroup).map((item) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} draggable aria-pressed={picks[group] === item.id} onDragStart={(event) => { event.dataTransfer.setData('text/little-jetter-item', `${group}:${item.id}`); event.dataTransfer.effectAllowed = 'copy'; }} onDragEnd={() => setDropActive(false)} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview destinationId={selected.id} group={group as ClothingGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} />{!item.tags.includes('illustrated') && <em className="little-sketch-badge">Sketch</em>}<strong>{item.name}</strong><small>{item.description}</small></button>)}
                       </div>
                       {colorVariants(group as ClothingGroup).length > 1 && <div className="little-color-swatches" data-color-slot={group} aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{colorVariants(group as ClothingGroup).map((variant) => <button type="button" aria-label={`Use ${variant.id} for ${chosen(group).name}`} aria-pressed={(garmentColors[picks[group]] ?? colorVariants(group as ClothingGroup)[0].swatch) === variant.swatch} style={{ '--swatch': variant.swatch } as React.CSSProperties} onClick={() => recolor(group as ClothingGroup, variant.swatch)} key={variant.id} />)}</div>}
                     </details>
