@@ -245,6 +245,17 @@
             "destination:all",
             "illustrated"
           ]
+        },
+        {
+          "id": "floral-midi-skirt",
+          "name": "Green floral midi skirt",
+          "description": "Flowy and covered in blossoms",
+          "imageUrl": "/little-jetter/catalog/tokyo/floral-midi-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
         }
       ],
       "layers": [
@@ -404,6 +415,39 @@
             "destination:san-jose",
             "destination:vancouver"
           ]
+        },
+        {
+          "id": "purple-high-tops",
+          "name": "Purple high-top sneakers",
+          "description": "Bold and ready to explore",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-high-tops/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-sandals",
+          "name": "Purple buckle sandals",
+          "description": "Easy on, easy off for warm days",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-sandals/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "black-lace-boots",
+          "name": "Black lace-up boots",
+          "description": "Sturdy and a little bit cool",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-lace-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
         }
       ],
       "accessories": [
@@ -461,6 +505,39 @@
           "name": "Mini travel camera",
           "description": "For pretend photo stories",
           "imageUrl": "/little-jetter/catalog/tokyo/mini-camera/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-beret",
+          "name": "Pink beret",
+          "description": "A little pop of flair",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-beret/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "straw-sun-hat",
+          "name": "Straw sun hat",
+          "description": "Wide brim with a ribbon bow",
+          "imageUrl": "/little-jetter/catalog/tokyo/straw-sun-hat/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "floral-headband",
+          "name": "Floral headband",
+          "description": "Sweet blossoms for any outfit",
+          "imageUrl": "/little-jetter/catalog/tokyo/floral-headband/default.png",
           "slot": "accessory",
           "tags": [
             "destination:all",
