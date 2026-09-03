@@ -735,9 +735,6 @@ export function LittleJetterApp() {
                 <aside className="little-look-preview">
                   <div className="little-closet-heading"><p className="little-kicker">02 Avatar</p><strong>Make your Little Jetter.</strong></div>
                   <div className="little-doll-rail-wrap">
-                    <div className="little-category-rail little-avatar-rail" aria-label="Avatar features">
-                      {(['hairStyle', 'skin', 'hair', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => setActiveAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
-                    </div>
                     <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
                       <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{selected.id === 'tokyo' && <img src="/little-jetter/tokyo-doll-backdrop.png" alt="" />}<i /><b /></div>
                       <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} />
@@ -745,8 +742,14 @@ export function LittleJetterApp() {
                       {dropActive && <div className="little-drop-message">Drop to dress</div>}
                       <div className="little-dressed-confirmation" aria-live="polite">Now wearing {wornTopName()}</div>
                     </div>
-                    <div className="little-category-rail" aria-label="Clothing categories">
-                      {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group} onClick={() => setActiveCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small>{picks[group] && picks[group] !== 'none' && <i className="little-category-dot-check" aria-hidden="true">✓</i>}</button>)}
+                    <div className="little-side-rail">
+                      <div className="little-category-rail little-avatar-rail" aria-label="Avatar features">
+                        {(['hairStyle', 'skin', 'hair', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => setActiveAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
+                      </div>
+                      <div className="little-rail-divider" aria-hidden="true" />
+                      <div className="little-category-rail" aria-label="Clothing categories">
+                        {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group} onClick={() => setActiveCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small>{picks[group] && picks[group] !== 'none' && <i className="little-category-dot-check" aria-hidden="true">✓</i>}</button>)}
+                      </div>
                     </div>
                   </div>
                   <h3>{selected.city} explorer</h3>
