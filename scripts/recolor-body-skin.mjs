@@ -11,15 +11,27 @@ import { promises as fs } from 'node:fs';
 const SRC = 'public/little-jetter/catalog/tokyo/body/golden.png';
 const OUT_DIR = 'public/little-jetter/catalog/tokyo/body';
 
-// Matches characterOptions.skin in src/LittleJetterApp.tsx. 'golden' is the
-// source image's own tone (skipped — already correct).
+// Targets are each head asset's OWN actual average skin color (sampled
+// directly from the shipped PNGs — see scripts/_sample_head_skin.mjs output),
+// not the character.skin swatch hex. The AI-generated heads and this locally
+// recolored body are two different pipelines; matching the body to the
+// swatch hex made it visually mismatch the head, since the head generation
+// never hit that exact hex either. Matching the body to the head directly is
+// what actually makes them look like the same skin. 'golden' is the source
+// image's own tone (skipped — already close).
 const TARGETS = {
-  porcelain: '#f4c9a8',
-  peach: '#dea47f',
-  caramel: '#9a5f43',
-  brown: '#70432f',
-  deep: '#4b2c24',
+  porcelain: 'rgb(251,172,129)',
+  peach: 'rgb(252,172,122)',
+  caramel: 'rgb(227,122,61)',
+  brown: 'rgb(209,95,49)',
+  deep: 'rgb(199,92,46)',
 };
+
+function parseColor(str) {
+  const m = str.match(/rgb\((\d+),(\d+),(\d+)\)/);
+  if (m) return [Number(m[1]), Number(m[2]), Number(m[3])];
+  return hexToRgb(str);
+}
 
 function rgbToHsl(r, g, b) {
   r /= 255; g /= 255; b /= 255;
@@ -112,7 +124,7 @@ async function main() {
   }
 
   for (const [skinId, hex] of Object.entries(TARGETS)) {
-    const [tr, tg, tb] = hexToRgb(hex);
+    const [tr, tg, tb] = parseColor(hex);
     const [targetH, targetS, targetL] = rgbToHsl(tr, tg, tb);
     const out = Buffer.from(data);
 

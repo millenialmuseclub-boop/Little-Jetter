@@ -247,10 +247,16 @@ const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string
   },
 };
 
+// Every shipped head has an eye-recolored variant alongside it
+// (<name>-eyes-<id>.png) for every non-default eye color — the heads were
+// baked with a fixed dark-brown iris, so this is what makes the eye-color
+// picker actually do something once a painterly head is showing.
 function painterlyHeadUrl(character: Character): string | undefined {
   const bySkin = PAINTERLY_HEAD_ASSETS[character.hairStyle ?? 'curls']?.[character.skin];
   if (!bySkin) return undefined;
-  return bySkin[character.hair] ?? bySkin.brown;
+  const base = bySkin[character.hair] ?? bySkin.brown;
+  if (!base || character.eyes === 'brown') return base;
+  return base.replace(/\.png$/, `-eyes-${character.eyes}.png`);
 }
 
 // Painterly bare-limbs body base (arms/torso/legs), one per skin tone, replacing
@@ -276,7 +282,7 @@ function CatalogDoll({ destinationId, picks, character, garmentColors }: { desti
   return <div className="little-catalog-doll" data-template={catalog.template.id}>
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
     {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" key={`body-${character.skin}`} />}
-    {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}-${character.hair}`} />}
+    {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}-${character.hair}-${character.eyes}`} />}
     {illustrated.map(({ group, item }) => item && <img className={`little-illustrated-layer layer-${item.slot}`} src={catalogImageFor(item, garmentColors[item.id])} alt="" aria-hidden="true" key={`${group}-${item.id}-${garmentColors[item.id] ?? 'default'}`} />)}
   </div>;
 }
