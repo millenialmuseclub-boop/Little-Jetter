@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import './little-jetter.css';
-import { realProductCatalog } from './catalog';
+import { realProductCatalog, type ProductCategory } from './catalog';
 import dressUpCatalog from './data/dressUpCatalog.json';
 import { destinationAssetUrls } from './data/garmentManifest';
 
@@ -84,6 +84,10 @@ const AVATAR_BUTTON: Record<AvatarFeature, { icon: string; label: string }> = {
   eyes: { icon: '👀', label: 'Eyes' },
 };
 const LAYERS = { base: 0, hairBack: 10, shoes: 20, bottom: 25, top: 30, dress: 35, outerwear: 50, hairFront: 60, accessory: 70, hat: 80 } as const;
+const PRODUCT_CATEGORY_ICON: Record<ProductCategory, string> = {
+  top: '👕', bottom: '👖', dress: '👗', outerwear: '🧥', shoe: '👟',
+  accessory: '🎒', luggage: '🧳', toy: '🧸', book: '📘', swim: '🩱',
+};
 
 const gameSheets: Record<PickGroup, string> = {
   tops: '/little-jetter/game-tops.png', bottoms: '/little-jetter/game-bottoms.png', layers: '/little-jetter/game-layers.png',
@@ -508,7 +512,7 @@ export function LittleJetterApp() {
   const readyToStamp = packed.length >= 4;
   const ltkCollectionUrl = import.meta.env.VITE_LTK_COLLECTION_URL as string | undefined;
   const matchedRealLook = realProductCatalog.filter((product) => [picks.tops, picks.layers, picks.shoes].includes(product.playItemId));
-  const realLook = (matchedRealLook.length ? matchedRealLook : realProductCatalog).slice(0, 6);
+  const realLook = (matchedRealLook.length ? matchedRealLook : realProductCatalog.filter((product) => product.imageUrl)).slice(0, 6);
   const outfitFeedback = !selected.sandalsFriendly && picks.shoes === 'sandals'
     ? { mood: 'brrr', title: 'Brrr—tiny toes alert!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Try sneakers or puddle boots for this adventure.` }
     : selected.needsLayer && picks.layers === 'none'
@@ -517,11 +521,16 @@ export function LittleJetterApp() {
         ? { mood: 'warm', title: 'Those boots may feel warm!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Sandals or sneakers could be comfier.` }
         : { mood: 'ready', title: `✦ ${selected.city} Ready!`, message: `${selected.needsLayer ? 'Perfect layer' : 'Perfect gear'} for ${adventureTemperatures[selected.id]} adventure walks. ${chosen('shoes').name} and ${chosen('layers').name.toLowerCase()} make a clever team.` };
   const shopDrawers = [
-    { id: 'clothing', number: '01', name: 'Clothes for the journey', note: 'Soft layers and easy travel outfits' },
-    { id: 'shoes', number: '02', name: 'Exploring shoes', note: 'Pairs made for busy travel days' },
-    { id: 'luggage', number: '03', name: 'Bags & little suitcases', note: 'Everything gets its own place' },
-    { id: 'toy', number: '04', name: 'Toys for the trip', note: 'Small companions and quiet play' },
-    { id: 'accessory', number: '05', name: 'Little essentials', note: 'Pouches, pillows and getting-ready helpers' },
+    { id: 'top', number: '01', name: 'Tops & shirts', note: 'Tees, blouses and everyday layers' },
+    { id: 'bottom', number: '02', name: 'Pants & skirts', note: 'Jeans, shorts and skirts for every day' },
+    { id: 'dress', number: '03', name: 'Dresses', note: 'One-piece favorites' },
+    { id: 'outerwear', number: '04', name: 'Jackets & hoodies', note: 'Warm layers for cooler days' },
+    { id: 'shoe', number: '05', name: 'Exploring shoes', note: 'Pairs made for busy travel days' },
+    { id: 'accessory', number: '06', name: 'Little essentials', note: 'Bags, hats and getting-ready helpers' },
+    { id: 'luggage', number: '07', name: 'Bags & little suitcases', note: 'Everything gets its own place' },
+    { id: 'toy', number: '08', name: 'Toys for the trip', note: 'Small companions and quiet play' },
+    { id: 'book', number: '09', name: 'Books', note: 'Stories and guides for the journey' },
+    { id: 'swim', number: '10', name: 'Swimwear', note: 'Ready for the water' },
   ];
 
   return (
@@ -627,7 +636,6 @@ export function LittleJetterApp() {
             <div><p className="little-kicker">Real picks, just for looking</p><h2 id="shop-title">The Jetter Shop</h2></div>
             <p>Window-shop the travel pieces saved in our LTK closet. Kids can heart favorites—prices, carts, and checkout stay out of the game.</p>
           </div>
-          <div className="little-section-art little-shop-art" aria-hidden="true"><img src="/little-jetter/wardrobe-drawers.png" alt="" /><span>Open the wardrobe</span></div>
           <div className="little-shop-toolbar">
             <p>Open one drawer at a time. Close it when you’re finished.</p>
             <span>{savedProducts.length} saved for a grown-up</span><button type="button" className="little-more-choices" onClick={() => { setShowMoreChoices(true); triggerCelebration(); }}>More choices</button>
@@ -642,7 +650,7 @@ export function LittleJetterApp() {
                 </button>
                 {isOpen && <div id={`drawer-${drawer.id}`} className="little-product-grid">
                   {products.length ? products.map((product) => <article key={product.id}>
-                    <div><img src={product.imageUrl} alt={product.name} loading="lazy" /><span>LTK pick</span></div>
+                    <div>{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}<span>LTK pick</span></div>
                     <small>{product.brand}</small><h3>{product.name}</h3>
                     <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}>{savedProducts.includes(product.id) ? 'Saved' : 'Save this pick'}</button>
                   </article>) : <p className="little-empty-drawer">New finds will land here soon.</p>}
@@ -694,7 +702,7 @@ export function LittleJetterApp() {
         })()}
 
         {showMoreChoices && <div className="little-choice-modal" role="dialog" aria-modal="true" aria-labelledby="choice-title">
-          <div><button type="button" className="little-modal-close" aria-label="Close more choices" onClick={() => setShowMoreChoices(false)}>×</button><p className="little-kicker">The parent closet · {realProductCatalog.length} finds</p><h2 id="choice-title">Real pieces for later</h2><p>A grown-up can save products inspired by the child’s finished game look.</p><div className="little-popup-products">{realProductCatalog.map((product,index) => <button type="button" style={{'--delay':`${Math.min(index * 45, 540)}ms`} as React.CSSProperties} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><img src={product.imageUrl} alt="" /><span><small>{product.brand}</small><strong>{product.name}</strong></span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>)}</div><button type="button" className="little-done-choosing" onClick={() => setShowMoreChoices(false)}>Done choosing</button></div>
+          <div><button type="button" className="little-modal-close" aria-label="Close more choices" onClick={() => setShowMoreChoices(false)}>×</button><p className="little-kicker">The parent closet · {realProductCatalog.length} finds</p><h2 id="choice-title">Real pieces for later</h2><p>A grown-up can save products inspired by the child’s finished game look.</p><div className="little-popup-products">{realProductCatalog.map((product,index) => <button type="button" style={{'--delay':`${Math.min(index * 45, 540)}ms`} as React.CSSProperties} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}>{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}<span><small>{product.brand}</small><strong>{product.name}</strong></span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>)}</div><button type="button" className="little-done-choosing" onClick={() => setShowMoreChoices(false)}>Done choosing</button></div>
         </div>}
 
         {started && (
@@ -707,13 +715,6 @@ export function LittleJetterApp() {
               </div>
               <div className="little-day-card"><span className="little-day-art" aria-hidden="true" /><small>Adventure forecast</small><strong>{selected.weather}</strong></div>
             </div>
-
-            <nav className="little-game-steps" aria-label="Adventure progress">
-              <button type="button" className={currentStep === 'destination' ? 'is-active' : 'is-done'} onClick={() => showStep('destination')}><span>1</span>Destination</button>
-              <button type="button" className={currentStep === 'style' ? 'is-active' : 'is-done'} onClick={() => showStep('style')}><span>2</span>Style</button>
-              <button type="button" className={currentStep === 'explore' ? 'is-active' : ''} onClick={() => showStep('explore')}><span>3</span>Explore</button>
-              <button type="button" className={currentStep === 'shop' ? 'is-active' : ''} onClick={() => showStep('shop')}><span>4</span>Shop</button>
-            </nav>
 
             {gameStep === 2 && (
               <div className="little-explore-panel little-game-panel">
@@ -733,7 +734,7 @@ export function LittleJetterApp() {
             {gameStep === 1 && (
               <div className="little-dress-layout little-game-panel">
                 <aside className="little-look-preview">
-                  <div className="little-closet-heading"><p className="little-kicker">02 Avatar</p><strong>Make your Little Jetter.</strong></div>
+                  <div className="little-closet-heading"><strong>Make your Little Jetter.</strong></div>
                   <div className="little-doll-rail-wrap">
                     <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
                       <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{selected.id === 'tokyo' && <img src="/little-jetter/tokyo-doll-backdrop.png" alt="" />}<i /><b /></div>
@@ -756,10 +757,9 @@ export function LittleJetterApp() {
                   <div key={`${picks.layers}-${picks.shoes}`} className={`little-outfit-reaction is-${outfitFeedback.mood}`} role="status"><span aria-hidden="true" /><div><strong>{outfitFeedback.title}</strong><p>{outfitFeedback.message}</p></div></div>
                 </aside>
                 <div className="little-closet">
-                  <div className="little-closet-intro"><span>03</span><div><small>Closet</small><strong>Tap an icon on the doll to build the look.</strong></div></div>
                   <div className="little-surprise-bar"><div><small>My paper-doll closet</small><strong>Tap a piece or drag it onto the doll.</strong></div><div className="little-look-actions"><button type="button" onClick={surpriseMe}>Surprise me</button><button type="button" onClick={clearLook}>Clear look</button><button type="button" onClick={saveLook}>Save my look</button></div></div>
-                  <details className="little-task-drawer little-my-looks"><summary><span>★</span><strong>My saved looks</strong><b>Open</b></summary><div>{savedLooks.length ? savedLooks.map((look) => <button type="button" onClick={() => restoreLook(look)} key={look.id}><strong>{look.name}</strong><small>Tap to wear again</small></button>) : <p>Save a look and it will wait here on this device.</p>}</div></details>
-                  <details className="little-task-drawer" open={openClosetDrawer === 'parent'} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer('parent'); }}><summary><span>06</span><strong>Parent product matches</strong><b>{openClosetDrawer === 'parent' ? 'Close' : 'Open'}</b></summary><div className="little-real-look">
+                  <details className="little-task-drawer little-my-looks"><summary><strong>My saved looks</strong><b>Open</b></summary><div>{savedLooks.length ? savedLooks.map((look) => <button type="button" onClick={() => restoreLook(look)} key={look.id}><strong>{look.name}</strong><small>Tap to wear again</small></button>) : <p>Save a look and it will wait here on this device.</p>}</div></details>
+                  <details className="little-task-drawer" open={openClosetDrawer === 'parent'} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer('parent'); }}><summary><strong>Parent product matches</strong><b>{openClosetDrawer === 'parent' ? 'Close' : 'Open'}</b></summary><div className="little-real-look">
                     <div><small>Your Little Jetter picks</small><strong>Real pieces inspired by this look</strong></div>
                     <div>{realLook.length ? realLook.map((product) => { const inspiredItem = (Object.keys(wardrobe) as PickGroup[]).flatMap((group) => wardrobe[group]).find((item) => item.id === product.playItemId); return <button type="button" key={product.id} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}><img src={product.imageUrl} alt="" /><span><small>{inspiredItem ? `Inspired by ${inspiredItem.name}` : 'Inspired by this look'}</small>{product.name}</span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>; }) : <p>Choose another piece to discover a real-life match.</p>}</div>
                     <small>Kids save the look. A parent decides whether to shop it.</small>
@@ -774,7 +774,7 @@ export function LittleJetterApp() {
                 <div className="little-section-art little-buddy-art" aria-hidden="true"><img src="/little-jetter/packing-buddies.png" alt="" /><span>Pick a tiny copilot</span></div>
                 <div><p className="little-kicker">Toys can travel too</p><h3>Who gets the window seat?</h3><p>Pick one small buddy to bring along. A good traveler makes room for what matters.</p></div>
                 <details className="little-task-drawer" open><summary><span>01</span><strong>Choose a travel buddy</strong><b>Open / close</b></summary><div className="little-buddy-grid">{wardrobe.buddies.map((item) => <button type="button" aria-pressed={picks.buddies === item.id} onClick={() => choose('buddies', item.id)} key={item.id}><span className="little-game-item" style={gameItemStyle('buddies', item.id)} aria-hidden="true" /><strong>{item.name}</strong><small>{item.description}</small></button>)}</div></details>
-                <details className="little-task-drawer"><summary><span>02</span><strong>Parent toy preview</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realProductCatalog.filter((product) => product.category === 'toy').map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><img src={product.imageUrl} alt="" /><strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : 'Save this real pick'}</small></button>)}</div></details>
+                <details className="little-task-drawer"><summary><span>02</span><strong>Parent toy preview</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realProductCatalog.filter((product) => product.category === 'toy').map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}>{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}<strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : 'Save this real pick'}</small></button>)}</div></details>
                 <button type="button" className="little-next" onClick={() => setGameStep(4)}>Pack my suitcase <span>→</span></button>
               </div>
             )}
