@@ -182,7 +182,8 @@
             "destination:sydney",
             "destination:san-jose",
             "destination:barcelona",
-            "illustrated"
+            "illustrated",
+            "covers-bottom"
           ]
         },
         {
@@ -193,7 +194,8 @@
           "slot": "top",
           "tags": [
             "destination:all",
-            "illustrated"
+            "illustrated",
+            "covers-bottom"
           ]
         },
         {
@@ -209,7 +211,8 @@
             "destination:sydney",
             "destination:san-jose",
             "destination:barcelona",
-            "illustrated"
+            "illustrated",
+            "covers-bottom"
           ]
         }
       ],
@@ -371,7 +374,8 @@
             "destination:sydney",
             "destination:san-jose",
             "destination:barcelona",
-            "illustrated"
+            "illustrated",
+            "includes-top"
           ]
         }
       ],

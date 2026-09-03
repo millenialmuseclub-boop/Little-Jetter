@@ -272,13 +272,18 @@ const PAINTERLY_BODY_ASSETS: Record<string, string> = {
 };
 
 function CatalogDoll({ destinationId, picks, character, garmentColors }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors }) {
-  const illustrated = CLOSET_GROUPS.map((group) => ({ group, item: catalogItemFor(destinationId, group, picks[group]) }))
+  const topItem = catalogItemFor(destinationId, 'tops', picks.tops);
+  const coversBottom = topItem?.tags.includes('covers-bottom') ?? false;
+  const illustrated = CLOSET_GROUPS
+    .filter((group) => !(coversBottom && group === 'bottoms'))
+    .map((group) => ({ group, item: catalogItemFor(destinationId, group, picks[group]) }))
     .filter(({ item }) => Boolean(catalogImageFor(item, item ? garmentColors[item.id] : undefined)));
   const headUrl = painterlyHeadUrl(character);
   const bodyUrl = PAINTERLY_BODY_ASSETS[character.skin];
   const hiddenLayers: string[] = (illustrated.map(({ item }) => item?.slot ?? '') as string[])
     .concat(headUrl ? ['face', 'hair'] : [])
-    .concat(bodyUrl ? ['base'] : []);
+    .concat(bodyUrl ? ['base'] : [])
+    .concat(coversBottom ? ['bottom'] : []);
   return <div className="little-catalog-doll" data-template={catalog.template.id}>
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
     {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" key={`body-${character.skin}`} />}
@@ -474,6 +479,11 @@ export function LittleJetterApp() {
   const chosen = (group: PickGroup) => {
     const item = catalogItemFor(selected.id, group, picks[group]) ?? wardrobe[group][0];
     return { ...item, note: item.description };
+  };
+  const wornTopName = () => {
+    const bottomItem = catalogItemFor(selected.id, 'bottoms', picks.bottoms);
+    if (bottomItem?.tags.includes('includes-top')) return bottomItem.name;
+    return chosen('tops').name;
   };
   const colorVariants = (group: ClothingGroup) => catalogItemFor(selected.id, group, picks[group])?.variants ?? [];
   const readyToStamp = packed.length >= 4;
@@ -687,7 +697,7 @@ export function LittleJetterApp() {
                     <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} />
                     <div className="little-dress-sparkles" key={`sparkles-${celebration}`} aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--spark': index } as React.CSSProperties}>✦</i>)}</div>
                     {dropActive && <div className="little-drop-message">Drop to dress</div>}
-                    <div className="little-dressed-confirmation" aria-live="polite">Now wearing {chosen('tops').name}</div>
+                    <div className="little-dressed-confirmation" aria-live="polite">Now wearing {wornTopName()}</div>
                   </div>
                   <h3>{selected.city} explorer</h3>
                   <div key={`${picks.layers}-${picks.shoes}`} className={`little-outfit-reaction is-${outfitFeedback.mood}`} role="status"><span aria-hidden="true" /><div><strong>{outfitFeedback.title}</strong><p>{outfitFeedback.message}</p></div></div>
