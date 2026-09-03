@@ -146,6 +146,12 @@ function ClassicDoll({ picks, character, garmentColors, onlyLayer, previewViewBo
 // hair-color picker never silently does nothing without a documented reason.
 const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string>>> = {
   curls: {
+    porcelain: {
+      brown: '/little-jetter/catalog/tokyo/head/curls-porcelain.png',
+    },
+    peach: {
+      brown: '/little-jetter/catalog/tokyo/head/curls-peach.png',
+    },
     golden: {
       brown: '/little-jetter/catalog/tokyo/head/curls-golden.png',
       black: '/little-jetter/catalog/tokyo/head/curls-golden-black.png',
@@ -154,10 +160,23 @@ const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string
       red: '/little-jetter/catalog/tokyo/head/curls-golden-red.png',
       blue: '/little-jetter/catalog/tokyo/head/curls-golden-blue.png',
     },
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/curls-porcelain.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/curls-deep.png' },
+    caramel: {
+      brown: '/little-jetter/catalog/tokyo/head/curls-caramel.png',
+    },
+    brown: {
+      brown: '/little-jetter/catalog/tokyo/head/curls-brown.png',
+    },
+    deep: {
+      brown: '/little-jetter/catalog/tokyo/head/curls-deep.png',
+    },
   },
   short: {
+    porcelain: {
+      brown: '/little-jetter/catalog/tokyo/head/short-porcelain.png',
+    },
+    peach: {
+      brown: '/little-jetter/catalog/tokyo/head/short-peach.png',
+    },
     golden: {
       brown: '/little-jetter/catalog/tokyo/head/short-golden.png',
       black: '/little-jetter/catalog/tokyo/head/short-golden-black.png',
@@ -166,8 +185,23 @@ const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string
       red: '/little-jetter/catalog/tokyo/head/short-golden-red.png',
       blue: '/little-jetter/catalog/tokyo/head/short-golden-blue.png',
     },
+    caramel: {
+      brown: '/little-jetter/catalog/tokyo/head/short-caramel.png',
+    },
+    brown: {
+      brown: '/little-jetter/catalog/tokyo/head/short-brown.png',
+    },
+    deep: {
+      brown: '/little-jetter/catalog/tokyo/head/short-deep.png',
+    },
   },
   bob: {
+    porcelain: {
+      brown: '/little-jetter/catalog/tokyo/head/bob-porcelain.png',
+    },
+    peach: {
+      brown: '/little-jetter/catalog/tokyo/head/bob-peach.png',
+    },
     golden: {
       brown: '/little-jetter/catalog/tokyo/head/bob-golden.png',
       black: '/little-jetter/catalog/tokyo/head/bob-golden-black.png',
@@ -176,8 +210,23 @@ const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string
       red: '/little-jetter/catalog/tokyo/head/bob-golden-red.png',
       blue: '/little-jetter/catalog/tokyo/head/bob-golden-blue.png',
     },
+    caramel: {
+      brown: '/little-jetter/catalog/tokyo/head/bob-caramel.png',
+    },
+    brown: {
+      brown: '/little-jetter/catalog/tokyo/head/bob-brown.png',
+    },
+    deep: {
+      brown: '/little-jetter/catalog/tokyo/head/bob-deep.png',
+    },
   },
   coils: {
+    porcelain: {
+      brown: '/little-jetter/catalog/tokyo/head/coils-porcelain.png',
+    },
+    peach: {
+      brown: '/little-jetter/catalog/tokyo/head/coils-peach.png',
+    },
     golden: {
       brown: '/little-jetter/catalog/tokyo/head/coils-golden.png',
       black: '/little-jetter/catalog/tokyo/head/coils-golden-black.png',
@@ -185,6 +234,15 @@ const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string
       blonde: '/little-jetter/catalog/tokyo/head/coils-golden-blonde.png',
       red: '/little-jetter/catalog/tokyo/head/coils-golden-red.png',
       blue: '/little-jetter/catalog/tokyo/head/coils-golden-blue.png',
+    },
+    caramel: {
+      brown: '/little-jetter/catalog/tokyo/head/coils-caramel.png',
+    },
+    brown: {
+      brown: '/little-jetter/catalog/tokyo/head/coils-brown.png',
+    },
+    deep: {
+      brown: '/little-jetter/catalog/tokyo/head/coils-deep.png',
     },
   },
 };

@@ -1,0 +1,20 @@
+{
+  "destinationId": "tokyo",
+  "itemId": "head",
+  "slot": "hair",
+  "color": "bob-deep",
+  "filename": "bob-deep.png",
+  "model": "gpt-image-2",
+  "styleVersion": "closet-style-v1",
+  "prompt": "Soft painterly children's-book illustration style, warm golden-hour lighting, gentle rounded shading with visible soft brushwork texture, not flat vector, not photoreal, warm and slightly desaturated palette, gentle drop shadow for depth, clean die-cut silhouette on a fully transparent background, no outline stroke, no background scenery, no character body visible, object only, centered, front-facing, straight-on, drawn worn — shaped by a standing child's body underneath it (shoulders, waist, and legs implied by the garment's silhouette) — not a flat-lay, not laid on a table, not a mannequin, not a 3/4-angle product photo.\nDestination palette: warm reds, soft indigo-blues, muted violet, and dusty teal, evoking lantern-lit city streets. If a motif fits naturally, use exactly one small tokyo motif such as a single small cherry blossom sprig or a red paper lantern silhouette or a subtle Tokyo Tower silhouette accent — never a motif from any other country or city.\nFramed to the head only, front-facing, as worn on a standing child.\nPrimary color for this piece: bob-deep.\nItem: A single painted children's-book illustration of a friendly child's HEAD, FACE, AND HAIR only — not just hair, the complete head including the painted face beneath it. Rounded, soft cartoon head shape with full cheeks, deep warm brown skin rendered with the same soft rounded gradient shading and warm highlight as the clothing pieces (a lit highlight toward the upper-left, gentle shadow toward the lower-right). Large friendly dark warm-brown eyes with a round white catchlight highlight in each, soft short eyebrows, small soft blush on both cheeks, a small closed gentle smile. Hair: a smooth chin-length bob with a soft inward curl at the ends, gentle sheen highlight along the crown, warm chestnut-brown hair color, painted with visible individual strand/texture linework and soft directional shading — the same fabric-like shading treatment as the jacket and backpack, not a flat single-tone silhouette. Head is cropped just below the chin/jawline — no neck, no shoulders, no torso, no body, no hands.\nOutput canvas 600x900, true alpha transparency, garment/item only.",
+  "referenceAsset": "/little-jetter/catalog/tokyo/stripe/coral.png",
+  "timestamp": "2026-09-03T16:41:02.238Z",
+  "storageUrl": "/little-jetter/catalog/tokyo/head/bob-deep.png",
+  "storageKey": "little-jetter/catalog/tokyo/head/bob-deep.png",
+  "validation": {
+    "ok": true,
+    "issues": [],
+    "warnings": []
+  },
+  "attempt": 1
+}

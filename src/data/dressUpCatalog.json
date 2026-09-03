@@ -105,11 +105,12 @@
           "id": "sunset-tee",
           "name": "Sunset tee",
           "description": "A bright everyday favorite",
-          "imageUrl": "",
+          "imageUrl": "/little-jetter/catalog/tokyo/sunset-tee/default.png",
           "slot": "top",
           "tags": [
             "destination:all",
-            "everyday"
+            "everyday",
+            "illustrated"
           ]
         },
         {
@@ -205,10 +206,11 @@
           "id": "play-skirt",
           "name": "Play-all-day skirt",
           "description": "Colorful and comfortable",
-          "imageUrl": "",
+          "imageUrl": "/little-jetter/catalog/tokyo/play-skirt/default.png",
           "slot": "bottom",
           "tags": [
-            "destination:all"
+            "destination:all",
+            "illustrated"
           ]
         }
       ],
@@ -233,11 +235,12 @@
           "id": "denim",
           "name": "Denim jacket",
           "description": "Light and easy to carry",
-          "imageUrl": "",
+          "imageUrl": "/little-jetter/catalog/tokyo/denim/default.png",
           "slot": "outerwear",
           "tags": [
             "destination:all",
-            "cool"
+            "cool",
+            "illustrated"
           ]
         },
         {
