@@ -1,0 +1,68 @@
+// floral-headband was generated as an off-head product shot (a full arch with
+// two long prongs), so at its current size it reads as a giant floating ring
+// around the head rather than a thin band. navy-pleated-skirt/play-skirt are
+// ~35% wider than travel-jeans at the same waistline, giving an oversized,
+// overly poofy silhouette compared to every other bottom. Scale both down,
+// anchored at their current top edge (hairline / waistY) and horizontal
+// center (300), so only size shrinks — position stays put.
+// Run with: node scripts/fix-headband-skirt-scale.mjs
+import sharp from 'sharp';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const DIR = path.resolve('public/little-jetter/catalog/tokyo');
+const CENTER_X = 300;
+
+const ITEMS = [
+  { id: 'floral-headband', targetHeight: 95 },
+  { id: 'navy-pleated-skirt', targetWidth: 210 },
+  { id: 'play-skirt', targetWidth: 210 },
+];
+
+async function bbox(filePath) {
+  const { data, info } = await sharp(filePath).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { width, height, channels } = info;
+  let top = -1, left = width, right = -1, bottom = -1;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const a = data[(y * width + x) * channels + 3];
+      if (a > 10) {
+        if (top === -1) top = y;
+        bottom = y;
+        if (x < left) left = x;
+        if (x > right) right = x;
+      }
+    }
+  }
+  return { top, left, right, bottom, width: right - left + 1, height: bottom - top + 1 };
+}
+
+async function main() {
+  for (const { id, targetHeight, targetWidth } of ITEMS) {
+    const filePath = path.join(DIR, id, 'default.png');
+    if (!fs.existsSync(filePath)) {
+      console.log(`${id}: missing, skipped`);
+      continue;
+    }
+    const box = await bbox(filePath);
+    const scale = targetHeight ? targetHeight / box.height : targetWidth / box.width;
+    if (scale >= 1) {
+      console.log(`${id}: already within target`);
+      continue;
+    }
+    const newWidth = Math.round(box.width * scale);
+    const newHeight = Math.round(box.height * scale);
+    const cropped = await sharp(filePath).extract({ left: box.left, top: box.top, width: box.width, height: box.height }).toBuffer();
+    const resized = await sharp(cropped).resize(newWidth, newHeight).toBuffer();
+    const left = Math.round(CENTER_X - newWidth / 2);
+    const top = box.top;
+    const out = await sharp({ create: { width: 600, height: 900, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+      .composite([{ input: resized, left, top }])
+      .png()
+      .toBuffer();
+    fs.writeFileSync(filePath, out);
+    console.log(`${id}: rescaled ${box.width}x${box.height} -> ${newWidth}x${newHeight}`);
+  }
+}
+
+main().catch((e) => { console.error(e); process.exitCode = 1; });

@@ -306,7 +306,7 @@ export function LittleJetterApp() {
   const [destinationTypeFilter, setDestinationTypeFilter] = useState('All types');
   const [started, setStarted] = useState(false);
   const [gameStep, setGameStep] = useState(1);
-  const [picks, setPicks] = useState<Picks>({ tops: 'stripe', bottoms: 'travel-jeans', layers: 'rain', shoes: 'sneakers', accessories: 'crossbody', buddies: 'bunny' });
+  const [picks, setPicks] = useState<Picks>({ tops: 'stripe', bottoms: 'travel-jeans', layers: 'none', shoes: 'sneakers', accessories: 'crossbody', buddies: 'bunny' });
   const [garmentColors, setGarmentColors] = useState<GarmentColors>({});
   const [savedLooks, setSavedLooks] = useState<SavedLook[]>([]);
   const [passportStamps, setPassportStamps] = useState<string[]>([]);
