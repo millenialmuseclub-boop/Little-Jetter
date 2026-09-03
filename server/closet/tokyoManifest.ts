@@ -67,6 +67,12 @@ const NORMALIZE_SLOT_OVERRIDE: Record<string, ClosetSlot> = {
   'travel-cap': 'hair',
   'bucket-hat': 'hair',
   'sun-glasses': 'hair',
+  'pink-beret': 'hair',
+  'straw-sun-hat': 'hair',
+  'floral-headband': 'hair',
+  'purple-flower-cap': 'hair',
+  'patchwork-bucket-hat-2': 'hair',
+  'puppy-cap': 'hair',
 };
 
 export type GenerationManifestEntry = {
