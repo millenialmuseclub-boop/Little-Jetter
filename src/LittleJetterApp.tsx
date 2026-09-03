@@ -288,7 +288,7 @@ function CatalogDoll({ destinationId, picks, character, garmentColors }: { desti
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
     {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" key={`body-${character.skin}`} />}
     {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}-${character.hair}-${character.eyes}`} />}
-    {illustrated.map(({ group, item }) => item && <img className={`little-illustrated-layer layer-${item.slot}`} src={catalogImageFor(item, garmentColors[item.id])} alt="" aria-hidden="true" key={`${group}-${item.id}-${garmentColors[item.id] ?? 'default'}`} />)}
+    {illustrated.map(({ group, item }) => item && <img className={`little-illustrated-layer layer-${item.slot}`} data-item-id={item.id} src={catalogImageFor(item, garmentColors[item.id])} alt="" aria-hidden="true" key={`${group}-${item.id}-${garmentColors[item.id] ?? 'default'}`} />)}
   </div>;
 }
 

@@ -15,7 +15,7 @@ import path from 'node:path';
 
 const DIR = path.resolve('public/little-jetter/catalog/tokyo');
 const CENTER_X = 300;
-const TARGET_TOP = 228;
+const TARGET_TOP = 330; // CLOSET_ANCHORS.shoulderY — straps cross the shoulder here, not up at the neck/head
 const TARGET_BOTTOM = 769;
 const ITEM = 'denim-overalls';
 
