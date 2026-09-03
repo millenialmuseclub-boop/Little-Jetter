@@ -69,6 +69,13 @@ type Character = { style: string; skin: string; hair: string; hairStyle: string;
 type SavedLook = { id: string; name: string; picks: Picks; character: Character; colors: GarmentColors };
 
 const CLOSET_GROUPS: ClothingGroup[] = ['bottoms', 'tops', 'layers', 'shoes', 'accessories'];
+const CATEGORY_BUTTON: Record<ClothingGroup, { icon: string; label: string; spot: string }> = {
+  tops: { icon: '👕', label: 'Main piece', spot: 'spot-tops' },
+  bottoms: { icon: '👖', label: 'Bottom', spot: 'spot-bottoms' },
+  layers: { icon: '🧥', label: 'Layer', spot: 'spot-layers' },
+  shoes: { icon: '👟', label: 'Shoes', spot: 'spot-shoes' },
+  accessories: { icon: '🎒', label: 'Accessory', spot: 'spot-accessories' },
+};
 const LAYERS = { base: 0, hairBack: 10, shoes: 20, bottom: 25, top: 30, dress: 35, outerwear: 50, hairFront: 60, accessory: 70, hat: 80 } as const;
 
 const gameSheets: Record<PickGroup, string> = {
@@ -331,6 +338,7 @@ export function LittleJetterApp() {
   const [foundNotices, setFoundNotices] = useState<string[]>([]);
   const [journalChoice, setJournalChoice] = useState('');
   const [openClosetDrawer, setOpenClosetDrawer] = useState<string>('tops');
+  const [activeCategorySheet, setActiveCategorySheet] = useState<ClothingGroup | null>(null);
   const selected = useMemo(() => destinations.find((item) => item.id === selectedId) ?? destinations[0], [selectedId]);
   const visibleDestinations = destinations.filter((item) => (regionFilter === 'All regions' || item.region === regionFilter) && (destinationTypeFilter === 'All types' || destinationTypes[item.id] === destinationTypeFilter));
   const availableWardrobe = (group: Exclude<PickGroup, 'buddies'>) => wardrobe[group]
@@ -645,6 +653,21 @@ export function LittleJetterApp() {
           </div>
         </div>}
 
+        {activeCategorySheet && (() => {
+          const group = activeCategorySheet;
+          const variants = colorVariants(group);
+          return <div className="little-category-backdrop" role="dialog" aria-modal="true" aria-labelledby="category-sheet-title" onClick={() => setActiveCategorySheet(null)}>
+            <div className="little-category-sheet" onClick={(event) => event.stopPropagation()}>
+              <div className="little-category-sheet-handle" aria-hidden="true" />
+              <div className="little-category-sheet-head"><strong id="category-sheet-title">{CATEGORY_BUTTON[group].icon} {CATEGORY_BUTTON[group].label}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => setActiveCategorySheet(null)}>×</button></div>
+              <div className="little-item-row">
+                {availableWardrobe(group).map((item) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} aria-pressed={picks[group] === item.id} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview destinationId={selected.id} group={group} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} />{!item.tags.includes('illustrated') && <em className="little-sketch-badge">Sketch</em>}<strong>{item.name}</strong><small>{item.description}</small></button>)}
+              </div>
+              {variants.length > 1 && <div className="little-color-swatches" data-color-slot={group} aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{variants.map((variant) => <button type="button" aria-label={`Use ${variant.id} for ${chosen(group).name}`} aria-pressed={(garmentColors[picks[group]] ?? variants[0].swatch) === variant.swatch} style={{ '--swatch': variant.swatch } as React.CSSProperties} onClick={() => recolor(group, variant.swatch)} key={variant.id} />)}</div>}
+            </div>
+          </div>;
+        })()}
+
         {showMoreChoices && <div className="little-choice-modal" role="dialog" aria-modal="true" aria-labelledby="choice-title">
           <div><button type="button" className="little-modal-close" aria-label="Close more choices" onClick={() => setShowMoreChoices(false)}>×</button><p className="little-kicker">The parent closet · {realProductCatalog.length} finds</p><h2 id="choice-title">Real pieces for later</h2><p>A grown-up can save products inspired by the child’s finished game look.</p><div className="little-popup-products">{realProductCatalog.map((product,index) => <button type="button" style={{'--delay':`${Math.min(index * 45, 540)}ms`} as React.CSSProperties} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><img src={product.imageUrl} alt="" /><span><small>{product.brand}</small><strong>{product.name}</strong></span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>)}</div><button type="button" className="little-done-choosing" onClick={() => setShowMoreChoices(false)}>Done choosing</button></div>
         </div>}
@@ -698,22 +721,16 @@ export function LittleJetterApp() {
                     <div className="little-dress-sparkles" key={`sparkles-${celebration}`} aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--spark': index } as React.CSSProperties}>✦</i>)}</div>
                     {dropActive && <div className="little-drop-message">Drop to dress</div>}
                     <div className="little-dressed-confirmation" aria-live="polite">Now wearing {wornTopName()}</div>
+                    <div className="little-category-dots" aria-label="Jump to a clothing category">
+                      {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-dot ${CATEGORY_BUTTON[group].spot} ${activeCategorySheet === group ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group} aria-label={CATEGORY_BUTTON[group].label} onClick={() => setActiveCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span>{picks[group] && picks[group] !== 'none' && <i className="little-category-dot-check" aria-hidden="true">✓</i>}</button>)}
+                    </div>
                   </div>
                   <h3>{selected.city} explorer</h3>
                   <div key={`${picks.layers}-${picks.shoes}`} className={`little-outfit-reaction is-${outfitFeedback.mood}`} role="status"><span aria-hidden="true" /><div><strong>{outfitFeedback.title}</strong><p>{outfitFeedback.message}</p></div></div>
                 </aside>
                 <div className="little-closet">
-                  <div className="little-closet-intro"><span>03</span><div><small>Closet</small><strong>Build the look one drawer at a time.</strong></div></div>
+                  <div className="little-closet-intro"><span>03</span><div><small>Closet</small><strong>Tap an icon on the doll to build the look.</strong></div></div>
                   <div className="little-surprise-bar"><div><small>My paper-doll closet</small><strong>Tap a piece or drag it onto the doll.</strong></div><div className="little-look-actions"><button type="button" onClick={surpriseMe}>Surprise me</button><button type="button" onClick={clearLook}>Clear look</button><button type="button" onClick={saveLook}>Save my look</button></div></div>
-                  {(['tops', 'bottoms', 'layers', 'shoes', 'accessories'] as PickGroup[]).map((group, index) => (
-                    <details className="little-task-drawer" open={openClosetDrawer === group} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer(group); }} key={group}>
-                      <summary><span>{picks[group] ? '✓' : String(index + 1).padStart(2, '0')}</span><strong>{group === 'tops' ? 'Pick the main piece' : group === 'bottoms' ? 'Choose a bottom' : group === 'layers' ? 'Add a layer' : group === 'shoes' ? 'Choose exploring shoes' : 'Finish with an accessory'}</strong><b>{openClosetDrawer === group ? 'Close' : 'Open'}</b></summary>
-                      <div className="little-item-row">
-                        {availableWardrobe(group as ClothingGroup).map((item) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} draggable aria-pressed={picks[group] === item.id} onDragStart={(event) => { event.dataTransfer.setData('text/little-jetter-item', `${group}:${item.id}`); event.dataTransfer.effectAllowed = 'copy'; }} onDragEnd={() => setDropActive(false)} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview destinationId={selected.id} group={group as ClothingGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} />{!item.tags.includes('illustrated') && <em className="little-sketch-badge">Sketch</em>}<strong>{item.name}</strong><small>{item.description}</small></button>)}
-                      </div>
-                      {colorVariants(group as ClothingGroup).length > 1 && <div className="little-color-swatches" data-color-slot={group} aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{colorVariants(group as ClothingGroup).map((variant) => <button type="button" aria-label={`Use ${variant.id} for ${chosen(group).name}`} aria-pressed={(garmentColors[picks[group]] ?? colorVariants(group as ClothingGroup)[0].swatch) === variant.swatch} style={{ '--swatch': variant.swatch } as React.CSSProperties} onClick={() => recolor(group as ClothingGroup, variant.swatch)} key={variant.id} />)}</div>}
-                    </details>
-                  ))}
                   <details className="little-task-drawer little-my-looks"><summary><span>★</span><strong>My saved looks</strong><b>Open</b></summary><div>{savedLooks.length ? savedLooks.map((look) => <button type="button" onClick={() => restoreLook(look)} key={look.id}><strong>{look.name}</strong><small>Tap to wear again</small></button>) : <p>Save a look and it will wait here on this device.</p>}</div></details>
                   <details className="little-task-drawer" open={openClosetDrawer === 'parent'} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer('parent'); }}><summary><span>06</span><strong>Parent product matches</strong><b>{openClosetDrawer === 'parent' ? 'Close' : 'Open'}</b></summary><div className="little-real-look">
                     <div><small>Your Little Jetter picks</small><strong>Real pieces inspired by this look</strong></div>
