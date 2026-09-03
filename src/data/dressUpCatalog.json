@@ -148,6 +148,17 @@
               "imageUrl": "/little-jetter/catalog/tokyo/adventure-shirt/teal.png"
             }
           ]
+        },
+        {
+          "id": "floral-cardigan",
+          "name": "Cream floral cardigan",
+          "description": "Button-front knit with painted blossoms",
+          "imageUrl": "/little-jetter/catalog/tokyo/floral-cardigan/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
         }
       ],
       "bottoms": [
@@ -207,6 +218,28 @@
           "name": "Play-all-day skirt",
           "description": "Colorful and comfortable",
           "imageUrl": "/little-jetter/catalog/tokyo/play-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "cargo-pants",
+          "name": "Cream cargo pants",
+          "description": "Roomy pockets for tiny treasures",
+          "imageUrl": "/little-jetter/catalog/tokyo/cargo-pants/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "navy-pleated-skirt",
+          "name": "Navy pleated skirt",
+          "description": "A crisp schoolyard classic",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-pleated-skirt/default.png",
           "slot": "bottom",
           "tags": [
             "destination:all",
@@ -276,6 +309,28 @@
             "destination:tokyo",
             "destination:vancouver",
             "destination:new-york",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "trench-coat",
+          "name": "Tan trench coat",
+          "description": "A classic belted trench for cooler days",
+          "imageUrl": "/little-jetter/catalog/tokyo/trench-coat/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-hoodie",
+          "name": "Cozy pink hoodie",
+          "description": "Soft and warm with a fuzzy-lined hood",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-hoodie/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
             "illustrated"
           ]
         }

@@ -253,13 +253,29 @@ function painterlyHeadUrl(character: Character): string | undefined {
   return bySkin[character.hair] ?? bySkin.brown;
 }
 
+// Painterly bare-limbs body base (arms/torso/legs), one per skin tone, replacing
+// the flat SVG "base" layer. Same anchor system (shoulderY/groundY/centerX) as
+// every other illustrated layer, so it lines up with existing clothing/shoes.
+const PAINTERLY_BODY_ASSETS: Record<string, string> = {
+  porcelain: '/little-jetter/catalog/tokyo/body/porcelain.png',
+  peach: '/little-jetter/catalog/tokyo/body/peach.png',
+  golden: '/little-jetter/catalog/tokyo/body/golden.png',
+  caramel: '/little-jetter/catalog/tokyo/body/caramel.png',
+  brown: '/little-jetter/catalog/tokyo/body/brown.png',
+  deep: '/little-jetter/catalog/tokyo/body/deep.png',
+};
+
 function CatalogDoll({ destinationId, picks, character, garmentColors }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors }) {
   const illustrated = CLOSET_GROUPS.map((group) => ({ group, item: catalogItemFor(destinationId, group, picks[group]) }))
     .filter(({ item }) => Boolean(catalogImageFor(item, item ? garmentColors[item.id] : undefined)));
   const headUrl = painterlyHeadUrl(character);
-  const hiddenLayers: string[] = (illustrated.map(({ item }) => item?.slot ?? '') as string[]).concat(headUrl ? ['face', 'hair'] : []);
+  const bodyUrl = PAINTERLY_BODY_ASSETS[character.skin];
+  const hiddenLayers: string[] = (illustrated.map(({ item }) => item?.slot ?? '') as string[])
+    .concat(headUrl ? ['face', 'hair'] : [])
+    .concat(bodyUrl ? ['base'] : []);
   return <div className="little-catalog-doll" data-template={catalog.template.id}>
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
+    {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" key={`body-${character.skin}`} />}
     {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}-${character.hair}`} />}
     {illustrated.map(({ group, item }) => item && <img className={`little-illustrated-layer layer-${item.slot}`} src={catalogImageFor(item, garmentColors[item.id])} alt="" aria-hidden="true" key={`${group}-${item.id}-${garmentColors[item.id] ?? 'default'}`} />)}
   </div>;
