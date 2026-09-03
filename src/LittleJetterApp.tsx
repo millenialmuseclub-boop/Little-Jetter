@@ -152,7 +152,11 @@ function GarmentPreview({ destinationId, group, itemId, picks, character, garmen
   const viewBoxes: Record<ClothingGroup, string> = { tops: '120 285 360 260', bottoms: '150 455 300 285', layers: '105 280 390 310', shoes: '135 650 330 150', accessories: itemId === 'crossbody' || itemId === 'mini-camera' ? '300 390 190 270' : itemId === 'sun-glasses' ? '220 180 160 130' : '175 85 250 210' };
   const item = catalogItemFor(destinationId, group, itemId);
   const imageUrl = catalogImageFor(item, item ? garmentColors[item.id] : undefined);
-  return <span className={`little-game-item little-garment-preview preview-${group}`} aria-hidden="true">{imageUrl ? <img className="little-catalog-preview" src={imageUrl} alt="" /> : <ClassicDoll picks={{ ...picks, [group]: itemId }} character={character} garmentColors={garmentColors} onlyLayer={layerByGroup[group]} previewViewBox={viewBoxes[group]} />}</span>;
+  const isHeadwear = group === 'accessories' && itemId !== 'crossbody' && itemId !== 'mini-camera' && itemId !== 'sun-glasses';
+  if (itemId === 'none') {
+    return <span className="little-game-item little-garment-preview preview-none" aria-hidden="true"><svg className="little-none-glyph" viewBox="0 0 48 48" fill="none"><path d="M24 8v8" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/><circle cx="24" cy="6" r="2.5" fill="currentColor"/><path d="M24 16 6 28h36z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round"/></svg></span>;
+  }
+  return <span className={`little-game-item little-garment-preview preview-${group}${isHeadwear ? ' preview-headwear' : ''}`} aria-hidden="true">{imageUrl ? <img className="little-catalog-preview" src={imageUrl} alt="" /> : <ClassicDoll picks={{ ...picks, [group]: itemId }} character={character} garmentColors={garmentColors} onlyLayer={layerByGroup[group]} previewViewBox={viewBoxes[group]} />}</span>;
 }
 
 export function LittleJetterApp() {
