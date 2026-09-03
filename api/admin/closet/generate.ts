@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { generateClosetAsset } from '../../../server/closet/generateClosetAsset';
-import { REFERENCE_ASSET_URLS } from '../../../server/closet/tokyoManifest';
-import type { ReferenceAssetKey } from '../../../server/closet/tokyoManifest';
-import type { ClosetSlot } from '../../../server/closet/assetSpec';
+import { generateClosetAsset } from '../../../server/closet/generateClosetAsset.js';
+import { REFERENCE_ASSET_URLS } from '../../../server/closet/tokyoManifest.js';
+import type { ReferenceAssetKey } from '../../../server/closet/tokyoManifest.js';
+import type { ClosetSlot } from '../../../server/closet/assetSpec.js';
 
 type RequestBody = {
   destination?: string;

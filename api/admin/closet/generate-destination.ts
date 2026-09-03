@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { generateClosetAsset } from '../../../server/closet/generateClosetAsset';
-import { REFERENCE_ASSET_URLS, TOKYO_GENERATION_MANIFEST } from '../../../server/closet/tokyoManifest';
-import type { GenerationManifestEntry } from '../../../server/closet/tokyoManifest';
+import { generateClosetAsset } from '../../../server/closet/generateClosetAsset.js';
+import { REFERENCE_ASSET_URLS, TOKYO_GENERATION_MANIFEST } from '../../../server/closet/tokyoManifest.js';
+import type { GenerationManifestEntry } from '../../../server/closet/tokyoManifest.js';
 
 // Add a destination's manifest here once it has one (see server/closet/tokyoManifest.ts).
 const MANIFESTS: Record<string, GenerationManifestEntry[]> = {

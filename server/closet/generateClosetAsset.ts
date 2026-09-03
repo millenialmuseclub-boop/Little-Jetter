@@ -1,12 +1,12 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { buildGenerationPrompt, STYLE_VERSION } from './stylePrompt';
-import { generateClosetImage } from './openaiClient';
-import { normalizeToClosetCanvas, qcCheck } from './imageProcessing';
-import { getClosetAssetStorage } from './storage';
-import type { ClosetSlot } from './assetSpec';
-import type { QcResult } from './imageProcessing';
-import type { SavedClosetAsset } from './storage';
+import { buildGenerationPrompt, STYLE_VERSION } from './stylePrompt.js';
+import { generateClosetImage } from './openaiClient.js';
+import { normalizeToClosetCanvas, qcCheck } from './imageProcessing.js';
+import { getClosetAssetStorage } from './storage.js';
+import type { ClosetSlot } from './assetSpec.js';
+import type { QcResult } from './imageProcessing.js';
+import type { SavedClosetAsset } from './storage.js';
 
 const GENERATION_MODEL = process.env.OPENAI_IMAGE_MODEL ?? 'gpt-image-2';
 

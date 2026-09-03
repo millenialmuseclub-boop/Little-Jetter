@@ -1,6 +1,6 @@
 import sharp from 'sharp';
-import { CLOSET_CANVAS, SLOT_BOUNDS } from './assetSpec';
-import type { ClosetSlot } from './assetSpec';
+import { CLOSET_CANVAS, SLOT_BOUNDS } from './assetSpec.js';
+import type { ClosetSlot } from './assetSpec.js';
 
 /**
  * Trims a generated image to its non-transparent content, scales it to fit inside

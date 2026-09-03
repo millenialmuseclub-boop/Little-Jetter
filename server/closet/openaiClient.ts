@@ -32,7 +32,7 @@ export async function generateClosetImage(options: GenerateImageOptions): Promis
     form.append('size', size);
     form.append('background', 'transparent');
     if (options.quality) form.append('quality', options.quality);
-    form.append('image', new Blob([options.referenceImage], { type: 'image/png' }), 'reference.png');
+    form.append('image', new Blob([new Uint8Array(options.referenceImage)], { type: 'image/png' }), 'reference.png');
     response = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}` },

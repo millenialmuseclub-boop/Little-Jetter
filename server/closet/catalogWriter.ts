@@ -1,6 +1,6 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import type { ClosetSlot } from './assetSpec';
+import type { ClosetSlot } from './assetSpec.js';
 
 // Writes into the existing catalog — src/data/dressUpCatalog.json — the same file
 // the client app reads. There is deliberately no second/parallel catalog: an item

@@ -1,5 +1,5 @@
-import { CLOSET_CANVAS } from './assetSpec';
-import type { ClosetSlot } from './assetSpec';
+import { CLOSET_CANVAS } from './assetSpec.js';
+import type { ClosetSlot } from './assetSpec.js';
 
 // Bump this whenever MASTER_STYLE_PROMPT, SLOT_FRAMING_INSTRUCTIONS, or a
 // destination's visual language changes in a way that would make an asset

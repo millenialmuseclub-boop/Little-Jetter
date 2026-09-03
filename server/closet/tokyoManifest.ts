@@ -3,8 +3,8 @@
 // client also reads (to badge un-illustrated drawer items). This file only adds
 // generation-specific metadata on top of that same list: prompts, color variants,
 // and which existing reference asset to steer style from.
-import { PENDING_TOKYO_GARMENTS, catalogAssetPath } from '../../src/data/garmentManifest';
-import type { ClosetSlot } from './assetSpec';
+import { PENDING_TOKYO_GARMENTS, catalogAssetPath } from '../../src/data/garmentManifest.js';
+import type { ClosetSlot } from './assetSpec.js';
 
 export type ReferenceAssetKey = 'stripe' | 'rain' | 'travel-jeans' | 'sneakers' | 'crossbody';
 

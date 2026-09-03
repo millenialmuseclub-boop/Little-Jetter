@@ -4,7 +4,7 @@
 // This file only adds: (1) the canonical path convention, so a contributor never has
 // to hand-type `/little-jetter/catalog/...` paths, and (2) a typed list of what's still
 // pending, so "what's left" doesn't require re-deriving it from the catalog by hand.
-import dressUpCatalog from './dressUpCatalog.json';
+import dressUpCatalog from './dressUpCatalog.json' with { type: 'json' };
 
 export const ASSET_TEMPLATE = {
   id: dressUpCatalog.template.id,
