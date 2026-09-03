@@ -237,6 +237,16 @@
             "illustrated",
             "covers-bottom"
           ]
+        },
+        {
+          "id": "none",
+          "name": "No top",
+          "description": "Keep it simple today",
+          "imageUrl": "",
+          "slot": "top",
+          "tags": [
+            "destination:all"
+          ]
         }
       ],
       "bottoms": [
@@ -376,6 +386,16 @@
           "tags": [
             "destination:all",
             "illustrated"
+          ]
+        },
+        {
+          "id": "none",
+          "name": "No bottom",
+          "description": "Keep it simple today",
+          "imageUrl": "",
+          "slot": "bottom",
+          "tags": [
+            "destination:all"
           ]
         }
       ],
@@ -756,6 +776,16 @@
             "destination:all",
             "illustrated"
           ]
+        },
+        {
+          "id": "none",
+          "name": "No shoes",
+          "description": "Bare feet, big adventure",
+          "imageUrl": "",
+          "slot": "shoes",
+          "tags": [
+            "destination:all"
+          ]
         }
       ],
       "accessories": [
@@ -938,6 +968,16 @@
           "tags": [
             "destination:all",
             "illustrated"
+          ]
+        },
+        {
+          "id": "none",
+          "name": "No accessory",
+          "description": "Sometimes less is more",
+          "imageUrl": "",
+          "slot": "accessory",
+          "tags": [
+            "destination:all"
           ]
         }
       ],

@@ -287,10 +287,13 @@ function CatalogDoll({ destinationId, picks, character, garmentColors }: { desti
     .filter(({ item }) => Boolean(catalogImageFor(item, item ? garmentColors[item.id] : undefined)));
   const headUrl = painterlyHeadUrl(character);
   const bodyUrl = PAINTERLY_BODY_ASSETS[character.skin];
+  const SLOT_BY_GROUP: Record<ClothingGroup, string> = { tops: 'top', bottoms: 'bottom', layers: 'outerwear', shoes: 'shoes', accessories: 'accessory' };
+  const noneSlots = CLOSET_GROUPS.filter((group) => picks[group] === 'none').map((group) => SLOT_BY_GROUP[group]);
   const hiddenLayers: string[] = (illustrated.map(({ item }) => item?.slot ?? '') as string[])
     .concat(headUrl ? ['face', 'hair'] : [])
     .concat(bodyUrl ? ['base'] : [])
-    .concat(coversBottom ? ['bottom'] : []);
+    .concat(coversBottom ? ['bottom'] : [])
+    .concat(noneSlots);
   return <div className="little-catalog-doll" data-template={catalog.template.id}>
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
     {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" key={`body-${character.skin}`} />}
