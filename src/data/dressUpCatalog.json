@@ -214,6 +214,29 @@
             "illustrated",
             "covers-bottom"
           ]
+        },
+        {
+          "id": "navy-overalls",
+          "name": "Navy overalls",
+          "description": "Classic pinafore over a blouse",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-overalls/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:paris",
+            "destination:nairobi",
+            "destination:mexico-city",
+            "destination:new-york",
+            "destination:cape-town",
+            "destination:vancouver",
+            "destination:seoul",
+            "destination:sydney",
+            "destination:san-jose",
+            "destination:barcelona",
+            "illustrated",
+            "covers-bottom"
+          ]
         }
       ],
       "bottoms": [
@@ -353,29 +376,6 @@
           "tags": [
             "destination:all",
             "illustrated"
-          ]
-        },
-        {
-          "id": "navy-overalls",
-          "name": "Navy overalls",
-          "description": "Classic pinafore over a blouse",
-          "imageUrl": "/little-jetter/catalog/tokyo/navy-overalls/default.png",
-          "slot": "bottom",
-          "tags": [
-            "destination:tokyo",
-            "destination:london",
-            "destination:paris",
-            "destination:nairobi",
-            "destination:mexico-city",
-            "destination:new-york",
-            "destination:cape-town",
-            "destination:vancouver",
-            "destination:seoul",
-            "destination:sydney",
-            "destination:san-jose",
-            "destination:barcelona",
-            "illustrated",
-            "includes-top"
           ]
         }
       ],

@@ -85,7 +85,7 @@ function gameItemStyle(group: PickGroup, id: string): React.CSSProperties {
 
 const characterOptions = {
   style: [{ id: 'girl', label: 'Girl' }, { id: 'boy', label: 'Boy' }],
-  hairStyle: [{ id: 'curls', label: 'Wavy' }, { id: 'coils', label: 'Curls' }, { id: 'bob', label: 'Bob' }, { id: 'short', label: 'Short' }],
+  hairStyle: [{ id: 'curls', label: 'Wavy' }, { id: 'bob', label: 'Bob' }, { id: 'short', label: 'Short' }],
   skin: [{ id: 'porcelain', color: '#f4c9a8' }, { id: 'peach', color: '#dea47f' }, { id: 'golden', color: '#bd7656' }, { id: 'caramel', color: '#9a5f43' }, { id: 'brown', color: '#70432f' }, { id: 'deep', color: '#4b2c24' }],
   hair: [{ id: 'black', color: '#211a19' }, { id: 'brown', color: '#573629' }, { id: 'auburn', color: '#8e4933' }, { id: 'blonde', color: '#d6a850' }, { id: 'red', color: '#b64932' }, { id: 'blue', color: '#397e9c' }],
   eyes: [{ id: 'brown', color: '#5a3827' }, { id: 'hazel', color: '#8d7440' }, { id: 'green', color: '#4e8060' }, { id: 'blue', color: '#4887aa' }, { id: 'gray', color: '#718088' }],

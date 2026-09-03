@@ -15,8 +15,12 @@ import path from 'node:path';
 
 const DIR = path.resolve('public/little-jetter/catalog/tokyo');
 const CENTER_X = 300;
-const TARGET_HEIGHT = 400;
-const ITEMS = ['pink-floral-dress', 'purple-button-dress', 'teal-wrap-dress'];
+const TARGET_HEIGHT = 320; // knee-length: shoulder (~315) down to ~635, not all the way to the ankle
+const TARGET_TOP = 315; // top slot's own top edge — shoulder line
+// navy-overalls was generated into the 'bottom' box (top=465) even though it's
+// a full pinafore-over-blouse one-piece; force its top back up to the shoulder
+// like the other dresses instead of leaving it anchored at the waist.
+const ITEMS = ['pink-floral-dress', 'purple-button-dress', 'teal-wrap-dress', 'navy-overalls'];
 
 async function bbox(filePath) {
   const { data, info } = await sharp(filePath).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -44,8 +48,8 @@ async function main() {
       continue;
     }
     const box = await bbox(filePath);
-    if (box.height >= TARGET_HEIGHT) {
-      console.log(`${item}: already tall enough (${box.height}px)`);
+    if (Math.abs(box.height - TARGET_HEIGHT) < 2) {
+      console.log(`${item}: already at target (${box.height}px)`);
       continue;
     }
     const scale = TARGET_HEIGHT / box.height;
@@ -54,7 +58,7 @@ async function main() {
     const cropped = await sharp(filePath).extract({ left: box.left, top: box.top, width: box.width, height: box.height }).toBuffer();
     const resized = await sharp(cropped).resize(newWidth, newHeight).toBuffer();
     const left = Math.round(CENTER_X - newWidth / 2);
-    const top = box.top;
+    const top = TARGET_TOP;
     const out = await sharp({ create: { width: 600, height: 900, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
       .composite([{ input: resized, left, top }])
       .png()

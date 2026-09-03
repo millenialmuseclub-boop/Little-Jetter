@@ -17,6 +17,8 @@ const ITEMS = [
   { id: 'floral-headband', targetHeight: 95 },
   { id: 'navy-pleated-skirt', targetWidth: 210 },
   { id: 'play-skirt', targetWidth: 210 },
+  { id: 'puppy-cap', targetHeight: 145 },
+  { id: 'purple-flower-cap', targetHeight: 145 },
 ];
 
 async function bbox(filePath) {
