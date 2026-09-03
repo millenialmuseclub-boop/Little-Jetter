@@ -1,0 +1,157 @@
+// Adds hair-color variants to every painterly head PNG that only ships the
+// default "brown" bake (every skin except golden) — the hair-color picker
+// silently did nothing for those skins because PAINTERLY_HEAD_ASSETS had no
+// entry to fall through to. Recolors hair-colored pixels (dark, warm-hued,
+// distinguished from the lighter skin tone of each specific skin) by
+// replacing hue while preserving each pixel's own lightness/saturation
+// shading, same hue-replace technique as recolor-eye-color.mjs. No AI
+// generation involved. Run: node scripts/recolor-hair-color.mjs
+import sharp from 'sharp';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+
+const HEAD_DIR = 'public/little-jetter/catalog/tokyo/head';
+const HAIRSTYLES = ['curls', 'short', 'bob', 'coils'];
+
+// Same iris centers as recolor-eye-color.mjs — excluded from the hair mask
+// so recoloring hair never also tints the eyes.
+const EYE_CENTERS = {
+  curls: [[271, 250], [325, 245]],
+  short: [[261, 244], [341, 242]],
+  bob: [[269, 264], [334, 262]],
+  coils: [[268, 257], [342, 252]],
+};
+const EYE_EXCLUDE_RADIUS = 16;
+// Skip golden — it already has hand-baked variants for every color.
+const SKINS = ['porcelain', 'peach', 'caramel', 'brown', 'deep'];
+
+// Matches characterOptions.hair in src/LittleJetterApp.tsx. 'brown' is the
+// heads' own baked-in color — skipped, already correct.
+const HAIR_TARGETS = {
+  black: [30, 27, 30],
+  auburn: [122, 58, 39],
+  blonde: [222, 186, 122],
+  red: [168, 66, 42],
+  blue: [58, 92, 148],
+};
+
+// Per-skin lightness ceiling for "this pixel is hair, not skin". Skin tones
+// get progressively darker (porcelain lightest -> deep darkest), so the
+// hair/skin split threshold has to move with it, especially for deep where
+// skin and (brown) hair sit close together in lightness.
+const SKIN_HAIR_LIGHTNESS_CEILING = {
+  porcelain: 0.62,
+  peach: 0.58,
+  caramel: 0.48,
+  brown: 0.4,
+  deep: 0.3,
+};
+
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s;
+  const l = (max + min) / 2;
+  if (max === min) { h = s = 0; }
+  else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      default: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  return [h, s, l];
+}
+
+function hslToRgb(h, s, l) {
+  let r, g, b;
+  if (s === 0) { r = g = b = l; }
+  else {
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+async function processFile(filePath, ceiling, hairstyle) {
+  const { data, info } = await sharp(filePath).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { width, height, channels } = info;
+  const base = path.basename(filePath, '.png');
+
+  // Precompute the hair mask once (shared across all target colors): warm,
+  // moderately-saturated, dark-relative-to-this-skin pixels, minus the two
+  // iris circles (irises are dark/warm too and would otherwise get caught).
+  const mask = new Uint8Array(width * height);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * channels;
+      if (data[idx + 3] < 200) continue;
+      const [h, s, l] = rgbToHsl(data[idx], data[idx + 1], data[idx + 2]);
+      const hueDeg = h * 360;
+      const isWarmBrown = hueDeg >= 5 && hueDeg <= 45;
+      if (isWarmBrown && s > 0.12 && l < ceiling) mask[y * width + x] = 1;
+    }
+  }
+  for (const [cx, cy] of EYE_CENTERS[hairstyle] ?? []) {
+    for (let dy = -EYE_EXCLUDE_RADIUS; dy <= EYE_EXCLUDE_RADIUS; dy++) {
+      for (let dx = -EYE_EXCLUDE_RADIUS; dx <= EYE_EXCLUDE_RADIUS; dx++) {
+        if (dx * dx + dy * dy > EYE_EXCLUDE_RADIUS * EYE_EXCLUDE_RADIUS) continue;
+        const x = cx + dx, y = cy + dy;
+        if (x < 0 || x >= width || y < 0 || y >= height) continue;
+        mask[y * width + x] = 0;
+      }
+    }
+  }
+
+  for (const [hairId, target] of Object.entries(HAIR_TARGETS)) {
+    const [targetH, targetS] = rgbToHsl(...target);
+    const targetLBase = rgbToHsl(...target)[2];
+    const out = Buffer.from(data);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (!mask[y * width + x]) continue;
+        const idx = (y * width + x) * channels;
+        const [, , l] = rgbToHsl(out[idx], out[idx + 1], out[idx + 2]);
+        // Preserve this pixel's own shading by keeping it proportionally
+        // offset from the target's base lightness, same as the eye script.
+        const newL = Math.min(1, Math.max(0, targetLBase + (l - 0.3) * 0.6));
+        const [nr, ng, nb] = hslToRgb(targetH, Math.min(1, targetS * 1.05), newL);
+        out[idx] = nr; out[idx + 1] = ng; out[idx + 2] = nb;
+      }
+    }
+    const outPath = path.join(HEAD_DIR, `${base}-${hairId}.png`);
+    await sharp(out, { raw: { width, height, channels } }).png().toFile(outPath);
+  }
+  console.log('processed', base);
+}
+
+async function main() {
+  for (const style of HAIRSTYLES) {
+    for (const skin of SKINS) {
+      const file = path.join(HEAD_DIR, `${style}-${skin}.png`);
+      try {
+        await fs.access(file);
+      } catch {
+        console.log('skip (missing):', file);
+        continue;
+      }
+      await processFile(file, SKIN_HAIR_LIGHTNESS_CEILING[skin], style);
+    }
+  }
+}
+
+main().catch((e) => { console.error(e); process.exitCode = 1; });
