@@ -66,6 +66,7 @@ async function main() {
           const result = await generateClosetAsset({
             destinationId: entry.destinationId,
             slot: entry.slot,
+            normalizeSlot: entry.normalizeSlot,
             itemId: entry.itemId,
             itemPrompt: entry.itemPrompt,
             color,

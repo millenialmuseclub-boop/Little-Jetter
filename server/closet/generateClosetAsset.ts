@@ -16,6 +16,8 @@ export type GenerateClosetAssetInput = {
   itemId: string;
   itemPrompt: string;
   color?: string;
+  /** Slot bounds to normalize the art into, if different from `slot` (e.g. a headwear accessory normalizes into `hair`, not `accessory`). Defaults to `slot`. */
+  normalizeSlot?: ClosetSlot;
   /** Public-root-relative path (e.g. "/little-jetter/catalog/tokyo/stripe/coral.png") to an existing asset to steer style from. */
   referenceAsset?: string;
   quality?: 'low' | 'medium' | 'high';
@@ -57,10 +59,11 @@ export async function generateClosetAsset(input: GenerateClosetAssetInput): Prom
     color: input.color,
   });
 
+  const normalizeSlot = input.normalizeSlot ?? input.slot;
   const referenceImage = input.referenceAsset ? await readReferenceImage(input.referenceAsset) : undefined;
   const raw = await generateClosetImage({ prompt, referenceImage, quality: input.quality });
-  const normalized = await normalizeToClosetCanvas(raw, input.slot);
-  const qc = await qcCheck(normalized, input.slot);
+  const normalized = await normalizeToClosetCanvas(raw, normalizeSlot);
+  const qc = await qcCheck(normalized, normalizeSlot);
   const asset = await storage.saveClosetAsset(normalized, metadata);
 
   const previous = await storage.getGenerationRecord(metadata);

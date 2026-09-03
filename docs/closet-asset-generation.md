@@ -37,6 +37,18 @@ checklist in `docs/wardrobe-asset-template.md`, then add matching entries to
 the new files. Nothing here touches the catalog automatically — that step is
 still a deliberate, reviewed edit.
 
+## Headwear vs. body-worn accessories
+
+The catalog's `accessory` slot covers two different anchor points on the doll:
+headwear (cap, bucket hat — anchored at head level) and handheld/worn-on-body
+items (bag, camera — anchored at chest level). The catalog `slot` field stays
+`"accessory"` for both — that's what drives z-index and which fallback vector
+layer gets hidden — but **generation** must normalize headwear into the `hair`
+slot-safe bound instead of `accessory`, or the art bakes in at chest height.
+`NORMALIZE_SLOT_OVERRIDE` in `server/closet/tokyoManifest.ts` is where that's
+declared per item id; `generateClosetAsset`'s `normalizeSlot` parameter is what
+actually uses it. Add a new headwear item id to that map before generating it.
+
 ## What's in the pipeline
 
 - `server/closet/assetSpec.ts` — canonical canvas/anchor/slot-bounds constants.

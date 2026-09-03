@@ -55,9 +55,25 @@ const COLOR_VARIANTS: Record<string, string[]> = {
   'adventure-shirt': ['red', 'blue', 'purple', 'teal'],
 };
 
+// "accessory" is one catalog `slot`, but it covers two very different anchor
+// points on the doll: headwear (cap, bucket hat — anchored at head level) vs
+// handheld/worn-on-body items (bag, camera — anchored at chest level). The
+// catalog's `slot` field stays "accessory" for both (it drives z-index and
+// which fallback vector layer gets hidden), but generation must normalize
+// headwear into the `hair` slot-safe bound instead of the `accessory` one, or
+// the art ends up baked in at chest height. This is what fixed
+// travel-cap/bucket-hat rendering on the torso instead of the head.
+const NORMALIZE_SLOT_OVERRIDE: Record<string, ClosetSlot> = {
+  'travel-cap': 'hair',
+  'bucket-hat': 'hair',
+  'sun-glasses': 'hair',
+};
+
 export type GenerationManifestEntry = {
   destinationId: 'tokyo';
   slot: ClosetSlot;
+  /** Slot bounds to normalize the generated art into, if different from `slot` (see NORMALIZE_SLOT_OVERRIDE above). */
+  normalizeSlot: ClosetSlot;
   itemId: string;
   name: string;
   itemPrompt: string;
@@ -68,15 +84,19 @@ export type GenerationManifestEntry = {
 
 export const TOKYO_EXISTING_ASSETS: GenerationManifestEntry[] = (
   ['stripe', 'rain', 'travel-jeans', 'sneakers', 'crossbody'] as ReferenceAssetKey[]
-).map((key) => ({
-  destinationId: 'tokyo',
-  slot: (Object.entries(REFERENCE_ASSET_BY_SLOT).find(([, ref]) => ref === key)?.[0] as ClosetSlot) ?? 'accessory',
-  itemId: key,
-  name: `Tokyo ${key} (canonical reference — do not regenerate)`,
-  itemPrompt: 'Canonical reference asset — do not regenerate.',
-  referenceAsset: key,
-  status: 'existing',
-}));
+).map((key) => {
+  const slot = (Object.entries(REFERENCE_ASSET_BY_SLOT).find(([, ref]) => ref === key)?.[0] as ClosetSlot) ?? 'accessory';
+  return {
+    destinationId: 'tokyo' as const,
+    slot,
+    normalizeSlot: slot,
+    itemId: key,
+    name: `Tokyo ${key} (canonical reference — do not regenerate)`,
+    itemPrompt: 'Canonical reference asset — do not regenerate.',
+    referenceAsset: key,
+    status: 'existing' as const,
+  };
+});
 
 export const TOKYO_GENERATION_MANIFEST: GenerationManifestEntry[] = [
   ...TOKYO_EXISTING_ASSETS,
@@ -85,6 +105,7 @@ export const TOKYO_GENERATION_MANIFEST: GenerationManifestEntry[] = [
     return {
       destinationId: 'tokyo',
       slot,
+      normalizeSlot: NORMALIZE_SLOT_OVERRIDE[item.itemId] ?? slot,
       itemId: item.itemId,
       name: item.name,
       itemPrompt: ITEM_PROMPTS[item.itemId] ?? item.name,
