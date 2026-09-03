@@ -136,29 +136,73 @@ function ClassicDoll({ picks, character, garmentColors, onlyLayer, previewViewBo
   </svg>;
 }
 
-// Painterly head/face+hair overlays generated to match the Tokyo clothing art's
-// style, one per (hairStyle, skin) combo actually produced so far. A combo not
-// listed here falls back to the flat SVG head/hair — never a broken image.
-const TOKYO_HEAD_ASSETS: Record<string, Record<string, string>> = {
-  curls: { golden: '/little-jetter/catalog/tokyo/head/curls-golden.png', porcelain: '/little-jetter/catalog/tokyo/head/curls-porcelain.png', deep: '/little-jetter/catalog/tokyo/head/curls-deep.png' },
-  short: { golden: '/little-jetter/catalog/tokyo/head/short-golden.png' },
-  bob: { golden: '/little-jetter/catalog/tokyo/head/bob-golden.png' },
-  coils: { golden: '/little-jetter/catalog/tokyo/head/coils-golden.png' },
+// Painterly head/face+hair overlays, generated to match the Tokyo clothing art's
+// style but containing no destination-specific motifs — so they're used as the
+// shared avatar art for every destination, not just Tokyo.
+// [hairStyle][skin][hairColor] -> asset url. Every (hairStyle, skin) pair has at
+// least a "brown" bake; other hair colors are only generated for the default
+// "golden" skin so far. Lookup falls back to that skin's "brown" asset before
+// falling back to the flat SVG head/hair — never a broken image, and the
+// hair-color picker never silently does nothing without a documented reason.
+const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string>>> = {
+  curls: {
+    golden: {
+      brown: '/little-jetter/catalog/tokyo/head/curls-golden.png',
+      black: '/little-jetter/catalog/tokyo/head/curls-golden-black.png',
+      auburn: '/little-jetter/catalog/tokyo/head/curls-golden-auburn.png',
+      blonde: '/little-jetter/catalog/tokyo/head/curls-golden-blonde.png',
+      red: '/little-jetter/catalog/tokyo/head/curls-golden-red.png',
+      blue: '/little-jetter/catalog/tokyo/head/curls-golden-blue.png',
+    },
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/curls-porcelain.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/curls-deep.png' },
+  },
+  short: {
+    golden: {
+      brown: '/little-jetter/catalog/tokyo/head/short-golden.png',
+      black: '/little-jetter/catalog/tokyo/head/short-golden-black.png',
+      auburn: '/little-jetter/catalog/tokyo/head/short-golden-auburn.png',
+      blonde: '/little-jetter/catalog/tokyo/head/short-golden-blonde.png',
+      red: '/little-jetter/catalog/tokyo/head/short-golden-red.png',
+      blue: '/little-jetter/catalog/tokyo/head/short-golden-blue.png',
+    },
+  },
+  bob: {
+    golden: {
+      brown: '/little-jetter/catalog/tokyo/head/bob-golden.png',
+      black: '/little-jetter/catalog/tokyo/head/bob-golden-black.png',
+      auburn: '/little-jetter/catalog/tokyo/head/bob-golden-auburn.png',
+      blonde: '/little-jetter/catalog/tokyo/head/bob-golden-blonde.png',
+      red: '/little-jetter/catalog/tokyo/head/bob-golden-red.png',
+      blue: '/little-jetter/catalog/tokyo/head/bob-golden-blue.png',
+    },
+  },
+  coils: {
+    golden: {
+      brown: '/little-jetter/catalog/tokyo/head/coils-golden.png',
+      black: '/little-jetter/catalog/tokyo/head/coils-golden-black.png',
+      auburn: '/little-jetter/catalog/tokyo/head/coils-golden-auburn.png',
+      blonde: '/little-jetter/catalog/tokyo/head/coils-golden-blonde.png',
+      red: '/little-jetter/catalog/tokyo/head/coils-golden-red.png',
+      blue: '/little-jetter/catalog/tokyo/head/coils-golden-blue.png',
+    },
+  },
 };
 
-function tokyoHeadUrl(destinationId: string, character: Character): string | undefined {
-  if (destinationId !== 'tokyo') return undefined;
-  return TOKYO_HEAD_ASSETS[character.hairStyle ?? 'curls']?.[character.skin];
+function painterlyHeadUrl(character: Character): string | undefined {
+  const bySkin = PAINTERLY_HEAD_ASSETS[character.hairStyle ?? 'curls']?.[character.skin];
+  if (!bySkin) return undefined;
+  return bySkin[character.hair] ?? bySkin.brown;
 }
 
 function CatalogDoll({ destinationId, picks, character, garmentColors }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors }) {
   const illustrated = CLOSET_GROUPS.map((group) => ({ group, item: catalogItemFor(destinationId, group, picks[group]) }))
     .filter(({ item }) => Boolean(catalogImageFor(item, item ? garmentColors[item.id] : undefined)));
-  const headUrl = tokyoHeadUrl(destinationId, character);
+  const headUrl = painterlyHeadUrl(character);
   const hiddenLayers: string[] = (illustrated.map(({ item }) => item?.slot ?? '') as string[]).concat(headUrl ? ['face', 'hair'] : []);
   return <div className="little-catalog-doll" data-template={catalog.template.id}>
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
-    {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}`} />}
+    {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}-${character.hair}`} />}
     {illustrated.map(({ group, item }) => item && <img className={`little-illustrated-layer layer-${item.slot}`} src={catalogImageFor(item, garmentColors[item.id])} alt="" aria-hidden="true" key={`${group}-${item.id}-${garmentColors[item.id] ?? 'default'}`} />)}
   </div>;
 }
