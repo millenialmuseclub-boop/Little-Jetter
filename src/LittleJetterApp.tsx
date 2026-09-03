@@ -76,6 +76,13 @@ const CATEGORY_BUTTON: Record<ClothingGroup, { icon: string; label: string; spot
   shoes: { icon: '👟', label: 'Shoes', spot: 'spot-shoes' },
   accessories: { icon: '🎒', label: 'Accessory', spot: 'spot-accessories' },
 };
+type AvatarFeature = 'hairStyle' | 'skin' | 'hair' | 'eyes';
+const AVATAR_BUTTON: Record<AvatarFeature, { icon: string; label: string }> = {
+  hairStyle: { icon: '💇', label: 'Hairstyle' },
+  skin: { icon: '🧑', label: 'Skin' },
+  hair: { icon: '🎨', label: 'Hair color' },
+  eyes: { icon: '👀', label: 'Eyes' },
+};
 const LAYERS = { base: 0, hairBack: 10, shoes: 20, bottom: 25, top: 30, dress: 35, outerwear: 50, hairFront: 60, accessory: 70, hat: 80 } as const;
 
 const gameSheets: Record<PickGroup, string> = {
@@ -342,6 +349,7 @@ export function LittleJetterApp() {
   const [journalChoice, setJournalChoice] = useState('');
   const [openClosetDrawer, setOpenClosetDrawer] = useState<string>('tops');
   const [activeCategorySheet, setActiveCategorySheet] = useState<ClothingGroup | null>(null);
+  const [activeAvatarSheet, setActiveAvatarSheet] = useState<AvatarFeature | null>(null);
   const selected = useMemo(() => destinations.find((item) => item.id === selectedId) ?? destinations[0], [selectedId]);
   const visibleDestinations = destinations.filter((item) => (regionFilter === 'All regions' || item.region === regionFilter) && (destinationTypeFilter === 'All types' || destinationTypes[item.id] === destinationTypeFilter));
   const availableWardrobe = (group: Exclude<PickGroup, 'buddies'>) => wardrobe[group]
@@ -656,6 +664,20 @@ export function LittleJetterApp() {
           </div>
         </div>}
 
+        {activeAvatarSheet && (() => {
+          const feature = activeAvatarSheet;
+          return <div className="little-category-backdrop" role="dialog" aria-modal="true" aria-labelledby="avatar-sheet-title" onClick={() => setActiveAvatarSheet(null)}>
+            <div className="little-category-sheet" onClick={(event) => event.stopPropagation()}>
+              <div className="little-category-sheet-handle" aria-hidden="true" />
+              <div className="little-category-sheet-head"><strong id="avatar-sheet-title">{AVATAR_BUTTON[feature].icon} {AVATAR_BUTTON[feature].label}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => setActiveAvatarSheet(null)}>×</button></div>
+              {feature === 'hairStyle' && <div className="little-character-options little-hairstyle-options">{characterOptions.hairStyle.map((option) => <button type="button" aria-pressed={character.hairStyle === option.id} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: option.id })); triggerCelebration(12); }} key={option.id}><img className="little-hair-icon" src={`/little-jetter/ui/hair-${option.id}.png`} alt="" aria-hidden="true" /><strong>{option.label}</strong></button>)}</div>}
+              {feature === 'skin' && <div className="little-character-options little-swatch-options">{characterOptions.skin.map((option) => <button type="button" aria-label={`${option.id} skin`} aria-pressed={character.skin === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, skin: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
+              {feature === 'hair' && <div className="little-character-options little-swatch-options">{characterOptions.hair.map((option) => <button type="button" aria-label={`${option.id} hair`} aria-pressed={character.hair === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, hair: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
+              {feature === 'eyes' && <div className="little-character-options little-swatch-options">{characterOptions.eyes.map((option) => <button type="button" aria-label={`${option.id} eyes`} aria-pressed={character.eyes === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, eyes: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
+            </div>
+          </div>;
+        })()}
+
         {activeCategorySheet && (() => {
           const group = activeCategorySheet;
           const variants = colorVariants(group);
@@ -712,13 +734,10 @@ export function LittleJetterApp() {
               <div className="little-dress-layout little-game-panel">
                 <aside className="little-look-preview">
                   <div className="little-closet-heading"><p className="little-kicker">02 Avatar</p><strong>Make your Little Jetter.</strong></div>
-                  <div className="little-character-drawers" aria-label="Build your doll">
-                    <details open><summary><span>01</span><strong>Hairstyle</strong><b>Open / close</b></summary><div className="little-character-options little-hairstyle-options">{characterOptions.hairStyle.map((option) => <button type="button" aria-pressed={character.hairStyle === option.id} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: option.id })); triggerCelebration(12); }} key={option.id}><img className="little-hair-icon" src={`/little-jetter/ui/hair-${option.id}.png`} alt="" aria-hidden="true" /><strong>{option.label}</strong></button>)}</div></details>
-                    <details><summary><span>02</span><strong>Skin</strong><b>Open / close</b></summary><div className="little-character-options little-swatch-options">{characterOptions.skin.map((option) => <button type="button" aria-label={`${option.id} skin`} aria-pressed={character.skin === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, skin: option.id })); triggerCelebration(12); }} key={option.id} />)}</div></details>
-                    <details><summary><span>03</span><strong>Hair color</strong><b>Open / close</b></summary><div className="little-character-options little-swatch-options">{characterOptions.hair.map((option) => <button type="button" aria-label={`${option.id} hair`} aria-pressed={character.hair === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, hair: option.id })); triggerCelebration(12); }} key={option.id} />)}</div></details>
-                    <details><summary><span>04</span><strong>Eyes</strong><b>Open / close</b></summary><div className="little-character-options little-swatch-options">{characterOptions.eyes.map((option) => <button type="button" aria-label={`${option.id} eyes`} aria-pressed={character.eyes === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, eyes: option.id })); triggerCelebration(12); }} key={option.id} />)}</div></details>
-                  </div>
                   <div className="little-doll-rail-wrap">
+                    <div className="little-category-rail little-avatar-rail" aria-label="Avatar features">
+                      {(['hairStyle', 'skin', 'hair', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => setActiveAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
+                    </div>
                     <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
                       <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{selected.id === 'tokyo' && <img src="/little-jetter/tokyo-doll-backdrop.png" alt="" />}<i /><b /></div>
                       <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} />
