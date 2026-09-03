@@ -8,11 +8,18 @@ not decide what gets illustrated or add anything to the catalog automatically.
 ## One-time setup
 
 1. Get an OpenAI API key.
-2. In `little-jetter/.env.local` (already gitignored — never commit it):
+2. In `little-jetter/.env.local` (already gitignored — never commit it; `.env.example`
+   is also gitignored in this repo, so it can't carry this documentation either —
+   that's why it lives here instead):
    ```
    OPENAI_API_KEY=sk-...
+   OPENAI_IMAGE_MODEL=       # optional; defaults to gpt-image-2 (server/closet/openaiClient.ts)
    ADMIN_API_TOKEN=<any long random string, only needed for the deployed /api endpoints>
    ```
+   None of these may ever be prefixed with `VITE_` — that would bundle them into
+   the client. They're read only by `server/closet/*.ts`, `api/admin/closet/*.ts`,
+   and `scripts/generate-destination.ts` (via `dotenv`), never by `src/*`. The
+   admin API routes fail closed (401) on every request until `ADMIN_API_TOKEN` is set.
 3. `npm install` (adds `sharp`, `@vercel/node`, `tsx`, `dotenv`).
 
 ## Running it locally (recommended path)
