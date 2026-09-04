@@ -940,6 +940,19 @@ export function LittleJetterApp() {
     setPicks(look.picks); setCharacter({ ...look.character, hairStyle: look.character.hairStyle ?? 'curls' }); setGarmentColors(look.colors); triggerCelebration([18, 25, 18]);
   }
 
+  // Scrolls the doll into view before opening a picker sheet — the sheet
+  // only covers the bottom of the screen, so if the doll is already
+  // scrolled up above the fold when a kid taps a category, this is what
+  // keeps it visible while they choose instead of leaving it off-screen.
+  function openAvatarSheet(feature: AvatarFeature) {
+    document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setActiveAvatarSheet(feature);
+  }
+  function openCategorySheet(group: ClothingGroup) {
+    document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setActiveCategorySheet(group);
+  }
+
   function dropOnDoll(event: React.DragEvent<HTMLDivElement>) {
     event.preventDefault(); setDropActive(false);
     const [group, id] = event.dataTransfer.getData('text/little-jetter-item').split(':');
@@ -1232,7 +1245,7 @@ export function LittleJetterApp() {
               <div className="little-dress-layout little-game-panel">
                 <aside className="little-look-preview">
                   <div className="little-closet-heading"><strong>Make your Little Jetter.</strong></div>
-                  <div className="little-doll-rail-wrap">
+                  <div className="little-doll-rail-wrap" id="little-doll-stage-anchor">
                     <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
                       <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{selected.id === 'tokyo' && <img src="/little-jetter/tokyo-doll-backdrop.png" alt="" />}<i /><b /></div>
                       <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} />
@@ -1241,11 +1254,11 @@ export function LittleJetterApp() {
                     </div>
                     <div className="little-side-rail">
                       <div className="little-category-rail little-avatar-rail" aria-label="Avatar features">
-                        {(['hairStyle', 'hair', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => setActiveAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
+                        {(['hairStyle', 'hair', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => openAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
                       </div>
                       <div className="little-rail-divider" aria-hidden="true" />
                       <div className="little-category-rail" aria-label="Clothing categories">
-                        {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group} onClick={() => setActiveCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small></button>)}
+                        {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group} onClick={() => openCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small></button>)}
                       </div>
                     </div>
                   </div>
@@ -1253,7 +1266,7 @@ export function LittleJetterApp() {
                   <div key={`${picks.layers}-${picks.shoes}`} className={`little-outfit-reaction is-${outfitFeedback.mood}`} role="status"><span aria-hidden="true" /><div><div className="little-rate-look"><strong>Rate my look</strong><span className="little-star-rating" aria-label={`${outfitFeedback.stars} out of 5 stars`}>{'★'.repeat(outfitFeedback.stars)}{'☆'.repeat(5 - outfitFeedback.stars)}</span></div><strong className="little-rate-title">{outfitFeedback.title}</strong><p>{outfitFeedback.message}</p></div></div>
                 </aside>
                 <div className="little-closet">
-                  <div className="little-surprise-bar"><div><small>My paper-doll closet</small><strong>Tap a piece or drag it onto the doll.</strong></div><div className="little-look-actions"><button type="button" onClick={surpriseMe}>Surprise me</button><button type="button" onClick={clearLook}>Clear look</button><button type="button" onClick={saveLook}>Save my look</button></div></div>
+                  <div className="little-surprise-bar"><div><small>My paper-doll closet</small><strong>Tap a piece to dress your doll.</strong></div><div className="little-look-actions"><button type="button" onClick={surpriseMe}>Surprise me</button><button type="button" onClick={clearLook}>Clear look</button><button type="button" onClick={saveLook}>Save my look</button></div></div>
                   <details className="little-task-drawer little-my-looks"><summary><strong>My saved looks</strong><b>Open</b></summary><div>{savedLooks.length ? savedLooks.map((look) => <button type="button" onClick={() => restoreLook(look)} key={look.id}><strong>{look.name}</strong><small>Tap to wear again</small></button>) : <p>Save a look and it will wait here on this device.</p>}</div></details>
                   <details className="little-task-drawer" open={openClosetDrawer === 'parent'} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer('parent'); }}><summary><strong>Parent product matches</strong><b>{openClosetDrawer === 'parent' ? 'Close' : 'Open'}</b></summary><div className="little-real-look">
                     <div><small>Your Little Jetter picks</small><strong>Real pieces inspired by this look</strong></div>
