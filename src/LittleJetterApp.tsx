@@ -76,10 +76,9 @@ const CATEGORY_BUTTON: Record<ClothingGroup, { icon: string; label: string; spot
   shoes: { icon: '👟', label: 'Shoes', spot: 'spot-shoes' },
   accessories: { icon: '🎒', label: 'Accessory', spot: 'spot-accessories' },
 };
-type AvatarFeature = 'hairStyle' | 'skin' | 'hair' | 'eyes';
+type AvatarFeature = 'hairStyle' | 'hair' | 'eyes';
 const AVATAR_BUTTON: Record<AvatarFeature, { icon: string; label: string }> = {
   hairStyle: { icon: '🙂', label: 'Head' },
-  skin: { icon: '🧑', label: 'Skin' },
   hair: { icon: '🎨', label: 'Hair color' },
   eyes: { icon: '👀', label: 'Eyes' },
 };
@@ -1178,7 +1177,6 @@ export function LittleJetterApp() {
                   })}
                 </div>
               </div>)}</div>}
-              {feature === 'skin' && <div className="little-character-options little-swatch-options">{characterOptions.skin.map((option) => <button type="button" aria-label={`${option.id} skin`} aria-pressed={character.skin === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, skin: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
               {feature === 'hair' && <div className="little-character-options little-swatch-options">{characterOptions.hair.map((option) => <button type="button" aria-label={option.label} aria-pressed={character.hair === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, hair: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
               {feature === 'eyes' && <div className="little-character-options little-swatch-options">{characterOptions.eyes.map((option) => <button type="button" aria-label={option.label} aria-pressed={character.eyes === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, eyes: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
             </div>
@@ -1243,7 +1241,7 @@ export function LittleJetterApp() {
                     </div>
                     <div className="little-side-rail">
                       <div className="little-category-rail little-avatar-rail" aria-label="Avatar features">
-                        {(['hairStyle', 'skin', 'hair', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => setActiveAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
+                        {(['hairStyle', 'hair', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => setActiveAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
                       </div>
                       <div className="little-rail-divider" aria-hidden="true" />
                       <div className="little-category-rail" aria-label="Clothing categories">
