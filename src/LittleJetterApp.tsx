@@ -980,23 +980,21 @@ export function LittleJetterApp() {
     const item = catalogItemFor(selected.id, group, picks[group]) ?? wardrobe[group][0];
     return { ...item, note: item.description };
   };
-  const wornTopName = () => {
-    const bottomItem = catalogItemFor(selected.id, 'bottoms', picks.bottoms);
-    if (bottomItem?.tags.includes('includes-top')) return bottomItem.name;
-    return chosen('tops').name;
-  };
   const colorVariants = (group: ClothingGroup) => catalogItemFor(selected.id, group, picks[group])?.variants ?? [];
   const readyToStamp = packed.length >= 4;
   const ltkCollectionUrl = import.meta.env.VITE_LTK_COLLECTION_URL as string | undefined;
   const matchedRealLook = realProductCatalog.filter((product) => [picks.tops, picks.layers, picks.shoes].includes(product.playItemId));
   const realLook = (matchedRealLook.length ? matchedRealLook : realProductCatalog.filter((product) => product.imageUrl)).slice(0, 6);
+  // "Rate my look" — scored mainly on the outer-layer/shoe choice against
+  // the destination's weather, since that's the pick most likely to leave a
+  // kid cold, sweaty, or otherwise uncomfortable if it's skipped or wrong.
   const outfitFeedback = !selected.sandalsFriendly && picks.shoes === 'sandals'
-    ? { mood: 'brrr', title: 'Brrr—tiny toes alert!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Try sneakers or puddle boots for this adventure.` }
+    ? { mood: 'brrr', stars: 2, title: 'Brrr—tiny toes alert!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Try sneakers or puddle boots for this adventure.` }
     : selected.needsLayer && picks.layers === 'none'
-      ? { mood: 'brrr', title: 'A breeze is coming!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Add a jacket you can carry.` }
+      ? { mood: 'brrr', stars: 2, title: 'A breeze is coming!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Add a jacket you can carry.` }
       : selected.sandalsFriendly && picks.shoes === 'boots'
-        ? { mood: 'warm', title: 'Those boots may feel warm!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Sandals or sneakers could be comfier.` }
-        : { mood: 'ready', title: `✦ ${selected.city} Ready!`, message: `${selected.needsLayer ? 'Perfect layer' : 'Perfect gear'} for ${adventureTemperatures[selected.id]} adventure walks. ${chosen('shoes').name} and ${chosen('layers').name.toLowerCase()} make a clever team.` };
+        ? { mood: 'warm', stars: 3, title: 'Those boots may feel warm!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Sandals or sneakers could be comfier.` }
+        : { mood: 'ready', stars: 5, title: `✦ ${selected.city} Ready!`, message: `${selected.needsLayer ? 'Perfect layer' : 'Perfect gear'} for ${adventureTemperatures[selected.id]} adventure walks. ${chosen('shoes').name} and ${chosen('layers').name.toLowerCase()} make a clever team.` };
   const shopDrawers = [
     { id: 'top', number: '01', name: 'Tops & shirts', note: 'Tees, blouses and everyday layers' },
     { id: 'bottom', number: '02', name: 'Pants & skirts', note: 'Jeans, shorts and skirts for every day' },
@@ -1242,7 +1240,6 @@ export function LittleJetterApp() {
                       <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} />
                       <div className="little-dress-sparkles" key={`sparkles-${celebration}`} aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--spark': index } as React.CSSProperties}>✦</i>)}</div>
                       {dropActive && <div className="little-drop-message">Drop to dress</div>}
-                      <div className="little-dressed-confirmation" aria-live="polite">Now wearing {wornTopName()}</div>
                     </div>
                     <div className="little-side-rail">
                       <div className="little-category-rail little-avatar-rail" aria-label="Avatar features">
@@ -1255,7 +1252,7 @@ export function LittleJetterApp() {
                     </div>
                   </div>
                   <h3>{selected.city} explorer</h3>
-                  <div key={`${picks.layers}-${picks.shoes}`} className={`little-outfit-reaction is-${outfitFeedback.mood}`} role="status"><span aria-hidden="true" /><div><strong>{outfitFeedback.title}</strong><p>{outfitFeedback.message}</p></div></div>
+                  <div key={`${picks.layers}-${picks.shoes}`} className={`little-outfit-reaction is-${outfitFeedback.mood}`} role="status"><span aria-hidden="true" /><div><div className="little-rate-look"><strong>Rate my look</strong><span className="little-star-rating" aria-label={`${outfitFeedback.stars} out of 5 stars`}>{'★'.repeat(outfitFeedback.stars)}{'☆'.repeat(5 - outfitFeedback.stars)}</span></div><strong className="little-rate-title">{outfitFeedback.title}</strong><p>{outfitFeedback.message}</p></div></div>
                 </aside>
                 <div className="little-closet">
                   <div className="little-surprise-bar"><div><small>My paper-doll closet</small><strong>Tap a piece or drag it onto the doll.</strong></div><div className="little-look-actions"><button type="button" onClick={surpriseMe}>Surprise me</button><button type="button" onClick={clearLook}>Clear look</button><button type="button" onClick={saveLook}>Save my look</button></div></div>
