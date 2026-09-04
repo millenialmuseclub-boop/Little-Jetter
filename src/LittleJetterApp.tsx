@@ -1104,14 +1104,17 @@ export function LittleJetterApp() {
   const [journalChoice, setJournalChoice] = useState('');
   const [openClosetDrawer, setOpenClosetDrawer] = useState<string>('tops');
   const [activeCategorySheet, setActiveCategorySheet] = useState<ClothingGroup | null>(null);
-  const [styleFilter, setStyleFilter] = useState<'dress' | 'hat' | null>(null);
+  const [styleFilter, setStyleFilter] = useState<'dress' | 'pajama' | 'swim' | 'hat' | null>(null);
   const [activeAvatarSheet, setActiveAvatarSheet] = useState<AvatarFeature | null>(null);
   const selected = useMemo(() => destinations.find((item) => item.id === selectedId) ?? destinations[0], [selectedId]);
   const visibleDestinations = destinations.filter((item) => (regionFilter === 'All regions' || item.region === regionFilter) && (destinationTypeFilter === 'All types' || destinationTypes[item.id] === destinationTypeFilter));
   const availableWardrobe = (group: Exclude<PickGroup, 'buddies'>) => wardrobe[group]
     .filter((item) => item.tags.includes('destination:all') || item.tags.includes(`destination:${selected.id}`))
     .filter((item) => {
-      if (group === 'tops') return styleFilter === 'dress' ? item.tags.includes('style:dress') : !item.tags.includes('style:dress');
+      if (group === 'tops') {
+        if (styleFilter === 'dress' || styleFilter === 'pajama' || styleFilter === 'swim') return item.tags.includes(`style:${styleFilter}`);
+        return !item.tags.includes('style:dress') && !item.tags.includes('style:pajama') && !item.tags.includes('style:swim');
+      }
       if (group === 'accessories') return styleFilter === 'hat' ? item.tags.includes('style:hat') : !item.tags.includes('style:hat');
       return true;
     })
@@ -1229,7 +1232,7 @@ export function LittleJetterApp() {
     document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setActiveAvatarSheet(feature);
   }
-  function openCategorySheet(group: ClothingGroup, filter: 'dress' | 'hat' | null = null) {
+  function openCategorySheet(group: ClothingGroup, filter: 'dress' | 'pajama' | 'swim' | 'hat' | null = null) {
     document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setActiveCategorySheet(group);
     setStyleFilter(filter);
@@ -1504,7 +1507,7 @@ export function LittleJetterApp() {
         {activeCategorySheet && (() => {
           const group = activeCategorySheet;
           const variants = colorVariants(group);
-          const sheetTitle = styleFilter === 'dress' ? '👗 Dress' : styleFilter === 'hat' ? '🧢 Hat' : `${CATEGORY_BUTTON[group].icon} ${CATEGORY_BUTTON[group].label}`;
+          const sheetTitle = styleFilter === 'dress' ? '👗 Dress' : styleFilter === 'pajama' ? '🌙 Pajamas' : styleFilter === 'swim' ? '🩱 Swim' : styleFilter === 'hat' ? '🧢 Hat' : `${CATEGORY_BUTTON[group].icon} ${CATEGORY_BUTTON[group].label}`;
           return <div className="little-category-backdrop" role="dialog" aria-modal="true" aria-labelledby="category-sheet-title" onClick={() => { setActiveCategorySheet(null); setStyleFilter(null); }}>
             <div className="little-category-sheet" onClick={(event) => event.stopPropagation()}>
               <div className="little-category-sheet-handle" aria-hidden="true" />
@@ -1566,6 +1569,8 @@ export function LittleJetterApp() {
                       <div className="little-category-rail" aria-label="Clothing categories">
                         {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group && !styleFilter ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group && !styleFilter} onClick={() => openCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small></button>)}
                         <button type="button" className={`little-category-rail-btn ${styleFilter === 'dress' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'dress'} onClick={() => openCategorySheet('tops', 'dress')}><span aria-hidden="true">👗</span><small>Dress</small></button>
+                        <button type="button" className={`little-category-rail-btn ${styleFilter === 'pajama' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'pajama'} onClick={() => openCategorySheet('tops', 'pajama')}><span aria-hidden="true">🌙</span><small>Pajamas</small></button>
+                        <button type="button" className={`little-category-rail-btn ${styleFilter === 'swim' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'swim'} onClick={() => openCategorySheet('tops', 'swim')}><span aria-hidden="true">🩱</span><small>Swim</small></button>
                         <button type="button" className={`little-category-rail-btn ${styleFilter === 'hat' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'hat'} onClick={() => openCategorySheet('accessories', 'hat')}><span aria-hidden="true">🧢</span><small>Hat</small></button>
                       </div>
                     </div>

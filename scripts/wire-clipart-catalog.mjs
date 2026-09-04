@@ -17,15 +17,20 @@ const SLOT_BY_ANCHOR = {
   top: 'top', dress: 'top', outerwear: 'outerwear', bottom: 'bottom',
   shoes: 'shoes', hat: 'accessory', face: 'accessory', bag: 'accessory',
 };
-const EXTRA_TAG_BY_ANCHOR = { dress: 'style:dress', hat: 'style:hat' };
-
 let added = 0;
+let updated = 0;
 for (const item of CLIPART_ITEMS) {
   const bucket = all[item.category];
-  if (bucket.some((existing) => existing.id === item.id)) continue;
   const tags = ['destination:all', 'illustrated', 'clipart'];
-  const extra = EXTRA_TAG_BY_ANCHOR[item.anchor];
-  if (extra) tags.push(extra);
+  if (item.style) tags.push(`style:${item.style}`);
+  else if (item.anchor === 'hat') tags.push('style:hat');
+  const existing = bucket.find((existing) => existing.id === item.id);
+  if (existing) {
+    const before = JSON.stringify(existing.tags);
+    existing.tags = tags;
+    if (JSON.stringify(existing.tags) !== before) updated++;
+    continue;
+  }
   bucket.push({
     id: item.id,
     name: item.name,
@@ -38,4 +43,4 @@ for (const item of CLIPART_ITEMS) {
 }
 
 fs.writeFileSync(CATALOG_PATH, JSON.stringify(catalog, null, 2) + '\n', 'utf8');
-console.log('added', added, 'clip-art items to dressUpCatalog.json (destinations.all)');
+console.log('added', added, 'new,', updated, 'retagged, in dressUpCatalog.json (destinations.all)');
