@@ -227,7 +227,7 @@
   .little-begin { grid-column:1/-1; justify-content:space-between; }
   .little-dress-layout { grid-template-columns:220px 1fr; }
   .little-product-grid { grid-template-columns:repeat(3,1fr); }
-  .little-travel-console { grid-template-columns:135px 1fr; }.little-product-departures { grid-column:1/-1; }.little-compass { width:125px;height:125px; }.little-compass i { left:49px;top:25px; }
+  .little-travel-console { grid-template-columns:135px 1fr; }.little-product-departures { grid-column:1/-1; }.little-route-adventure { grid-column:1/-1; }.little-compass { width:125px;height:125px; }.little-compass i { left:49px;top:25px; }
 }
 @media (max-width: 640px) {
   .little-header { height:66px;padding:0 18px; }
@@ -296,6 +296,7 @@
 
 /* Virtual closet: keep the doll central and apply every choice directly to it. */
 .little-dress-layout{grid-template-columns:minmax(270px,340px) minmax(0,1fr);align-items:start;gap:24px;padding:22px!important;background:#fffaf0!important}.little-dress-layout.little-game-panel{transform:none!important}
+@media(min-width:681px) and (max-width:1024px){.little-dress-layout{grid-template-columns:minmax(340px,420px) minmax(0,1fr);gap:32px}.little-look-preview{max-width:420px}.little-avatar.little-doll-stage{height:640px}}
 .little-dress-layout::after,.little-dress-layout .little-task-drawer::before,.little-dress-layout .little-task-drawer::after{display:none!important}
 .little-dress-layout .little-look-preview{position:sticky;top:76px;transform:none;max-width:none;padding:16px;background:#f6e8cc;border:1px solid rgba(24,59,72,.2);box-shadow:5px 5px 0 rgba(24,59,72,.08)}
 .little-closet-heading{display:flex;align-items:end;justify-content:space-between;gap:10px}.little-closet-heading p{margin:0}.little-closet-heading strong{font:600 18px 'Fraunces',serif;color:var(--coral)}
