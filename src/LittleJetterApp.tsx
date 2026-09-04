@@ -78,6 +78,7 @@ const MAX_GARMENT_SCALE = 1.6;
 function clampGarmentScale(value: number) {
   return Math.min(MAX_GARMENT_SCALE, Math.max(MIN_GARMENT_SCALE, value));
 }
+const SANDAL_SHOE_IDS = new Set(['sandals', 'purple-sandals', 'navy-sandals', 'brown-strap-sandals', 'brown-buckle-sandals', 'blue-strap-sandals']);
 type Character = { style: string; skin: string; hair: string; hairStyle: string; eyes: string };
 type SavedLook = { id: string; name: string; picks: Picks; character: Character; colors: GarmentColors; scales?: GarmentScales; offsets?: Record<string, { x: number; y: number }> };
 
@@ -1453,7 +1454,7 @@ export function LittleJetterApp() {
   // "Rate my look" — scored mainly on the outer-layer/shoe choice against
   // the destination's weather, since that's the pick most likely to leave a
   // kid cold, sweaty, or otherwise uncomfortable if it's skipped or wrong.
-  const outfitFeedback = !selected.sandalsFriendly && picks.shoes === 'sandals'
+  const outfitFeedback = !selected.sandalsFriendly && SANDAL_SHOE_IDS.has(picks.shoes)
     ? { mood: 'brrr', stars: 2, title: 'Brrr—tiny toes alert!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Try sneakers or puddle boots for this adventure.` }
     : selected.needsLayer && picks.layers === 'none'
       ? { mood: 'brrr', stars: 2, title: 'A breeze is coming!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Add a jacket you can carry.` }

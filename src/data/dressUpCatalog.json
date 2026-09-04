@@ -88,19 +88,6 @@
           ]
         },
         {
-          "id": "dress",
-          "name": "Twirl dress",
-          "description": "Ready for something special",
-          "imageUrl": "",
-          "slot": "top",
-          "tags": [
-            "destination:paris",
-            "destination:cartagena",
-            "destination:honolulu",
-            "destination:barcelona"
-          ]
-        },
-        {
           "id": "sunset-tee",
           "name": "Sunset tee",
           "description": "A bright everyday favorite",
@@ -776,34 +763,6 @@
           ]
         },
         {
-          "id": "coral-skirt",
-          "name": "Coral swing skirt",
-          "description": "A colorful city choice",
-          "imageUrl": "",
-          "slot": "bottom",
-          "tags": [
-            "destination:paris",
-            "destination:cartagena",
-            "destination:barcelona"
-          ]
-        },
-        {
-          "id": "adventure-shorts",
-          "name": "Adventure shorts",
-          "description": "Pockets for tiny finds",
-          "imageUrl": "",
-          "slot": "bottom",
-          "tags": [
-            "destination:honolulu",
-            "destination:cartagena",
-            "destination:rome",
-            "destination:sydney",
-            "destination:san-jose",
-            "destination:barcelona",
-            "warm"
-          ]
-        },
-        {
           "id": "wide-leg-pants",
           "name": "Wide-leg pants",
           "description": "Easy movement for long days",
@@ -1188,18 +1147,6 @@
           "slot": "outerwear",
           "tags": [
             "destination:all"
-          ]
-        },
-        {
-          "id": "cardigan",
-          "name": "Pocket cardigan",
-          "description": "Soft and easy to carry",
-          "imageUrl": "",
-          "slot": "outerwear",
-          "tags": [
-            "destination:paris",
-            "destination:cape-town",
-            "destination:sydney"
           ]
         },
         {
@@ -1642,22 +1589,6 @@
           ]
         },
         {
-          "id": "sandals",
-          "name": "Sunny sandals",
-          "description": "Maybe chilly today",
-          "imageUrl": "",
-          "slot": "shoes",
-          "tags": [
-            "destination:honolulu",
-            "destination:cartagena",
-            "destination:rome",
-            "destination:sydney",
-            "destination:san-jose",
-            "destination:barcelona",
-            "warm"
-          ]
-        },
-        {
           "id": "high-tops",
           "name": "Colorful high-tops",
           "description": "Made for city steps",
@@ -1668,19 +1599,6 @@
             "destination:new-york",
             "destination:seoul",
             "illustrated"
-          ]
-        },
-        {
-          "id": "trail-shoes",
-          "name": "Little trail shoes",
-          "description": "Ready for nature paths",
-          "imageUrl": "",
-          "slot": "shoes",
-          "tags": [
-            "destination:nairobi",
-            "destination:cape-town",
-            "destination:san-jose",
-            "destination:vancouver"
           ]
         },
         {
@@ -2035,21 +1953,6 @@
           "tags": [
             "destination:all",
             "illustrated"
-          ]
-        },
-        {
-          "id": "sun-glasses",
-          "name": "Sunshine glasses",
-          "description": "Made for bright arrivals",
-          "imageUrl": "",
-          "slot": "accessory",
-          "tags": [
-            "destination:honolulu",
-            "destination:cartagena",
-            "destination:rome",
-            "destination:sydney",
-            "destination:san-jose",
-            "destination:barcelona"
           ]
         },
         {
