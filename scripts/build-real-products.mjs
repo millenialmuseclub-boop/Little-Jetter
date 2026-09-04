@@ -9,6 +9,10 @@ import { realProductCatalog as legacyCatalog } from './build-real-products-legac
 
 const CSV_PATH = path.resolve('scripts/ltk-import.csv');
 const OUT_PATH = path.resolve('src/data/realProducts.ts');
+const OVERRIDES_PATH = path.resolve('scripts/product-image-overrides.json');
+const imageOverrides = fs.existsSync(OVERRIDES_PATH)
+  ? JSON.parse(fs.readFileSync(OVERRIDES_PATH, 'utf8'))
+  : {};
 
 function parseCsv(text) {
   const rows = [];
@@ -51,8 +55,8 @@ const newEntries = rows.map((r) => {
   return {
     id, playItemId: '__general__', category,
     brand: r.brand.trim(), name: r.item_name.trim(),
-    price: Number(r.price_usd), imageUrl: '', sourceUrl: r.url.trim(),
-    provider: 'ltk', verifiedAt: '2026-09-03', childMode: 'view-only',
+    price: Number(r.price_usd), imageUrl: imageOverrides[id] ?? '', sourceUrl: r.url.trim(),
+    provider: 'ltk', verifiedAt: imageOverrides[id] ? '2026-09-04' : '2026-09-03', childMode: 'view-only',
     listId: r.list_id.trim(), listName: r.list_name.trim(),
   };
 });
