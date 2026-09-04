@@ -247,6 +247,519 @@
           "tags": [
             "destination:all"
           ]
+        },
+        {
+          "id": "little-jetter-logo-tee",
+          "name": "Little Jetter logo tee",
+          "description": "Little Jetter logo tee",
+          "imageUrl": "/little-jetter/catalog/tokyo/little-jetter-logo-tee/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "navy-stripe-heart-tee",
+          "name": "Navy stripe heart tee",
+          "description": "Navy stripe heart tee",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-stripe-heart-tee/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "cherry-tee",
+          "name": "Cherry tee",
+          "description": "Cherry tee",
+          "imageUrl": "/little-jetter/catalog/tokyo/cherry-tee/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "globe-tee",
+          "name": "Globe tee",
+          "description": "Globe tee",
+          "imageUrl": "/little-jetter/catalog/tokyo/globe-tee/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "rainbow-tee",
+          "name": "Rainbow tee",
+          "description": "Rainbow tee",
+          "imageUrl": "/little-jetter/catalog/tokyo/rainbow-tee/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "floral-puff-sleeve-top",
+          "name": "Floral puff-sleeve top",
+          "description": "Floral puff-sleeve top",
+          "imageUrl": "/little-jetter/catalog/tokyo/floral-puff-sleeve-top/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "blue-daisy-dress",
+          "name": "Blue daisy dress",
+          "description": "Blue daisy dress",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-daisy-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "pink-bow-dress",
+          "name": "Pink bow dress",
+          "description": "Pink bow dress",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-bow-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "yellow-daisy-dress",
+          "name": "Yellow daisy dress",
+          "description": "Yellow daisy dress",
+          "imageUrl": "/little-jetter/catalog/tokyo/yellow-daisy-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "denim-heart-overalls-dress",
+          "name": "Denim heart overalls dress",
+          "description": "Denim heart overalls dress",
+          "imageUrl": "/little-jetter/catalog/tokyo/denim-heart-overalls-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "olive-belted-romper",
+          "name": "Olive belted romper",
+          "description": "Olive belted romper",
+          "imageUrl": "/little-jetter/catalog/tokyo/olive-belted-romper/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "pink-button-romper",
+          "name": "Pink button romper",
+          "description": "Pink button romper",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-button-romper/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "cream-button-romper",
+          "name": "Cream button romper",
+          "description": "Cream button romper",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-button-romper/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "blue-stripe-dress",
+          "name": "Blue stripe dress",
+          "description": "Blue stripe dress",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-stripe-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "pink-floral-puff-dress",
+          "name": "Pink floral puff dress",
+          "description": "Pink floral puff dress",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-floral-puff-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "lavender-tiered-dress",
+          "name": "Lavender tiered dress",
+          "description": "Lavender tiered dress",
+          "imageUrl": "/little-jetter/catalog/tokyo/lavender-tiered-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "black-pinafore-dress",
+          "name": "Black pinafore dress",
+          "description": "Black pinafore dress",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-pinafore-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "red-gingham-dress",
+          "name": "Red gingham dress",
+          "description": "Red gingham dress",
+          "imageUrl": "/little-jetter/catalog/tokyo/red-gingham-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "cream-bow-blouse",
+          "name": "Cream bow blouse",
+          "description": "Cream bow blouse",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-bow-blouse/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "cherry-pajama-set",
+          "name": "Cherry pajama set",
+          "description": "Cherry pajama set",
+          "imageUrl": "/little-jetter/catalog/tokyo/cherry-pajama-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "blue-cloud-pajama-set",
+          "name": "Blue cloud pajama set",
+          "description": "Blue cloud pajama set",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-cloud-pajama-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "teddy-bear-set",
+          "name": "Teddy bear set",
+          "description": "Teddy bear set",
+          "imageUrl": "/little-jetter/catalog/tokyo/teddy-bear-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "good-places-set",
+          "name": "\"Good Places\" set",
+          "description": "\"Good Places\" set",
+          "imageUrl": "/little-jetter/catalog/tokyo/good-places-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "daisy-purple-set",
+          "name": "Daisy purple set",
+          "description": "Daisy purple set",
+          "imageUrl": "/little-jetter/catalog/tokyo/daisy-purple-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "travel-cream-set",
+          "name": "\"Travel\" cream set",
+          "description": "\"Travel\" cream set",
+          "imageUrl": "/little-jetter/catalog/tokyo/travel-cream-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "sage-tank-set",
+          "name": "Sage tank set",
+          "description": "Sage tank set",
+          "imageUrl": "/little-jetter/catalog/tokyo/sage-tank-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "blue-airplane-set",
+          "name": "Blue airplane set",
+          "description": "Blue airplane set",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-airplane-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "car-print-set",
+          "name": "Car-print set",
+          "description": "Car-print set",
+          "imageUrl": "/little-jetter/catalog/tokyo/car-print-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "moon-star-set",
+          "name": "Moon and star set",
+          "description": "Moon and star set",
+          "imageUrl": "/little-jetter/catalog/tokyo/moon-star-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "heart-print-set",
+          "name": "Heart-print set",
+          "description": "Heart-print set",
+          "imageUrl": "/little-jetter/catalog/tokyo/heart-print-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "turtle-print-set",
+          "name": "Turtle-print set",
+          "description": "Turtle-print set",
+          "imageUrl": "/little-jetter/catalog/tokyo/turtle-print-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "navy-stripe-swimsuit",
+          "name": "Navy stripe swimsuit",
+          "description": "Navy stripe swimsuit",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-stripe-swimsuit/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "pink-floral-swim-onesie",
+          "name": "Pink floral swim onesie",
+          "description": "Pink floral swim onesie",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-floral-swim-onesie/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "pink-ruffle-swimsuit",
+          "name": "Pink ruffle swimsuit",
+          "description": "Pink ruffle swimsuit",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-ruffle-swimsuit/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "navy-airplane-romper",
+          "name": "Navy airplane romper",
+          "description": "Navy airplane romper",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-airplane-romper/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "pink-daisy-onesie",
+          "name": "Pink daisy onesie",
+          "description": "Pink daisy onesie",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-daisy-onesie/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "sage-onesie",
+          "name": "Sage onesie",
+          "description": "Sage onesie",
+          "imageUrl": "/little-jetter/catalog/tokyo/sage-onesie/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "blue-gingham-swimsuit",
+          "name": "Blue gingham swimsuit",
+          "description": "Blue gingham swimsuit",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-gingham-swimsuit/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "pink-floral-swim-wrap",
+          "name": "Pink floral swim wrap",
+          "description": "Pink floral swim wrap",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-floral-swim-wrap/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
+        },
+        {
+          "id": "green-floral-swim-set",
+          "name": "Green floral swim set",
+          "description": "Green floral swim set",
+          "imageUrl": "/little-jetter/catalog/tokyo/green-floral-swim-set/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:dress"
+          ]
         }
       ],
       "bottoms": [
@@ -397,6 +910,222 @@
           "tags": [
             "destination:all"
           ]
+        },
+        {
+          "id": "denim-heart-capris",
+          "name": "Denim heart capris",
+          "description": "Denim heart capris",
+          "imageUrl": "/little-jetter/catalog/tokyo/denim-heart-capris/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-cargo-shorts",
+          "name": "Pink cargo shorts",
+          "description": "Pink cargo shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-cargo-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "olive-cargo-shorts",
+          "name": "Olive cargo shorts",
+          "description": "Olive cargo shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/olive-cargo-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "khaki-cargo-shorts",
+          "name": "Khaki cargo shorts",
+          "description": "Khaki cargo shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/khaki-cargo-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "denim-daisy-shorts",
+          "name": "Denim daisy shorts",
+          "description": "Denim daisy shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/denim-daisy-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "cream-drawstring-shorts",
+          "name": "Cream drawstring shorts",
+          "description": "Cream drawstring shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-drawstring-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-tiered-skirt",
+          "name": "Pink tiered skirt",
+          "description": "Pink tiered skirt",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-tiered-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "blue-pleated-skirt",
+          "name": "Blue pleated skirt",
+          "description": "Blue pleated skirt",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-pleated-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "khaki-pleated-skirt",
+          "name": "Khaki pleated skirt",
+          "description": "Khaki pleated skirt",
+          "imageUrl": "/little-jetter/catalog/tokyo/khaki-pleated-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "green-plaid-skirt",
+          "name": "Green plaid skirt",
+          "description": "Green plaid skirt",
+          "imageUrl": "/little-jetter/catalog/tokyo/green-plaid-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "black-tiered-skirt",
+          "name": "Black tiered skirt",
+          "description": "Black tiered skirt",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-tiered-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "cream-bow-shorts",
+          "name": "Cream bow shorts",
+          "description": "Cream bow shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-bow-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-sport-shorts",
+          "name": "Pink sport shorts",
+          "description": "Pink sport shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-sport-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "navy-swim-shorts",
+          "name": "Navy swim shorts",
+          "description": "Navy swim shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-swim-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "green-floral-swim-shorts",
+          "name": "Green floral swim shorts",
+          "description": "Green floral swim shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/green-floral-swim-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "yellow-daisy-swim-shorts",
+          "name": "Yellow daisy swim shorts",
+          "description": "Yellow daisy swim shorts",
+          "imageUrl": "/little-jetter/catalog/tokyo/yellow-daisy-swim-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-floral-swim-briefs",
+          "name": "Pink floral swim briefs",
+          "description": "Pink floral swim briefs",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-floral-swim-briefs/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-floral-swim-bottoms",
+          "name": "Pink floral swim bottoms",
+          "description": "Pink floral swim bottoms",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-floral-swim-bottoms/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
         }
       ],
       "layers": [
@@ -532,6 +1261,342 @@
             "destination:san-jose",
             "destination:barcelona",
             "illustrated"
+          ]
+        },
+        {
+          "id": "denim-jacket-classic",
+          "name": "Classic denim jacket",
+          "description": "Classic denim jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/denim-jacket-classic/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-bow-cardigan",
+          "name": "Pink bow cardigan",
+          "description": "Pink bow cardigan",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-bow-cardigan/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "cream-cable-cardigan",
+          "name": "Cream cable cardigan",
+          "description": "Cream cable cardigan",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-cable-cardigan/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "blue-airplane-hoodie",
+          "name": "Blue airplane hoodie",
+          "description": "Blue airplane hoodie",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-airplane-hoodie/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "olive-heart-jacket",
+          "name": "Olive heart jacket",
+          "description": "Olive heart jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/olive-heart-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-wrap-coat",
+          "name": "Pink wrap coat",
+          "description": "Pink wrap coat",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-wrap-coat/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "explore-hoodie",
+          "name": "Explore hoodie",
+          "description": "Explore hoodie",
+          "imageUrl": "/little-jetter/catalog/tokyo/explore-hoodie/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "jet-set-hoodie",
+          "name": "Jet Set hoodie",
+          "description": "Jet Set hoodie",
+          "imageUrl": "/little-jetter/catalog/tokyo/jet-set-hoodie/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-heart-hoodie",
+          "name": "Pink heart hoodie",
+          "description": "Pink heart hoodie",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-heart-hoodie/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "colorblock-jacket",
+          "name": "Colorblock jacket",
+          "description": "Colorblock jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/colorblock-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "brown-sherpa-jacket",
+          "name": "Brown sherpa jacket",
+          "description": "Brown sherpa jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/brown-sherpa-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "denim-sherpa-collar-jacket",
+          "name": "Denim sherpa-collar jacket",
+          "description": "Denim sherpa-collar jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/denim-sherpa-collar-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "black-moto-jacket",
+          "name": "Black moto jacket",
+          "description": "Black moto jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-moto-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "cream-cherry-cardigan",
+          "name": "Cream cherry cardigan",
+          "description": "Cream cherry cardigan",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-cherry-cardigan/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "red-heart-cardigan",
+          "name": "Red heart cardigan",
+          "description": "Red heart cardigan",
+          "imageUrl": "/little-jetter/catalog/tokyo/red-heart-cardigan/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "navy-stripe-cardigan",
+          "name": "Navy stripe cardigan",
+          "description": "Navy stripe cardigan",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-stripe-cardigan/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "yellow-puffer-jacket",
+          "name": "Yellow puffer jacket",
+          "description": "Yellow puffer jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/yellow-puffer-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-puffer-jacket",
+          "name": "Pink puffer jacket",
+          "description": "Pink puffer jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-puffer-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "blue-cloud-puffer-jacket",
+          "name": "Blue cloud puffer jacket",
+          "description": "Blue cloud puffer jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-cloud-puffer-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "olive-puffer-jacket",
+          "name": "Olive puffer jacket",
+          "description": "Olive puffer jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/olive-puffer-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "cream-sherpa-hood-puffer",
+          "name": "Cream sherpa-hood puffer",
+          "description": "Cream sherpa-hood puffer",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-sherpa-hood-puffer/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "purple-heart-puffer-jacket",
+          "name": "Purple heart puffer jacket",
+          "description": "Purple heart puffer jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-heart-puffer-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "navy-puffer-jacket",
+          "name": "Navy puffer jacket",
+          "description": "Navy puffer jacket",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-puffer-jacket/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "brown-bear-hood-puffer",
+          "name": "Brown bear-hood puffer",
+          "description": "Brown bear-hood puffer",
+          "imageUrl": "/little-jetter/catalog/tokyo/brown-bear-hood-puffer/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "panda-hood-puffer",
+          "name": "Panda-hood puffer",
+          "description": "Panda-hood puffer",
+          "imageUrl": "/little-jetter/catalog/tokyo/panda-hood-puffer/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "red-fox-hood-puffer",
+          "name": "Red fox-hood puffer",
+          "description": "Red fox-hood puffer",
+          "imageUrl": "/little-jetter/catalog/tokyo/red-fox-hood-puffer/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "olive-dino-hood-puffer",
+          "name": "Olive dino-hood puffer",
+          "description": "Olive dino-hood puffer",
+          "imageUrl": "/little-jetter/catalog/tokyo/olive-dino-hood-puffer/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-bear-hood-puffer",
+          "name": "Pink bear-hood puffer",
+          "description": "Pink bear-hood puffer",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-bear-hood-puffer/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
           ]
         }
       ],
@@ -786,6 +1851,162 @@
           "tags": [
             "destination:all"
           ]
+        },
+        {
+          "id": "pink-daisy-rain-boots",
+          "name": "Pink daisy rain boots",
+          "description": "Pink daisy rain boots",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-daisy-rain-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "white-heart-sneakers",
+          "name": "White heart sneakers",
+          "description": "White heart sneakers",
+          "imageUrl": "/little-jetter/catalog/tokyo/white-heart-sneakers/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "yellow-daisy-rain-boots",
+          "name": "Yellow daisy rain boots",
+          "description": "Yellow daisy rain boots",
+          "imageUrl": "/little-jetter/catalog/tokyo/yellow-daisy-rain-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-sneakers",
+          "name": "Pink sneakers",
+          "description": "Pink sneakers",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-sneakers/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "navy-sneakers",
+          "name": "Navy sneakers",
+          "description": "Navy sneakers",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-sneakers/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "brown-strap-sandals",
+          "name": "Brown strap sandals",
+          "description": "Brown strap sandals",
+          "imageUrl": "/little-jetter/catalog/tokyo/brown-strap-sandals/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-mary-janes-clip",
+          "name": "Pink mary janes",
+          "description": "Pink mary janes",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-mary-janes-clip/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "black-mary-janes-clip",
+          "name": "Black mary janes",
+          "description": "Black mary janes",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-mary-janes-clip/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "brown-buckle-sandals",
+          "name": "Brown buckle sandals",
+          "description": "Brown buckle sandals",
+          "imageUrl": "/little-jetter/catalog/tokyo/brown-buckle-sandals/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "green-sneakers",
+          "name": "Green sneakers",
+          "description": "Green sneakers",
+          "imageUrl": "/little-jetter/catalog/tokyo/green-sneakers/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "red-hiking-boots",
+          "name": "Red hiking boots",
+          "description": "Red hiking boots",
+          "imageUrl": "/little-jetter/catalog/tokyo/red-hiking-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "tan-hiking-boots",
+          "name": "Tan hiking boots",
+          "description": "Tan hiking boots",
+          "imageUrl": "/little-jetter/catalog/tokyo/tan-hiking-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "blue-strap-sandals",
+          "name": "Blue strap sandals",
+          "description": "Blue strap sandals",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-strap-sandals/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
         }
       ],
       "accessories": [
@@ -978,6 +2199,384 @@
           "slot": "accessory",
           "tags": [
             "destination:all"
+          ]
+        },
+        {
+          "id": "straw-sun-hat-clip",
+          "name": "Straw sun hat (clip art)",
+          "description": "Straw sun hat (clip art)",
+          "imageUrl": "/little-jetter/catalog/tokyo/straw-sun-hat-clip/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "pink-sun-hat",
+          "name": "Pink sun hat",
+          "description": "Pink sun hat",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-sun-hat/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "cream-daisy-bucket-hat",
+          "name": "Cream daisy bucket hat",
+          "description": "Cream daisy bucket hat",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-daisy-bucket-hat/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "navy-airplane-cap",
+          "name": "Navy airplane cap",
+          "description": "Navy airplane cap",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-airplane-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "green-explore-cap",
+          "name": "Green explore cap",
+          "description": "Green explore cap",
+          "imageUrl": "/little-jetter/catalog/tokyo/green-explore-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "pink-heart-cap",
+          "name": "Pink heart cap",
+          "description": "Pink heart cap",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-heart-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "navy-pompom-beanie",
+          "name": "Navy pompom beanie",
+          "description": "Navy pompom beanie",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-pompom-beanie/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "cream-pompom-beanie",
+          "name": "Cream pompom beanie",
+          "description": "Cream pompom beanie",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-pompom-beanie/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "red-pompom-beanie",
+          "name": "Red pompom beanie",
+          "description": "Red pompom beanie",
+          "imageUrl": "/little-jetter/catalog/tokyo/red-pompom-beanie/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "olive-pompom-beanie",
+          "name": "Olive pompom beanie",
+          "description": "Olive pompom beanie",
+          "imageUrl": "/little-jetter/catalog/tokyo/olive-pompom-beanie/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "olive-trapper-hat",
+          "name": "Olive trapper hat",
+          "description": "Olive trapper hat",
+          "imageUrl": "/little-jetter/catalog/tokyo/olive-trapper-hat/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "cream-trapper-hat",
+          "name": "Cream trapper hat",
+          "description": "Cream trapper hat",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-trapper-hat/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "blue-daisy-bucket-hat",
+          "name": "Blue daisy bucket hat",
+          "description": "Blue daisy bucket hat",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-daisy-bucket-hat/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "pink-heart-sunglasses",
+          "name": "Pink heart sunglasses",
+          "description": "Pink heart sunglasses",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-heart-sunglasses/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "pink-heart-sunglasses-2",
+          "name": "Pink heart sunglasses (rose)",
+          "description": "Pink heart sunglasses (rose)",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-heart-sunglasses-2/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "round-brown-sunglasses",
+          "name": "Round brown sunglasses",
+          "description": "Round brown sunglasses",
+          "imageUrl": "/little-jetter/catalog/tokyo/round-brown-sunglasses/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "round-brown-sunglasses-2",
+          "name": "Round brown sunglasses (tan)",
+          "description": "Round brown sunglasses (tan)",
+          "imageUrl": "/little-jetter/catalog/tokyo/round-brown-sunglasses-2/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "flower-red-sunglasses",
+          "name": "Flower red sunglasses",
+          "description": "Flower red sunglasses",
+          "imageUrl": "/little-jetter/catalog/tokyo/flower-red-sunglasses/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "flower-red-sunglasses-2",
+          "name": "Flower red sunglasses (pink)",
+          "description": "Flower red sunglasses (pink)",
+          "imageUrl": "/little-jetter/catalog/tokyo/flower-red-sunglasses-2/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "cream-bow-headband",
+          "name": "Cream bow headband",
+          "description": "Cream bow headband",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-bow-headband/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "pink-hair-bow",
+          "name": "Pink hair bow",
+          "description": "Pink hair bow",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-hair-bow/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "blue-scrunchie",
+          "name": "Blue scrunchie",
+          "description": "Blue scrunchie",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-scrunchie/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "green-scrunchie",
+          "name": "Green scrunchie",
+          "description": "Green scrunchie",
+          "imageUrl": "/little-jetter/catalog/tokyo/green-scrunchie/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "floral-headscarf",
+          "name": "Floral headscarf",
+          "description": "Floral headscarf",
+          "imageUrl": "/little-jetter/catalog/tokyo/floral-headscarf/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "pink-backpack",
+          "name": "Pink backpack",
+          "description": "Pink backpack",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-backpack/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "green-backpack",
+          "name": "Green backpack",
+          "description": "Green backpack",
+          "imageUrl": "/little-jetter/catalog/tokyo/green-backpack/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "little-jetter-tote-bag",
+          "name": "Little Jetter tote bag",
+          "description": "Little Jetter tote bag",
+          "imageUrl": "/little-jetter/catalog/tokyo/little-jetter-tote-bag/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "brown-satchel-bag",
+          "name": "Brown satchel bag",
+          "description": "Brown satchel bag",
+          "imageUrl": "/little-jetter/catalog/tokyo/brown-satchel-bag/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "yellow-fanny-pack",
+          "name": "Yellow fanny pack",
+          "description": "Yellow fanny pack",
+          "imageUrl": "/little-jetter/catalog/tokyo/yellow-fanny-pack/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
+          ]
+        },
+        {
+          "id": "blue-suitcase",
+          "name": "Blue suitcase",
+          "description": "Blue suitcase",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-suitcase/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "clipart"
           ]
         }
       ],

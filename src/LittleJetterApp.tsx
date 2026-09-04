@@ -1104,11 +1104,17 @@ export function LittleJetterApp() {
   const [journalChoice, setJournalChoice] = useState('');
   const [openClosetDrawer, setOpenClosetDrawer] = useState<string>('tops');
   const [activeCategorySheet, setActiveCategorySheet] = useState<ClothingGroup | null>(null);
+  const [styleFilter, setStyleFilter] = useState<'dress' | 'hat' | null>(null);
   const [activeAvatarSheet, setActiveAvatarSheet] = useState<AvatarFeature | null>(null);
   const selected = useMemo(() => destinations.find((item) => item.id === selectedId) ?? destinations[0], [selectedId]);
   const visibleDestinations = destinations.filter((item) => (regionFilter === 'All regions' || item.region === regionFilter) && (destinationTypeFilter === 'All types' || destinationTypes[item.id] === destinationTypeFilter));
   const availableWardrobe = (group: Exclude<PickGroup, 'buddies'>) => wardrobe[group]
     .filter((item) => item.tags.includes('destination:all') || item.tags.includes(`destination:${selected.id}`))
+    .filter((item) => {
+      if (group === 'tops') return styleFilter === 'dress' ? item.tags.includes('style:dress') : !item.tags.includes('style:dress');
+      if (group === 'accessories') return styleFilter === 'hat' ? item.tags.includes('style:hat') : !item.tags.includes('style:hat');
+      return true;
+    })
     .map((item) => catalogItemFor(selected.id, group, item.id) ?? item);
 
   useEffect(() => {
@@ -1223,9 +1229,10 @@ export function LittleJetterApp() {
     document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setActiveAvatarSheet(feature);
   }
-  function openCategorySheet(group: ClothingGroup) {
+  function openCategorySheet(group: ClothingGroup, filter: 'dress' | 'hat' | null = null) {
     document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setActiveCategorySheet(group);
+    setStyleFilter(filter);
   }
 
   function dropOnDoll(event: React.DragEvent<HTMLDivElement>) {
@@ -1497,10 +1504,11 @@ export function LittleJetterApp() {
         {activeCategorySheet && (() => {
           const group = activeCategorySheet;
           const variants = colorVariants(group);
-          return <div className="little-category-backdrop" role="dialog" aria-modal="true" aria-labelledby="category-sheet-title" onClick={() => setActiveCategorySheet(null)}>
+          const sheetTitle = styleFilter === 'dress' ? '👗 Dress' : styleFilter === 'hat' ? '🧢 Hat' : `${CATEGORY_BUTTON[group].icon} ${CATEGORY_BUTTON[group].label}`;
+          return <div className="little-category-backdrop" role="dialog" aria-modal="true" aria-labelledby="category-sheet-title" onClick={() => { setActiveCategorySheet(null); setStyleFilter(null); }}>
             <div className="little-category-sheet" onClick={(event) => event.stopPropagation()}>
               <div className="little-category-sheet-handle" aria-hidden="true" />
-              <div className="little-category-sheet-head"><strong id="category-sheet-title">{CATEGORY_BUTTON[group].icon} {CATEGORY_BUTTON[group].label}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => setActiveCategorySheet(null)}>×</button></div>
+              <div className="little-category-sheet-head"><strong id="category-sheet-title">{sheetTitle}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => { setActiveCategorySheet(null); setStyleFilter(null); }}>×</button></div>
               <div className="little-item-row">
                 {availableWardrobe(group).map((item) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} aria-pressed={picks[group] === item.id} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview destinationId={selected.id} group={group} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} />{!item.tags.includes('illustrated') && <em className="little-sketch-badge">Sketch</em>}<strong>{item.name}</strong><small>{item.description}</small></button>)}
               </div>
@@ -1556,7 +1564,9 @@ export function LittleJetterApp() {
                       </div>
                       <div className="little-rail-divider" aria-hidden="true" />
                       <div className="little-category-rail" aria-label="Clothing categories">
-                        {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group} onClick={() => openCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small></button>)}
+                        {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group && !styleFilter ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group && !styleFilter} onClick={() => openCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small></button>)}
+                        <button type="button" className={`little-category-rail-btn ${styleFilter === 'dress' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'dress'} onClick={() => openCategorySheet('tops', 'dress')}><span aria-hidden="true">👗</span><small>Dress</small></button>
+                        <button type="button" className={`little-category-rail-btn ${styleFilter === 'hat' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'hat'} onClick={() => openCategorySheet('accessories', 'hat')}><span aria-hidden="true">🧢</span><small>Hat</small></button>
                       </div>
                     </div>
                   </div>
