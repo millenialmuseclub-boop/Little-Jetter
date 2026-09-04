@@ -9,8 +9,7 @@ import sharp from 'sharp';
 import path from 'node:path';
 
 const SHOES = [
-  'black-combat-boots', 'black-lace-boots', 'boots', 'brown-hiking-boots', 'cream-sneakers',
-  'navy-sandals', 'pink-boots', 'purple-sandals', 'sneakers', 'yellow-boots',
+  'black-mary-janes', 'pink-flats', 'purple-converse', 'red-converse',
 ];
 
 async function run() {

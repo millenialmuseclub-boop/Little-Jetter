@@ -10,8 +10,7 @@ const GROUND_Y = 810;
 const TARGET_WIDTH = 145;
 
 const SHOES = [
-  'black-combat-boots', 'black-lace-boots', 'boots', 'brown-hiking-boots', 'cream-sneakers',
-  'navy-sandals', 'pink-boots', 'purple-sandals', 'sneakers', 'yellow-boots',
+  'black-mary-janes', 'pink-flats', 'purple-converse', 'red-converse',
 ];
 
 async function bbox(input) {
