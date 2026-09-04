@@ -1102,7 +1102,7 @@ export function LittleJetterApp() {
   const [destinationTypeFilter, setDestinationTypeFilter] = useState('All types');
   const [started, setStarted] = useState(false);
   const [gameStep, setGameStep] = useState(1);
-  const [picks, setPicks] = useState<Picks>({ tops: 'stripe', bottoms: 'travel-jeans', layers: 'none', shoes: 'sneakers', accessories: 'crossbody', buddies: 'bunny' });
+  const [picks, setPicks] = useState<Picks>({ tops: 'none', bottoms: 'none', layers: 'none', shoes: 'none', accessories: 'none', buddies: 'bunny' });
   const [garmentColors, setGarmentColors] = useState<GarmentColors>({});
   const [garmentScale, setGarmentScale] = useState<GarmentScales>({});
   const [garmentOffset, setGarmentOffset] = useState<Record<string, { x: number; y: number }>>({});
@@ -1141,6 +1141,7 @@ export function LittleJetterApp() {
         if (styleFilter === 'dress' || styleFilter === 'pajama' || styleFilter === 'swim') return item.tags.includes(`style:${styleFilter}`);
         return !item.tags.includes('style:dress') && !item.tags.includes('style:pajama') && !item.tags.includes('style:swim');
       }
+      if (group === 'bottoms') return styleFilter === 'swim' ? item.tags.includes('style:swim') : !item.tags.includes('style:swim');
       if (group === 'accessories') return styleFilter === 'hat' ? item.tags.includes('style:hat') : !item.tags.includes('style:hat');
       return true;
     })
@@ -1189,7 +1190,7 @@ export function LittleJetterApp() {
 
   function selectDestination(destination: Destination) {
     setSelectedId(destination.id);
-    setPicks((current) => ({ ...current, tops: 'stripe', bottoms: 'travel-jeans', layers: destination.needsLayer ? 'denim' : 'none', shoes: destination.sandalsFriendly ? 'sandals' : 'sneakers', accessories: 'travel-cap' }));
+    setPicks((current) => ({ ...current, tops: 'none', bottoms: 'none', layers: 'none', shoes: 'none', accessories: 'none' }));
     setStarted(false);
     setGameStep(1);
     setPacked([]);
@@ -1369,7 +1370,7 @@ export function LittleJetterApp() {
   }
 
   function clearLook() {
-    setPicks((current) => ({ ...current, tops: 'stripe', bottoms: 'travel-jeans', layers: 'none', shoes: 'sneakers', accessories: 'crossbody' }));
+    setPicks((current) => ({ ...current, tops: 'none', bottoms: 'none', layers: 'none', shoes: 'none', accessories: 'none' }));
     setGarmentColors({});
     setGarmentScale({});
     setGarmentOffset({});
@@ -1675,12 +1676,19 @@ export function LittleJetterApp() {
           const group = activeCategorySheet;
           const variants = colorVariants(group);
           const sheetTitle = styleFilter === 'dress' ? '👗 Dress' : styleFilter === 'pajama' ? '🌙 Pajamas' : styleFilter === 'swim' ? '🩱 Swim' : styleFilter === 'hat' ? '🧢 Hat' : `${CATEGORY_BUTTON[group].icon} ${CATEGORY_BUTTON[group].label}`;
+          // The Swim view spans two equip slots (swimsuits/onesies live in
+          // tops, swim trunks/briefs live in bottoms) so it merges both
+          // groups' lists instead of showing just the one the rail button
+          // happened to open.
+          const sheetItems: Array<{ group: ClothingGroup; item: ReturnType<typeof availableWardrobe>[number] }> = styleFilter === 'swim'
+            ? [...availableWardrobe('tops').map((item) => ({ group: 'tops' as ClothingGroup, item })), ...availableWardrobe('bottoms').map((item) => ({ group: 'bottoms' as ClothingGroup, item }))]
+            : availableWardrobe(group).map((item) => ({ group, item }));
           return <div className="little-category-backdrop" role="dialog" aria-modal="true" aria-labelledby="category-sheet-title" onClick={() => { setActiveCategorySheet(null); setStyleFilter(null); }}>
             <div className="little-category-sheet" onClick={(event) => event.stopPropagation()}>
               <div className="little-category-sheet-handle" aria-hidden="true" />
               <div className="little-category-sheet-head"><strong id="category-sheet-title">{sheetTitle}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => { setActiveCategorySheet(null); setStyleFilter(null); }}>×</button></div>
               <div className="little-item-row">
-                {availableWardrobe(group).map((item) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} aria-pressed={picks[group] === item.id} onClick={() => choose(group, item.id)} key={item.id}><GarmentPreview destinationId={selected.id} group={group} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} />{!item.tags.includes('illustrated') && <em className="little-sketch-badge">Sketch</em>}<strong>{item.name}</strong><small>{item.description}</small></button>)}
+                {sheetItems.map(({ group: itemGroup, item }) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} aria-pressed={picks[itemGroup] === item.id} onClick={() => choose(itemGroup, item.id)} key={`${itemGroup}-${item.id}`}><GarmentPreview destinationId={selected.id} group={itemGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} />{!item.tags.includes('illustrated') && <em className="little-sketch-badge">Sketch</em>}<strong>{item.name}</strong><small>{item.description}</small></button>)}
               </div>
               {variants.length > 1 && <div className="little-color-swatches" data-color-slot={group} aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{variants.map((variant) => <button type="button" aria-label={`Use ${variant.id} for ${chosen(group).name}`} aria-pressed={(garmentColors[picks[group]] ?? variants[0].swatch) === variant.swatch} style={{ '--swatch': variant.swatch } as React.CSSProperties} onClick={() => recolor(group, variant.swatch)} key={variant.id} />)}</div>}
             </div>
