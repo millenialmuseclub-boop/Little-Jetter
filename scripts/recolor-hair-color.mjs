@@ -14,14 +14,20 @@ const HEAD_DIR = 'public/little-jetter/catalog/tokyo/head';
 const HAIRSTYLES = ['curls', 'short', 'bob', 'coils'];
 
 // Same iris centers as recolor-eye-color.mjs — excluded from the hair mask
-// so recoloring hair never also tints the eyes.
+// so recoloring hair never also tints the eyes. +14px on Y vs. the original
+// measurement to match scripts/shift-head-down.mjs (see recolor-eye-color.mjs
+// for why) — this was left un-adjusted, which is why light hair colors were
+// bleeding into the eyebrow/iris area unprotected on some heads.
 const EYE_CENTERS = {
-  curls: [[271, 250], [325, 245]],
-  short: [[261, 244], [341, 242]],
-  bob: [[269, 264], [334, 262]],
-  coils: [[268, 257], [342, 252]],
+  curls: [[271, 264], [325, 259]],
+  short: [[261, 258], [341, 256]],
+  bob: [[269, 278], [334, 276]],
+  coils: [[268, 271], [342, 266]],
 };
 const EYE_EXCLUDE_RADIUS = 16;
+// Nose bridge through chin/lip shadow, consistent across hairstyles (only
+// hair shape differs between styles, not underlying face geometry).
+const FACE_EXCLUDE_RECT = { left: 255, right: 375, top: 275, bottom: 345 };
 const SKINS = ['porcelain', 'peach', 'golden', 'caramel', 'brown', 'deep'];
 // golden already has hand-AI-generated (higher quality) bakes for these 4 —
 // keep those files untouched rather than overwrite with a local recolor.
@@ -130,6 +136,17 @@ async function processFile(filePath, ceiling, hairstyle, skipIds = new Set()) {
         if (x < 0 || x >= width || y < 0 || y >= height) continue;
         mask[y * width + x] = 0;
       }
+    }
+  }
+  // Nose/mouth/chin shadow pixels are dark and warm enough on deeper skins
+  // to pass the same threshold as hair (that ceiling has to sit low to
+  // separate hair from skin at all on those tones) — recoloring them to a
+  // light target produced visible white speckling around the mouth. Hair
+  // never legitimately occupies this box, so it's always safe to exclude.
+  for (let y = FACE_EXCLUDE_RECT.top; y <= FACE_EXCLUDE_RECT.bottom; y++) {
+    for (let x = FACE_EXCLUDE_RECT.left; x <= FACE_EXCLUDE_RECT.right; x++) {
+      if (x < 0 || x >= width || y < 0 || y >= height) continue;
+      mask[y * width + x] = 0;
     }
   }
 

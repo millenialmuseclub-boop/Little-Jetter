@@ -27,11 +27,15 @@ const EYE_TARGETS = {
 // Measured per-hairstyle iris centers (average of dark-pixel clusters in the
 // golden variant of each style — head geometry is consistent across skin
 // tones within a style, since only color changed, not shape/position).
+// +14px on Y vs. the original measurement: scripts/shift-head-down.mjs
+// nudged every head asset down 14px afterward to fix a "floating head"
+// alignment bug, which silently desynced these coordinates from the actual
+// art (they landed on the eyebrows instead of the irises).
 const EYE_CENTERS = {
-  curls: [[271, 250], [325, 245]],
-  short: [[261, 244], [341, 242]],
-  bob: [[269, 264], [334, 262]],
-  coils: [[268, 257], [342, 252]],
+  curls: [[271, 264], [325, 259]],
+  short: [[261, 258], [341, 256]],
+  bob: [[269, 278], [334, 276]],
+  coils: [[268, 271], [342, 266]],
 };
 const EYE_RADIUS = 12;
 
@@ -111,9 +115,20 @@ async function processFile(filePath, hairstyle) {
   console.log('processed', base);
 }
 
+const STYLES = ['curls', 'short', 'bob', 'coils'];
+const SKINS = ['porcelain', 'peach', 'golden', 'caramel', 'brown', 'deep'];
+// Only the default "Medium Brown" hair bake (<style>-<skin>.png, no color
+// suffix) gets eye-color overlays — see painterlyHeadUrl in
+// src/LittleJetterApp.tsx for why. Without this filter, every hair-color
+// variant (17 of them per base) would also get the full eye-color set,
+// ~17x-ing an already-large asset directory for a subtle iris-only change.
+function isBaselineHeadFile(f) {
+  return STYLES.some((s) => SKINS.some((k) => f === `${s}-${k}.png`));
+}
+
 async function main() {
   const files = await fs.readdir(HEAD_DIR);
-  const pngs = files.filter((f) => f.endsWith('.png') && !f.includes('-eyes-'));
+  const pngs = files.filter((f) => f.endsWith('.png') && !f.includes('-eyes-') && isBaselineHeadFile(f));
   for (const f of pngs) {
     const hairstyle = f.split('-')[0];
     if (!EYE_CENTERS[hairstyle]) { console.log('skip (unknown hairstyle):', f); continue; }
