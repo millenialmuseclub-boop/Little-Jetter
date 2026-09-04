@@ -708,22 +708,22 @@ const HEAD_THUMB_FOCUS: Record<string, { x: number; y: number }> = {
 };
 const HEAD_THUMB_ZOOM = 0.42;
 
-// The default "Medium Brown" hair bake has an eye-recolored variant alongside
-// it (<name>-eyes-<id>.png) for every non-default eye color — the heads were
-// baked with a fixed dark-brown iris, so this is what makes the eye-color
-// picker actually do something once a painterly head is showing. Other hair
-// colors don't have eye overlays (see painterlyHeadUrl).
 function painterlyHeadUrl(character: Character): string | undefined {
   const bySkin = PAINTERLY_HEAD_ASSETS[character.hairStyle ?? 'curls']?.[character.skin];
   if (!bySkin) return undefined;
-  const base = bySkin[character.hair] ?? bySkin.brown;
-  if (!base || character.eyes === 'brown') return base;
-  // Eye-color overlays only exist for the default "Medium Brown" hair bake —
-  // generating them for all 17 other hair colors too would multiply an
-  // already-large asset set roughly 17x for a subtle iris-only difference,
-  // so a non-default hair color keeps natural brown eyes for now.
-  if (character.hair !== 'brown') return base;
-  return base.replace(/\.png$/, `-eyes-${character.eyes}.png`);
+  return bySkin[character.hair] ?? bySkin.brown;
+}
+
+// Eye color is applied as a live CSS tint (see the iris-tint layer in
+// CatalogDoll) instead of a baked-in image per hair color — a full
+// hairstyle x skin x hairColor x eyeColor image cross-product would run
+// into the thousands of files and blew past Vercel's per-day upload-count
+// limit the one time it was tried, and it only ever covered the default
+// hair color anyway (eye color silently did nothing for any other hair
+// pick). One small iris-shaped mask per hairstyle (scripts/generate-iris-
+// masks.mjs) works for every skin/hairColor combination instead.
+function irisMaskUrl(hairStyle: string | undefined): string {
+  return `/little-jetter/catalog/tokyo/head/${hairStyle ?? 'curls'}-iris-mask.png`;
 }
 
 // Painterly bare-limbs body base (arms/torso/legs), one per skin tone, replacing
@@ -764,7 +764,19 @@ function CatalogDoll({ destinationId, picks, character, garmentColors }: { desti
   return <div className="little-catalog-doll" data-template={catalog.template.id}>
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
     {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" key={`body-${character.skin}`} />}
-    {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}-${character.hair}-${character.eyes}`} />}
+    {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}-${character.hair}`} />}
+    {headUrl && character.eyes !== 'brown' && (
+      <div
+        className="little-illustrated-layer layer-iris-tint"
+        style={{
+          WebkitMaskImage: `url(${irisMaskUrl(character.hairStyle)})`,
+          maskImage: `url(${irisMaskUrl(character.hairStyle)})`,
+          backgroundColor: characterOptions.eyes.find((option) => option.id === character.eyes)?.color,
+        }}
+        aria-hidden="true"
+        key={`iris-${character.hairStyle}-${character.eyes}`}
+      />
+    )}
     {illustrated.map(({ group, item }) => item && (
       <img
         className={`little-illustrated-layer layer-${item.slot}${item.id === 'blue-backpack' && layerCoversTop ? ' is-floor-backpack' : ''}`}
