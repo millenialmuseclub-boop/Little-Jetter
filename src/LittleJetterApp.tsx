@@ -79,7 +79,7 @@ function clampGarmentScale(value: number) {
   return Math.min(MAX_GARMENT_SCALE, Math.max(MIN_GARMENT_SCALE, value));
 }
 type Character = { style: string; skin: string; hair: string; hairStyle: string; eyes: string };
-type SavedLook = { id: string; name: string; picks: Picks; character: Character; colors: GarmentColors; scales?: GarmentScales };
+type SavedLook = { id: string; name: string; picks: Picks; character: Character; colors: GarmentColors; scales?: GarmentScales; offsets?: Record<string, { x: number; y: number }> };
 
 const CLOSET_GROUPS: ClothingGroup[] = ['bottoms', 'tops', 'layers', 'shoes', 'accessories'];
 const CATEGORY_BUTTON: Record<ClothingGroup, { icon: string; label: string; spot: string }> = {
@@ -1018,7 +1018,9 @@ const PAINTERLY_BODY_ASSETS: Record<string, string> = {
   deep: '/little-jetter/catalog/tokyo/body/deep.png',
 };
 
-function CatalogDoll({ destinationId, picks, character, garmentColors, garmentScale = {} }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors; garmentScale?: GarmentScales }) {
+const LAYER_BASE_Z: Record<string, number> = { shoes: 2, bottom: 3, top: 4, outerwear: 5, face: 6, accessory: 7 };
+
+function CatalogDoll({ destinationId, picks, character, garmentColors, garmentScale = {}, garmentOffset = {}, garmentZBoost = {}, activeItemId }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors; garmentScale?: GarmentScales; garmentOffset?: Record<string, { x: number; y: number }>; garmentZBoost?: Record<string, number>; activeItemId?: string | null }) {
   const topItem = catalogItemFor(destinationId, 'tops', picks.tops);
   const coversBottom = topItem?.tags.includes('covers-bottom') ?? false;
   const layerItem = catalogItemFor(destinationId, 'layers', picks.layers);
@@ -1057,17 +1059,27 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
         key={`iris-${character.hairStyle}-${character.eyes}`}
       />
     )}
-    {illustrated.map(({ group, item }) => item && (
-      <img
-        className={`little-illustrated-layer layer-${item.slot}${item.id === 'blue-backpack' && layerCoversTop ? ' is-floor-backpack' : ''}`}
-        data-item-id={item.id}
-        src={catalogImageFor(item, garmentColors[item.id])}
-        alt=""
-        aria-hidden="true"
-        style={garmentScale[item.id] ? ({ '--resize-scale': garmentScale[item.id] } as React.CSSProperties) : undefined}
-        key={`${group}-${item.id}-${garmentColors[item.id] ?? 'default'}`}
-      />
-    ))}
+    {illustrated.map(({ group, item }) => {
+      if (!item) return null;
+      const offset = garmentOffset[item.id];
+      const zBoost = garmentZBoost[item.id];
+      const style: React.CSSProperties = {};
+      if (garmentScale[item.id]) (style as Record<string, unknown>)['--resize-scale'] = garmentScale[item.id];
+      if (offset) { (style as Record<string, unknown>)['--resize-x'] = `${offset.x}px`; (style as Record<string, unknown>)['--resize-y'] = `${offset.y}px`; }
+      if (zBoost) style.zIndex = (LAYER_BASE_Z[item.slot] ?? 1) + zBoost;
+      return (
+        <img
+          className={`little-illustrated-layer layer-${item.slot}${item.id === 'blue-backpack' && layerCoversTop ? ' is-floor-backpack' : ''}${item.id === activeItemId ? ' is-selected-for-resize' : ''}`}
+          data-item-id={item.id}
+          data-group={group}
+          src={catalogImageFor(item, garmentColors[item.id])}
+          alt=""
+          aria-hidden="true"
+          style={Object.keys(style).length ? style : undefined}
+          key={`${group}-${item.id}-${garmentColors[item.id] ?? 'default'}`}
+        />
+      );
+    })}
   </div>;
 }
 
@@ -1093,8 +1105,12 @@ export function LittleJetterApp() {
   const [picks, setPicks] = useState<Picks>({ tops: 'stripe', bottoms: 'travel-jeans', layers: 'none', shoes: 'sneakers', accessories: 'crossbody', buddies: 'bunny' });
   const [garmentColors, setGarmentColors] = useState<GarmentColors>({});
   const [garmentScale, setGarmentScale] = useState<GarmentScales>({});
+  const [garmentOffset, setGarmentOffset] = useState<Record<string, { x: number; y: number }>>({});
+  const [garmentZBoost, setGarmentZBoost] = useState<Record<string, number>>({});
   const [resizeTarget, setResizeTarget] = useState<string | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<ClothingGroup | null>(null);
   const pinchStartRef = useRef<{ distance: number; scale: number } | null>(null);
+  const dragStartRef = useRef<{ x: number; y: number; offset: { x: number; y: number }; moved: boolean } | null>(null);
   const [savedLooks, setSavedLooks] = useState<SavedLook[]>([]);
   const [passportStamps, setPassportStamps] = useState<string[]>([]);
   const [transitioning, setTransitioning] = useState(false);
@@ -1208,12 +1224,8 @@ export function LittleJetterApp() {
   function choose(group: PickGroup, id: string) {
     setPicks((current) => ({ ...current, [group]: id }));
     setResizeTarget(id !== 'none' ? id : null);
+    setSelectedGroup(id !== 'none' && group !== 'buddies' ? (group as ClothingGroup) : null);
     triggerCelebration(18);
-  }
-
-  function nudgeScale(id: string, delta: number) {
-    setGarmentScale((current) => ({ ...current, [id]: clampGarmentScale((current[id] ?? 1) + delta) }));
-    playHaptic(8);
   }
 
   function pinchDistance(touches: React.TouchList) {
@@ -1221,21 +1233,133 @@ export function LittleJetterApp() {
     return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   }
 
-  function handlePinchStart(event: React.TouchEvent<HTMLDivElement>) {
-    if (!resizeTarget || event.touches.length !== 2) return;
-    pinchStartRef.current = { distance: pinchDistance(event.touches), scale: garmentScale[resizeTarget] ?? 1 };
+  // One finger drags the just-equipped piece into place; two fingers pinch
+  // it bigger/smaller. Both act on `resizeTarget` (whatever was equipped
+  // most recently) so a child can fine-tune fit and placement themselves,
+  // no separate UI needed.
+  // Alpha-aware hit test: samples the actual pixel under the tap on each
+  // rendered garment layer (topmost z-index first) so tapping the doll
+  // selects whichever piece is visually there, not just whatever has the
+  // biggest invisible bounding box.
+  function sampleAlphaAtPoint(img: HTMLImageElement, clientX: number, clientY: number) {
+    if (!img.complete || !img.naturalWidth) return 0;
+    const rect = img.getBoundingClientRect();
+    const boxRatio = rect.width / rect.height;
+    const imgRatio = img.naturalWidth / img.naturalHeight;
+    let width: number, height: number, left: number, top: number;
+    if (imgRatio > boxRatio) { width = rect.width; height = rect.width / imgRatio; left = rect.left; top = rect.top + (rect.height - height) / 2; }
+    else { height = rect.height; width = rect.height * imgRatio; top = rect.top; left = rect.left + (rect.width - width) / 2; }
+    if (clientX < left || clientX > left + width || clientY < top || clientY > top + height) return 0;
+    const px = Math.floor(((clientX - left) / width) * img.naturalWidth);
+    const py = Math.floor(((clientY - top) / height) * img.naturalHeight);
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return 255;
+      ctx.drawImage(img, 0, 0);
+      return ctx.getImageData(px, py, 1, 1).data[3];
+    } catch { return 255; }
   }
 
-  function handlePinchMove(event: React.TouchEvent<HTMLDivElement>) {
-    if (!resizeTarget || event.touches.length !== 2 || !pinchStartRef.current) return;
-    if (event.cancelable) event.preventDefault();
-    const { distance: startDistance, scale: startScale } = pinchStartRef.current;
-    const nextScale = clampGarmentScale(startScale * (pinchDistance(event.touches) / startDistance));
-    setGarmentScale((current) => ({ ...current, [resizeTarget]: nextScale }));
+  function hitTestDoll(container: HTMLDivElement, clientX: number, clientY: number) {
+    const layers = Array.from(container.querySelectorAll<HTMLImageElement>('img.little-illustrated-layer[data-item-id]'));
+    layers.sort((a, b) => (parseFloat(getComputedStyle(b).zIndex) || 0) - (parseFloat(getComputedStyle(a).zIndex) || 0));
+    for (const img of layers) {
+      if (sampleAlphaAtPoint(img, clientX, clientY) > 20) return { id: img.dataset.itemId!, group: img.dataset.group as ClothingGroup };
+    }
+    return null;
   }
 
-  function handlePinchEnd() {
+  function selectFromTap(container: HTMLDivElement, clientX: number, clientY: number) {
+    const hit = hitTestDoll(container, clientX, clientY);
+    setResizeTarget(hit?.id ?? null);
+    setSelectedGroup(hit?.group ?? null);
+  }
+
+  function handleTouchStart(event: React.TouchEvent<HTMLDivElement>) {
+    if (event.touches.length === 2 && resizeTarget) {
+      pinchStartRef.current = { distance: pinchDistance(event.touches), scale: garmentScale[resizeTarget] ?? 1 };
+      dragStartRef.current = null;
+    } else if (event.touches.length === 1) {
+      dragStartRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY, offset: resizeTarget ? garmentOffset[resizeTarget] ?? { x: 0, y: 0 } : { x: 0, y: 0 }, moved: false };
+      pinchStartRef.current = null;
+    }
+  }
+
+  function handleTouchMove(event: React.TouchEvent<HTMLDivElement>) {
+    if (event.touches.length === 2 && pinchStartRef.current && resizeTarget) {
+      if (event.cancelable) event.preventDefault();
+      const { distance: startDistance, scale: startScale } = pinchStartRef.current;
+      const nextScale = clampGarmentScale(startScale * (pinchDistance(event.touches) / startDistance));
+      setGarmentScale((current) => ({ ...current, [resizeTarget]: nextScale }));
+    } else if (event.touches.length === 1 && dragStartRef.current) {
+      const { x: startX, y: startY, offset } = dragStartRef.current;
+      const dx = event.touches[0].clientX - startX;
+      const dy = event.touches[0].clientY - startY;
+      if (Math.hypot(dx, dy) > 5) dragStartRef.current.moved = true;
+      if (resizeTarget && dragStartRef.current.moved) {
+        if (event.cancelable) event.preventDefault();
+        setGarmentOffset((current) => ({ ...current, [resizeTarget]: { x: offset.x + dx, y: offset.y + dy } }));
+      }
+    }
+  }
+
+  function handleTouchEnd(event: React.TouchEvent<HTMLDivElement>) {
+    const wasTap = dragStartRef.current && !dragStartRef.current.moved;
     pinchStartRef.current = null;
+    dragStartRef.current = null;
+    if (wasTap && event.changedTouches.length === 1) {
+      selectFromTap(event.currentTarget, event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+    }
+  }
+
+  function handleDollClick(event: React.MouseEvent<HTMLDivElement>) {
+    if (dragStartRef.current?.moved) return;
+    selectFromTap(event.currentTarget, event.clientX, event.clientY);
+  }
+
+  function handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
+    if (event.button !== 0) return;
+    dragStartRef.current = { x: event.clientX, y: event.clientY, offset: resizeTarget ? garmentOffset[resizeTarget] ?? { x: 0, y: 0 } : { x: 0, y: 0 }, moved: false };
+  }
+
+  function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
+    if (!dragStartRef.current) return;
+    const { x: startX, y: startY, offset } = dragStartRef.current;
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+    if (Math.hypot(dx, dy) > 5) dragStartRef.current.moved = true;
+    if (resizeTarget && dragStartRef.current.moved) {
+      setGarmentOffset((current) => ({ ...current, [resizeTarget]: { x: offset.x + dx, y: offset.y + dy } }));
+    }
+  }
+
+  function handleMouseUp() {
+    // handleDollClick (fires after mouseup) reads dragStartRef.current.moved,
+    // so clear it a tick later rather than immediately.
+    requestAnimationFrame(() => { dragStartRef.current = null; });
+  }
+
+  function handleWheelResize(event: React.WheelEvent<HTMLDivElement>) {
+    if (!resizeTarget) return;
+    if (event.cancelable) event.preventDefault();
+    const delta = event.deltaY < 0 ? 0.05 : -0.05;
+    setGarmentScale((current) => ({ ...current, [resizeTarget]: clampGarmentScale((current[resizeTarget] ?? 1) + delta) }));
+  }
+
+  function deleteSelectedItem() {
+    if (!selectedGroup) return;
+    setPicks((current) => ({ ...current, [selectedGroup]: 'none' }));
+    setResizeTarget(null);
+    setSelectedGroup(null);
+    playHaptic(12);
+  }
+
+  function bumpLayer(delta: number) {
+    if (!resizeTarget) return;
+    setGarmentZBoost((current) => ({ ...current, [resizeTarget]: Math.max(-3, Math.min(3, (current[resizeTarget] ?? 0) + delta)) }));
+    playHaptic(8);
   }
 
   function recolor(group: ClothingGroup, color: string) {
@@ -1248,20 +1372,23 @@ export function LittleJetterApp() {
     setPicks((current) => ({ ...current, tops: 'stripe', bottoms: 'travel-jeans', layers: 'none', shoes: 'sneakers', accessories: 'crossbody' }));
     setGarmentColors({});
     setGarmentScale({});
+    setGarmentOffset({});
+    setGarmentZBoost({});
     setResizeTarget(null);
+    setSelectedGroup(null);
     setOpenClosetDrawer('tops');
     triggerCelebration(12);
   }
 
   function saveLook() {
-    const look: SavedLook = { id: `${Date.now()}`, name: `${selected.city} look ${savedLooks.length + 1}`, picks: { ...picks }, character: { ...character }, colors: { ...garmentColors }, scales: { ...garmentScale } };
+    const look: SavedLook = { id: `${Date.now()}`, name: `${selected.city} look ${savedLooks.length + 1}`, picks: { ...picks }, character: { ...character }, colors: { ...garmentColors }, scales: { ...garmentScale }, offsets: { ...garmentOffset } };
     setSavedLooks((current) => { const next = [look, ...current].slice(0, 6); window.localStorage.setItem('little-jetter-saved-looks', JSON.stringify(next)); return next; });
     showTravelConfirmation(`${look.name} stamped and saved`);
     triggerCelebration([20, 30, 45]);
   }
 
   function restoreLook(look: SavedLook) {
-    setPicks(look.picks); setCharacter({ ...look.character, hairStyle: look.character.hairStyle ?? 'curls' }); setGarmentColors(look.colors); setGarmentScale(look.scales ?? {}); setResizeTarget(null); triggerCelebration([18, 25, 18]);
+    setPicks(look.picks); setCharacter({ ...look.character, hairStyle: look.character.hairStyle ?? 'curls' }); setGarmentColors(look.colors); setGarmentScale(look.scales ?? {}); setGarmentOffset(look.offsets ?? {}); setResizeTarget(null); setSelectedGroup(null); triggerCelebration([18, 25, 18]);
   }
 
   // Scrolls the doll into view before opening a picker sheet — the sheet
@@ -1595,17 +1722,16 @@ export function LittleJetterApp() {
                 <aside className="little-look-preview">
                   <div className="little-closet-heading"><strong>Make your Little Jetter.</strong></div>
                   <div className="little-doll-rail-wrap" id="little-doll-stage-anchor">
-                    <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} onTouchStart={handlePinchStart} onTouchMove={handlePinchMove} onTouchEnd={handlePinchEnd} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
+                    <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onClick={handleDollClick} onWheel={handleWheelResize} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}. Tap a piece to move, resize, or delete it.`}>
                       <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{DESTINATIONS_WITH_BACKDROP.has(selected.id) && <img src={`/little-jetter/${selected.id}-doll-backdrop.png`} alt="" />}<i /><b /></div>
-                      <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} garmentScale={garmentScale} />
+                      <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} garmentScale={garmentScale} garmentOffset={garmentOffset} garmentZBoost={garmentZBoost} activeItemId={resizeTarget} />
                       <div className="little-dress-sparkles" key={`sparkles-${celebration}`} aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--spark': index } as React.CSSProperties}>✦</i>)}</div>
                       {dropActive && <div className="little-drop-message">Drop to dress</div>}
-                      {resizeTarget && (
-                        <div className="little-resize-hint">
-                          <button type="button" aria-label="Make smaller" onClick={() => nudgeScale(resizeTarget, -0.1)}>−</button>
-                          <span>Pinch to resize</span>
-                          <button type="button" aria-label="Make bigger" onClick={() => nudgeScale(resizeTarget, 0.1)}>+</button>
-                          <b role="button" onClick={() => setResizeTarget(null)}>Done</b>
+                      {resizeTarget && selectedGroup && (
+                        <div className="little-item-toolbar" onClick={(event) => event.stopPropagation()}>
+                          <button type="button" aria-label="Send this layer backward, behind other clothes" onClick={() => bumpLayer(-1)}><span aria-hidden="true">⬇</span><small>Layer</small></button>
+                          <button type="button" aria-label="Bring this layer forward, in front of other clothes" onClick={() => bumpLayer(1)}><span aria-hidden="true">⬆</span><small>Layer</small></button>
+                          <button type="button" className="is-delete" aria-label="Remove this item" onClick={deleteSelectedItem}><span aria-hidden="true">🗑</span><small>Remove</small></button>
                         </div>
                       )}
                     </div>
