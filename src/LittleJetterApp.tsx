@@ -88,6 +88,21 @@ const PRODUCT_CATEGORY_ICON: Record<ProductCategory, string> = {
   top: '👕', bottom: '👖', dress: '👗', outerwear: '🧥', shoe: '👟',
   accessory: '🎒', luggage: '🧳', toy: '🧸', book: '📘', swim: '🩱',
 };
+// Gives every product-card tile a colorful backdrop keyed by category, so a
+// real product photo reads just as "dressed up" as the fallback-icon cards
+// (which already sat on a warm gradient) instead of a plain white square.
+const PRODUCT_CATEGORY_BG: Record<ProductCategory, string> = {
+  top: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#ffe3ea 100%)',
+  bottom: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#e3edff 100%)',
+  dress: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#ffe0f6 100%)',
+  outerwear: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#fff0d6 100%)',
+  shoe: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#ffe6d2 100%)',
+  accessory: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#e3f7f0 100%)',
+  luggage: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#f4e6ff 100%)',
+  toy: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#fff3d8 100%)',
+  book: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#e0f0ff 100%)',
+  swim: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#d9f5f5 100%)',
+};
 
 const gameSheets: Record<PickGroup, string> = {
   tops: '/little-jetter/game-tops.png', bottoms: '/little-jetter/game-bottoms.png', layers: '/little-jetter/game-layers.png',
@@ -764,7 +779,7 @@ export function LittleJetterApp() {
                   <span className="little-drawer-number">{drawer.number}</span><span><strong>{drawer.name}</strong><small>{drawer.note} · {products.length} picks</small></span><b>{isOpen ? 'Close −' : 'Open +'}</b>
                 </button>
                 {isOpen && <div id={`drawer-${drawer.id}`} className="little-product-grid">
-                  {products.length ? products.map((product) => <article key={product.id}>
+                  {products.length ? products.map((product) => <article key={product.id} style={{ background: PRODUCT_CATEGORY_BG[product.category] }}>
                     <div>{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}<span>LTK pick</span></div>
                     <small>{product.brand}</small><h3>{product.name}</h3>
                     <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}>{savedProducts.includes(product.id) ? 'Saved' : 'Save this pick'}</button>
@@ -817,7 +832,7 @@ export function LittleJetterApp() {
         })()}
 
         {showMoreChoices && <div className="little-choice-modal" role="dialog" aria-modal="true" aria-labelledby="choice-title">
-          <div><button type="button" className="little-modal-close" aria-label="Close more choices" onClick={() => setShowMoreChoices(false)}>×</button><p className="little-kicker">The parent closet · {realProductCatalog.length} finds</p><h2 id="choice-title">Real pieces for later</h2><p>A grown-up can save products inspired by the child’s finished game look.</p><div className="little-popup-products">{realProductCatalog.map((product,index) => <button type="button" style={{'--delay':`${Math.min(index * 45, 540)}ms`} as React.CSSProperties} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}>{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}<span><small>{product.brand}</small><strong>{product.name}</strong></span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>)}</div><button type="button" className="little-done-choosing" onClick={() => setShowMoreChoices(false)}>Done choosing</button></div>
+          <div><button type="button" className="little-modal-close" aria-label="Close more choices" onClick={() => setShowMoreChoices(false)}>×</button><p className="little-kicker">The parent closet · {realProductCatalog.length} finds</p><h2 id="choice-title">Real pieces for later</h2><p>A grown-up can save products inspired by the child’s finished game look.</p><div className="little-popup-products">{realProductCatalog.map((product,index) => <button type="button" style={{'--delay':`${Math.min(index * 45, 540)}ms`} as React.CSSProperties} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><span className="little-popup-thumb" style={{ background: PRODUCT_CATEGORY_BG[product.category] }}>{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}</span><span><small>{product.brand}</small><strong>{product.name}</strong></span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>)}</div><button type="button" className="little-done-choosing" onClick={() => setShowMoreChoices(false)}>Done choosing</button></div>
         </div>}
 
         {started && (
@@ -864,7 +879,7 @@ export function LittleJetterApp() {
                       </div>
                       <div className="little-rail-divider" aria-hidden="true" />
                       <div className="little-category-rail" aria-label="Clothing categories">
-                        {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group} onClick={() => setActiveCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small>{picks[group] && picks[group] !== 'none' && <i className="little-category-dot-check" aria-hidden="true">✓</i>}</button>)}
+                        {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group} onClick={() => setActiveCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small></button>)}
                       </div>
                     </div>
                   </div>
@@ -889,7 +904,7 @@ export function LittleJetterApp() {
                 <div className="little-section-art little-buddy-art" aria-hidden="true"><img src="/little-jetter/packing-buddies.png" alt="" /><span>Pick a tiny copilot</span></div>
                 <div><p className="little-kicker">Toys can travel too</p><h3>Who gets the window seat?</h3><p>Pick one small buddy to bring along. A good traveler makes room for what matters.</p></div>
                 <details className="little-task-drawer" open><summary><span>01</span><strong>Choose a travel buddy</strong><b>Open / close</b></summary><div className="little-buddy-grid">{wardrobe.buddies.map((item) => <button type="button" aria-pressed={picks.buddies === item.id} onClick={() => choose('buddies', item.id)} key={item.id}><span className="little-game-item" style={gameItemStyle('buddies', item.id)} aria-hidden="true" /><strong>{item.name}</strong><small>{item.description}</small></button>)}</div></details>
-                <details className="little-task-drawer"><summary><span>02</span><strong>Parent toy preview</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realProductCatalog.filter((product) => product.category === 'toy').map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}>{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}<strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : 'Save this real pick'}</small></button>)}</div></details>
+                <details className="little-task-drawer"><summary><span>02</span><strong>Parent toy preview</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realProductCatalog.filter((product) => product.category === 'toy').map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><span className="little-buddy-thumb" style={{ background: PRODUCT_CATEGORY_BG[product.category] }}>{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}</span><strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : 'Save this real pick'}</small></button>)}</div></details>
                 <button type="button" className="little-next" onClick={() => setGameStep(4)}>Pack my suitcase <span>→</span></button>
               </div>
             )}
