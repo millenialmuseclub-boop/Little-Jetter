@@ -76,11 +76,9 @@ const CATEGORY_BUTTON: Record<ClothingGroup, { icon: string; label: string; spot
   shoes: { icon: '👟', label: 'Shoes', spot: 'spot-shoes' },
   accessories: { icon: '🎒', label: 'Accessory', spot: 'spot-accessories' },
 };
-type AvatarFeature = 'hairStyle' | 'hair' | 'eyes';
+type AvatarFeature = 'hairStyle';
 const AVATAR_BUTTON: Record<AvatarFeature, { icon: string; label: string }> = {
   hairStyle: { icon: '🙂', label: 'Head' },
-  hair: { icon: '🎨', label: 'Hair color' },
-  eyes: { icon: '👀', label: 'Eyes' },
 };
 const LAYERS = { base: 0, hairBack: 10, shoes: 20, bottom: 25, top: 30, dress: 35, outerwear: 50, hairFront: 60, accessory: 70, hat: 80 } as const;
 const PRODUCT_CATEGORY_ICON: Record<ProductCategory, string> = {
@@ -117,7 +115,7 @@ function gameItemStyle(group: PickGroup, id: string): React.CSSProperties {
 
 const characterOptions = {
   style: [{ id: 'girl', label: 'Girl' }, { id: 'boy', label: 'Boy' }],
-  hairStyle: [{ id: 'curls', label: 'Wavy' }, { id: 'bob', label: 'Bob' }, { id: 'short', label: 'Short' }, { id: 'coils', label: 'Coils' }],
+  hairStyle: [{ id: 'curls', label: 'Wavy' }, { id: 'bob', label: 'Bob' }, { id: 'short', label: 'Short' }, { id: 'coils', label: 'Coils' }, { id: 'bun-blonde-bow', label: 'Bun & Bow' }, { id: 'cap-brown', label: 'Cap' }, { id: 'bandana-bun', label: 'Bandana Bun' }, { id: 'messy-bun', label: 'Messy Bun' }, { id: 'wavy-daisy-auburn', label: 'Daisy Wavy' }, { id: 'pigtail-buns', label: 'Pigtail Buns' }, { id: 'bob-bangs', label: 'Bob & Bangs' }, { id: 'braids-dark', label: 'Braids' }, { id: 'wavy-clip', label: 'Wavy Clip' }, { id: 'blonde-wavy-daisy', label: 'Blonde Wavy' }, { id: 'curly-fro', label: 'Curly Fro' }, { id: 'pigtails-bows', label: 'Pigtails' }, { id: 'curly-topknot', label: 'Curly Topknot' }, { id: 'braids-auburn', label: 'Auburn Braids' }, { id: 'bucket-hat-pink', label: 'Bucket Hat' }, { id: 'wavy-long-dark', label: 'Long Wavy' }, { id: 'bob-blonde-clip', label: 'Blonde Bob' }, { id: 'headband-curly', label: 'Headband Curls' }, { id: 'bow-curly', label: 'Curly & Bow' }, { id: 'bun-auburn', label: 'Auburn Bun' }, { id: 'curly-fro-boy', label: 'Curly Fro' }, { id: 'curly-bow', label: 'Curly & Bow' }, { id: 'wavy-blonde-boy', label: 'Wavy Blonde' }, { id: 'long-straight-dark', label: 'Long Straight' }, { id: 'wavy-brown-boy', label: 'Wavy Brown' }, { id: 'cap-green-boy', label: 'Green Cap' }, { id: 'wavy-blonde-boy2', label: 'Wavy Blonde' }, { id: 'cap-tan-boy', label: 'Tan Cap' }, { id: 'short-dark-boy', label: 'Short & Dark' }, { id: 'curly-auburn-boy', label: 'Curly Auburn' },],
   skin: [{ id: 'porcelain', color: '#f4c9a8' }, { id: 'peach', color: '#dea47f' }, { id: 'golden', color: '#bd7656' }, { id: 'caramel', color: '#9a5f43' }, { id: 'brown', color: '#70432f' }, { id: 'deep', color: '#4b2c24' }],
   hair: [
     { id: 'platinum-blonde', label: 'Platinum Blonde', color: '#ebe1d2' },
@@ -692,6 +690,246 @@ const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string
       "purple": '/little-jetter/catalog/tokyo/head/coils-deep-purple.png',
     },
   },
+  'bun-blonde-bow': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
+  },
+  'cap-brown': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
+  },
+  'bandana-bun': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
+  },
+  'messy-bun': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
+  },
+  'wavy-daisy-auburn': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
+  },
+  'pigtail-buns': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
+  },
+  'bob-bangs': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
+  },
+  'braids-dark': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
+  },
+  'wavy-clip': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
+  },
+  'blonde-wavy-daisy': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
+  },
+  'curly-fro': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
+  },
+  'pigtails-bows': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
+  },
+  'curly-topknot': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
+  },
+  'braids-auburn': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
+  },
+  'bucket-hat-pink': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
+  },
+  'wavy-long-dark': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
+  },
+  'bob-blonde-clip': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
+  },
+  'headband-curly': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
+  },
+  'bow-curly': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
+  },
+  'bun-auburn': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
+  },
+  'curly-fro-boy': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
+  },
+  'curly-bow': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
+  },
+  'wavy-blonde-boy': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
+  },
+  'long-straight-dark': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
+  },
+  'wavy-brown-boy': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
+  },
+  'cap-green-boy': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
+  },
+  'wavy-blonde-boy2': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
+  },
+  'cap-tan-boy': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
+  },
+  'short-dark-boy': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
+  },
+  'curly-auburn-boy': {
+    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
+    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
+    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
+    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
+    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
+    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
+  },
 };
 
 // Face-center point (in the shared 600x900 head-canvas pixel space) per
@@ -704,6 +942,36 @@ const HEAD_THUMB_FOCUS: Record<string, { x: number; y: number }> = {
   bob: { x: 300, y: 259 },
   short: { x: 300, y: 218 },
   coils: { x: 300, y: 233 },
+  'bun-blonde-bow': { x: 300, y: 192 },
+  'cap-brown': { x: 300, y: 198 },
+  'bandana-bun': { x: 300, y: 239 },
+  'messy-bun': { x: 300, y: 186 },
+  'wavy-daisy-auburn': { x: 300, y: 223 },
+  'pigtail-buns': { x: 300, y: 224 },
+  'bob-bangs': { x: 300, y: 222 },
+  'braids-dark': { x: 300, y: 181 },
+  'wavy-clip': { x: 300, y: 224 },
+  'blonde-wavy-daisy': { x: 300, y: 227 },
+  'curly-fro': { x: 300, y: 233 },
+  'pigtails-bows': { x: 300, y: 242 },
+  'curly-topknot': { x: 300, y: 203 },
+  'braids-auburn': { x: 300, y: 230 },
+  'bucket-hat-pink': { x: 300, y: 217 },
+  'wavy-long-dark': { x: 300, y: 215 },
+  'bob-blonde-clip': { x: 300, y: 231 },
+  'headband-curly': { x: 300, y: 235 },
+  'bow-curly': { x: 300, y: 242 },
+  'bun-auburn': { x: 300, y: 204 },
+  'curly-fro-boy': { x: 300, y: 215 },
+  'curly-bow': { x: 300, y: 234 },
+  'wavy-blonde-boy': { x: 300, y: 212 },
+  'long-straight-dark': { x: 300, y: 225 },
+  'wavy-brown-boy': { x: 300, y: 228 },
+  'cap-green-boy': { x: 300, y: 222 },
+  'wavy-blonde-boy2': { x: 300, y: 223 },
+  'cap-tan-boy': { x: 300, y: 219 },
+  'short-dark-boy': { x: 300, y: 227 },
+  'curly-auburn-boy': { x: 300, y: 231 },
 };
 const HEAD_THUMB_ZOOM = 0.42;
 
@@ -1165,33 +1433,56 @@ export function LittleJetterApp() {
             <div className="little-category-sheet" onClick={(event) => event.stopPropagation()}>
               <div className="little-category-sheet-handle" aria-hidden="true" />
               <div className="little-category-sheet-head"><strong id="avatar-sheet-title">{AVATAR_BUTTON[feature].icon} {AVATAR_BUTTON[feature].label}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => setActiveAvatarSheet(null)}>×</button></div>
-              {feature === 'hairStyle' && <div className="little-head-gallery">{characterOptions.hairStyle.map((styleOption) => <div className="little-head-gallery-group" key={styleOption.id}>
-                <small>{styleOption.label}</small>
-                <div className="little-character-options little-hairstyle-options">
-                  {characterOptions.skin.map((skinOption) => {
-                    const headUrl = PAINTERLY_HEAD_ASSETS[styleOption.id]?.[skinOption.id]?.brown;
-                    if (!headUrl) return null;
-                    const isChosen = character.hairStyle === styleOption.id && character.skin === skinOption.id;
-                    return <button type="button" aria-pressed={isChosen} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: styleOption.id, skin: skinOption.id })); triggerCelebration(12); }} key={skinOption.id}>
-                      <span className="little-head-thumb">
-                        <img
-                          src={headUrl}
-                          alt=""
-                          aria-hidden="true"
-                          style={{
-                            width: 600 * HEAD_THUMB_ZOOM,
-                            height: 900 * HEAD_THUMB_ZOOM,
-                            transform: `translate(${26 - HEAD_THUMB_FOCUS[styleOption.id].x * HEAD_THUMB_ZOOM}px, ${26 - HEAD_THUMB_FOCUS[styleOption.id].y * HEAD_THUMB_ZOOM}px)`,
-                          }}
-                        />
-                      </span>
-                      <strong>{skinOption.id}</strong>
-                    </button>;
-                  })}
-                </div>
-              </div>)}</div>}
-              {feature === 'hair' && <div className="little-character-options little-swatch-options">{characterOptions.hair.map((option) => <button type="button" aria-label={option.label} aria-pressed={character.hair === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, hair: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
-              {feature === 'eyes' && <div className="little-character-options little-swatch-options">{characterOptions.eyes.map((option) => <button type="button" aria-label={option.label} aria-pressed={character.eyes === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, eyes: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
+              {feature === 'hairStyle' && (() => {
+                const thumbStyleFor = (styleId: string) => {
+                  const focus = HEAD_THUMB_FOCUS[styleId] ?? { x: 300, y: 220 };
+                  return {
+                    width: 600 * HEAD_THUMB_ZOOM,
+                    height: 900 * HEAD_THUMB_ZOOM,
+                    transform: `translate(${26 - focus.x * HEAD_THUMB_ZOOM}px, ${26 - focus.y * HEAD_THUMB_ZOOM}px)`,
+                  };
+                };
+                const classicStyles = characterOptions.hairStyle.filter((styleOption) => {
+                  const urls = new Set(characterOptions.skin.map((s) => PAINTERLY_HEAD_ASSETS[styleOption.id]?.[s.id]?.brown).filter(Boolean));
+                  return urls.size > 1;
+                });
+                const moreStyles = characterOptions.hairStyle.filter((s) => !classicStyles.includes(s));
+                const boyStyleIds = new Set(['curly-fro-boy', 'wavy-blonde-boy', 'wavy-brown-boy', 'cap-green-boy', 'wavy-blonde-boy2', 'cap-tan-boy', 'short-dark-boy', 'curly-auburn-boy']);
+                const girlMoreStyles = moreStyles.filter((s) => !boyStyleIds.has(s.id));
+                const boyMoreStyles = moreStyles.filter((s) => boyStyleIds.has(s.id));
+                const renderMoreGroup = (label: string, styles: typeof moreStyles) => styles.length > 0 && <div className="little-head-gallery-group" key={label}>
+                  <small>{label}</small>
+                  <div className="little-character-options little-hairstyle-options little-hairstyle-options-compact">
+                    {styles.map((styleOption) => {
+                      const headUrl = PAINTERLY_HEAD_ASSETS[styleOption.id]?.golden?.brown;
+                      if (!headUrl) return null;
+                      const isChosen = character.hairStyle === styleOption.id;
+                      return <button type="button" aria-pressed={isChosen} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: styleOption.id })); triggerCelebration(12); }} key={styleOption.id}>
+                        <span className="little-head-thumb"><img src={headUrl} alt="" aria-hidden="true" style={thumbStyleFor(styleOption.id)} /></span>
+                        <strong>{styleOption.label}</strong>
+                      </button>;
+                    })}
+                  </div>
+                </div>;
+                return <div className="little-head-gallery">
+                  {classicStyles.map((styleOption) => <div className="little-head-gallery-group" key={styleOption.id}>
+                    <small>{styleOption.label}</small>
+                    <div className="little-character-options little-hairstyle-options">
+                      {characterOptions.skin.map((skinOption) => {
+                        const headUrl = PAINTERLY_HEAD_ASSETS[styleOption.id]?.[skinOption.id]?.brown;
+                        if (!headUrl) return null;
+                        const isChosen = character.hairStyle === styleOption.id && character.skin === skinOption.id;
+                        return <button type="button" aria-pressed={isChosen} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: styleOption.id, skin: skinOption.id })); triggerCelebration(12); }} key={skinOption.id}>
+                          <span className="little-head-thumb"><img src={headUrl} alt="" aria-hidden="true" style={thumbStyleFor(styleOption.id)} /></span>
+                          <strong>{skinOption.id}</strong>
+                        </button>;
+                      })}
+                    </div>
+                  </div>)}
+                  {renderMoreGroup('More Looks · Girls', girlMoreStyles)}
+                  {renderMoreGroup('More Looks · Boys', boyMoreStyles)}
+                </div>;
+              })()}
             </div>
           </div>;
         })()}
@@ -1254,7 +1545,7 @@ export function LittleJetterApp() {
                     </div>
                     <div className="little-side-rail">
                       <div className="little-category-rail little-avatar-rail" aria-label="Avatar features">
-                        {(['hairStyle', 'hair', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => openAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
+                        {(['hairStyle'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => openAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
                       </div>
                       <div className="little-rail-divider" aria-hidden="true" />
                       <div className="little-category-rail" aria-label="Clothing categories">
