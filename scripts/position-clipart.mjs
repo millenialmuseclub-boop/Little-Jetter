@@ -25,14 +25,14 @@ const OUT_ROOT = 'public/little-jetter/catalog/tokyo';
 // relative to its width. anchor 'bottom' aligns the image's bottom edge to
 // `top` instead of its top edge (for shoes sitting on the ground line).
 const BOUNDS = {
-  top: { left: 300, top: 315, targetWidth: 195, maxHeight: 220, align: 'top' },
-  dress: { left: 300, top: 315, targetWidth: 235, maxHeight: 420, align: 'top' },
-  bottom: { left: 300, top: 465, targetWidth: 185, maxHeight: 305, align: 'top' },
-  outerwear: { left: 300, top: 300, targetWidth: 230, maxHeight: 280, align: 'top' },
-  shoes: { left: 300, top: 810, targetWidth: 130, maxHeight: 140, align: 'bottom' },
-  hat: { left: 300, top: 115, targetWidth: 155, maxHeight: 140, align: 'top' },
-  face: { left: 300, top: 178, targetWidth: 115, maxHeight: 80, align: 'top' },
-  bag: { left: 370, top: 339, targetWidth: 190, maxHeight: 260, align: 'top' },
+  top: { left: 300, top: 320, targetWidth: 165, maxHeight: 185, align: 'top' },
+  dress: { left: 300, top: 320, targetWidth: 200, maxHeight: 360, align: 'top' },
+  bottom: { left: 300, top: 468, targetWidth: 157, maxHeight: 260, align: 'top' },
+  outerwear: { left: 300, top: 304, targetWidth: 195, maxHeight: 240, align: 'top' },
+  shoes: { left: 300, top: 805, targetWidth: 110, maxHeight: 120, align: 'bottom' },
+  hat: { left: 300, top: 118, targetWidth: 132, maxHeight: 120, align: 'top' },
+  face: { left: 300, top: 180, targetWidth: 98, maxHeight: 68, align: 'top' },
+  bag: { left: 365, top: 345, targetWidth: 161, maxHeight: 220, align: 'top' },
 };
 
 async function placeOne(item) {
