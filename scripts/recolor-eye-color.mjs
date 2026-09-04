@@ -11,13 +11,17 @@ import path from 'node:path';
 
 const HEAD_DIR = 'public/little-jetter/catalog/tokyo/head';
 
-// Matches characterOptions.eyes in src/LittleJetterApp.tsx. 'brown' is the
-// heads' own baked-in color — skipped, already correct.
+// Matches characterOptions.eyes in src/LittleJetterApp.tsx (full 8-color
+// palette). 'brown' is the heads' own baked-in color — skipped, already
+// correct.
 const EYE_TARGETS = {
+  'light-brown': [150, 110, 60],
   hazel: [141, 116, 64],
   green: [78, 128, 96],
   blue: [72, 135, 170],
+  'light-blue': [140, 190, 220],
   gray: [113, 128, 136],
+  amber: [180, 120, 40],
 };
 
 // Measured per-hairstyle iris centers (average of dark-pixel clusters in the

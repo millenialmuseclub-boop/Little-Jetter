@@ -22,17 +22,32 @@ const EYE_CENTERS = {
   coils: [[268, 257], [342, 252]],
 };
 const EYE_EXCLUDE_RADIUS = 16;
-// Skip golden — it already has hand-baked variants for every color.
-const SKINS = ['porcelain', 'peach', 'caramel', 'brown', 'deep'];
+const SKINS = ['porcelain', 'peach', 'golden', 'caramel', 'brown', 'deep'];
+// golden already has hand-AI-generated (higher quality) bakes for these 4 —
+// keep those files untouched rather than overwrite with a local recolor.
+const GOLDEN_HAND_BAKED = new Set(['black', 'auburn', 'red', 'blue']);
 
-// Matches characterOptions.hair in src/LittleJetterApp.tsx. 'brown' is the
-// heads' own baked-in color — skipped, already correct.
+// Matches characterOptions.hair in src/LittleJetterApp.tsx (full 18-color
+// palette). 'brown' (Medium Brown) is the heads' own baked-in color —
+// skipped, already correct.
 const HAIR_TARGETS = {
-  black: [30, 27, 30],
+  'platinum-blonde': [235, 225, 210],
+  'light-blonde': [225, 196, 140],
+  'honey-blonde': [201, 155, 90],
+  'strawberry-blonde': [214, 150, 110],
+  red: [180, 70, 55],
   auburn: [122, 58, 39],
-  blonde: [222, 186, 122],
-  red: [168, 66, 42],
+  'light-brown': [150, 104, 70],
+  'dark-brown': [74, 48, 34],
+  black: [35, 30, 30],
+  'warm-black': [40, 30, 28],
+  chocolate: [92, 58, 38],
+  caramel: [156, 104, 58],
+  'ash-brown': [120, 100, 85],
+  gray: [150, 148, 145],
   blue: [58, 92, 148],
+  pink: [219, 110, 150],
+  purple: [120, 70, 150],
 };
 
 // Per-skin lightness ceiling for "this pixel is hair, not skin". Skin tones
@@ -42,6 +57,7 @@ const HAIR_TARGETS = {
 const SKIN_HAIR_LIGHTNESS_CEILING = {
   porcelain: 0.62,
   peach: 0.58,
+  golden: 0.52,
   caramel: 0.48,
   brown: 0.4,
   deep: 0.3,
@@ -87,7 +103,7 @@ function hslToRgb(h, s, l) {
   return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 
-async function processFile(filePath, ceiling, hairstyle) {
+async function processFile(filePath, ceiling, hairstyle, skipIds = new Set()) {
   const { data, info } = await sharp(filePath).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const { width, height, channels } = info;
   const base = path.basename(filePath, '.png');
@@ -118,6 +134,7 @@ async function processFile(filePath, ceiling, hairstyle) {
   }
 
   for (const [hairId, target] of Object.entries(HAIR_TARGETS)) {
+    if (skipIds.has(hairId)) continue;
     const [targetH, targetS] = rgbToHsl(...target);
     const targetLBase = rgbToHsl(...target)[2];
     const out = Buffer.from(data);
@@ -149,7 +166,8 @@ async function main() {
         console.log('skip (missing):', file);
         continue;
       }
-      await processFile(file, SKIN_HAIR_LIGHTNESS_CEILING[skin], style);
+      const skipIds = skin === 'golden' ? GOLDEN_HAND_BAKED : new Set();
+      await processFile(file, SKIN_HAIR_LIGHTNESS_CEILING[skin], style, skipIds);
     }
   }
 }

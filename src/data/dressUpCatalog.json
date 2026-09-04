@@ -1115,6 +1115,105 @@
               "imageUrl": "/little-jetter/catalog/tokyo/adventure-shirt/teal.png"
             }
           ]
+        },
+        {
+          "id": "cherry-cardigan",
+          "name": "Cherry Cardigan",
+          "description": "Cream button-front cardigan with a red trim collar and sm...",
+          "imageUrl": "/little-jetter/catalog/tokyo/cherry-cardigan/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "floral-cardigan",
+          "name": "Floral Cardigan",
+          "description": "Cream button-front knit cardigan with small painted pink ...",
+          "imageUrl": "/little-jetter/catalog/tokyo/floral-cardigan/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-floral-dress",
+          "name": "Pink Floral Dress",
+          "description": "Soft pink dress with short ruffled sleeves and small pain...",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-floral-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-button-dress",
+          "name": "Purple Button Dress",
+          "description": "Lavender-purple button-front dress with a white collar an...",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-button-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-floral-sweater",
+          "name": "Purple Floral Sweater",
+          "description": "Purple cable-knit crewneck sweater scattered with small p...",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-floral-sweater/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "ramen-tee",
+          "name": "Ramen Tee",
+          "description": "Cream crewneck t-shirt with a hand-painted bowl of ramen ...",
+          "imageUrl": "/little-jetter/catalog/tokyo/ramen-tee/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "sunset-tee",
+          "name": "Sunset Tee",
+          "description": "Short-sleeve crew-neck t-shirt with a warm orange-to-pink...",
+          "imageUrl": "/little-jetter/catalog/tokyo/sunset-tee/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "teal-shiba-sweater",
+          "name": "Teal Shiba Sweater",
+          "description": "Teal crewneck knit sweater with a cute cartoon shiba inu ...",
+          "imageUrl": "/little-jetter/catalog/tokyo/teal-shiba-sweater/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "teal-wrap-dress",
+          "name": "Teal Wrap Dress",
+          "description": "Teal-green wrap dress with short sleeves",
+          "imageUrl": "/little-jetter/catalog/tokyo/teal-wrap-dress/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
         }
       ],
       "bottoms": [
@@ -1140,6 +1239,105 @@
             "destination:tokyo",
             "illustrated"
           ]
+        },
+        {
+          "id": "black-flower-shorts",
+          "name": "Black Flower Shorts",
+          "description": "Black denim shorts with a frayed hem and small painted pi...",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-flower-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "cargo-pants",
+          "name": "Cargo Pants",
+          "description": "Relaxed cream cargo pants with large patch pockets on bot...",
+          "imageUrl": "/little-jetter/catalog/tokyo/cargo-pants/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "denim-overalls",
+          "name": "Denim Overalls",
+          "description": "Denim pinafore overalls with adjustable straps and a smal...",
+          "imageUrl": "/little-jetter/catalog/tokyo/denim-overalls/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "floral-midi-skirt",
+          "name": "Floral Midi Skirt",
+          "description": "Forest-green A-line midi skirt with painted pink flower b...",
+          "imageUrl": "/little-jetter/catalog/tokyo/floral-midi-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "navy-overalls",
+          "name": "Navy Overalls",
+          "description": "Navy denim pinafore overalls with adjustable straps",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-overalls/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "navy-pleated-skirt",
+          "name": "Navy Pleated Skirt",
+          "description": "Navy blue pleated mini skirt with a small gold charm at t...",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-pleated-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-bow-skirt",
+          "name": "Pink Bow Skirt",
+          "description": "Dusty-pink tiered ruffle mini skirt with a bow at the wai...",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-bow-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "play-skirt",
+          "name": "Play Skirt",
+          "description": "Playful bubblegum-pink tiered ruffle skirt with two soft ...",
+          "imageUrl": "/little-jetter/catalog/tokyo/play-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "yellow-plaid-skirt",
+          "name": "Yellow Plaid Skirt",
+          "description": "Golden-yellow pleated plaid mini skirt",
+          "imageUrl": "/little-jetter/catalog/tokyo/yellow-plaid-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
         }
       ],
       "layers": [
@@ -1160,6 +1358,39 @@
           "name": "Color-block windbreaker",
           "description": "Ready for a breezy ride",
           "imageUrl": "/little-jetter/catalog/tokyo/windbreaker/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "denim",
+          "name": "Denim",
+          "description": "Classic light-wash denim jacket with button-front closure",
+          "imageUrl": "/little-jetter/catalog/tokyo/denim/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-hoodie",
+          "name": "Pink Hoodie",
+          "description": "Soft pink zip-up hoodie with a fuzzy cream-lined hood and...",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-hoodie/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "trench-coat",
+          "name": "Trench Coat",
+          "description": "Tan double-breasted trench coat with a tied waist belt an...",
+          "imageUrl": "/little-jetter/catalog/tokyo/trench-coat/default.png",
           "slot": "outerwear",
           "tags": [
             "destination:tokyo",
@@ -1196,6 +1427,149 @@
           "name": "Colorful high-tops",
           "description": "Made for city steps",
           "imageUrl": "/little-jetter/catalog/tokyo/high-tops/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "black-combat-boots",
+          "name": "Black Combat Boots",
+          "description": "Black lace-up combat boots with a chunky sole and small g...",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-combat-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "black-lace-boots",
+          "name": "Black Lace Boots",
+          "description": "Black lace-up ankle boots with a chunky sole and small fl...",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-lace-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "black-mary-janes",
+          "name": "Black Mary Janes",
+          "description": "Black mary-jane shoes with a gold buckle strap",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-mary-janes/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "brown-hiking-boots",
+          "name": "Brown Hiking Boots",
+          "description": "Brown lace-up hiking boots with a chunky sole",
+          "imageUrl": "/little-jetter/catalog/tokyo/brown-hiking-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "cream-sneakers",
+          "name": "Cream Sneakers",
+          "description": "Cream canvas sneakers with pink laces and small flower ch...",
+          "imageUrl": "/little-jetter/catalog/tokyo/cream-sneakers/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "navy-sandals",
+          "name": "Navy Sandals",
+          "description": "Navy-blue double-strap buckle sandals with a chunky cream...",
+          "imageUrl": "/little-jetter/catalog/tokyo/navy-sandals/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-boots",
+          "name": "Pink Boots",
+          "description": "Pink lace-up ankle boots with a fuzzy fleece trim",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-flats",
+          "name": "Pink Flats",
+          "description": "Soft pink ballet flats with a small bow",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-flats/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-converse",
+          "name": "Purple Converse",
+          "description": "Purple canvas high-top sneakers with cream laces and a st...",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-converse/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-high-tops",
+          "name": "Purple High Tops",
+          "description": "Purple canvas high-top sneakers with cream laces",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-high-tops/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-sandals",
+          "name": "Purple Sandals",
+          "description": "Purple double-strap buckle sandals with a chunky cream sole",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-sandals/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "red-converse",
+          "name": "Red Converse",
+          "description": "Red canvas high-top sneakers with cream laces and a round...",
+          "imageUrl": "/little-jetter/catalog/tokyo/red-converse/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "yellow-boots",
+          "name": "Yellow Boots",
+          "description": "Bright yellow rubber rain boots",
+          "imageUrl": "/little-jetter/catalog/tokyo/yellow-boots/default.png",
           "slot": "shoes",
           "tags": [
             "destination:tokyo",
@@ -1242,6 +1616,127 @@
           "name": "Mini travel camera",
           "description": "For pretend photo stories",
           "imageUrl": "/little-jetter/catalog/tokyo/mini-camera/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "black-quilted-purse",
+          "name": "Black Quilted Purse",
+          "description": "Small black quilted crossbody purse with a gold chain str...",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-quilted-purse/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "blue-backpack",
+          "name": "Blue Backpack",
+          "description": "Soft blue backpack with a small flower patch and a cute a...",
+          "imageUrl": "/little-jetter/catalog/tokyo/blue-backpack/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "floral-headband",
+          "name": "Floral Headband",
+          "description": "Black hairband trimmed with small pink and white flower b...",
+          "imageUrl": "/little-jetter/catalog/tokyo/floral-headband/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "patchwork-bucket-hat-2",
+          "name": "Patchwork Bucket Hat 2",
+          "description": "Blue bucket hat covered in colorful patchwork squares",
+          "imageUrl": "/little-jetter/catalog/tokyo/patchwork-bucket-hat-2/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-beret",
+          "name": "Pink Beret",
+          "description": "Soft pink knit beret",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-beret/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "pink-quilted-purse",
+          "name": "Pink Quilted Purse",
+          "description": "Small pink quilted crossbody purse with a bow charm and a...",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-quilted-purse/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "puppy-cap",
+          "name": "Puppy Cap",
+          "description": "Teal baseball cap with a small cute cartoon puppy face pa...",
+          "imageUrl": "/little-jetter/catalog/tokyo/puppy-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-fanny-pack",
+          "name": "Purple Fanny Pack",
+          "description": "Small purple fanny pack with a front zip pocket and paint...",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-fanny-pack/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "purple-flower-cap",
+          "name": "Purple Flower Cap",
+          "description": "Soft purple baseball cap with a small painted flower embr...",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-flower-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "red-flat-cap",
+          "name": "Red Flat Cap",
+          "description": "Rust-red felt newsboy flat cap",
+          "imageUrl": "/little-jetter/catalog/tokyo/red-flat-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "illustrated"
+          ]
+        },
+        {
+          "id": "straw-sun-hat",
+          "name": "Straw Sun Hat",
+          "description": "Woven straw sun hat with a wide brim and a coral ribbon b...",
+          "imageUrl": "/little-jetter/catalog/tokyo/straw-sun-hat/default.png",
           "slot": "accessory",
           "tags": [
             "destination:tokyo",
