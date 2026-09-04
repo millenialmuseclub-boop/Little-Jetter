@@ -14,7 +14,7 @@ const OUT_ROOT = 'public/little-jetter/catalog/tokyo';
 
 const BOUNDS = {
   top: { left: 145, top: 315, width: 310, height: 175 },
-  dress: { left: 150, top: 315, width: 300, height: 420 },
+  dress: { left: 165, top: 315, width: 270, height: 400, alignTop: true },
   bottom: { left: 170, top: 465, width: 260, height: 305 },
   outerwear: { left: 130, top: 300, width: 340, height: 275 },
   shoes: { left: 170, top: 710, width: 260, height: 105 },
@@ -32,7 +32,7 @@ async function placeOne(item) {
   const newH = Math.max(1, Math.round(meta.height * scale));
   const resized = await sharp(srcFile).resize(newW, newH).toBuffer();
   const left = Math.round(bound.left + (bound.width - newW) / 2);
-  const top = Math.round(bound.top + (bound.height - newH) / 2);
+  const top = bound.alignTop ? bound.top : Math.round(bound.top + (bound.height - newH) / 2);
   const outDir = path.join(OUT_ROOT, item.id);
   fs.mkdirSync(outDir, { recursive: true });
   const canvas = sharp({ create: { width: 600, height: 900, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } });
