@@ -78,7 +78,7 @@ const CATEGORY_BUTTON: Record<ClothingGroup, { icon: string; label: string; spot
 };
 type AvatarFeature = 'hairStyle' | 'skin' | 'hair' | 'eyes';
 const AVATAR_BUTTON: Record<AvatarFeature, { icon: string; label: string }> = {
-  hairStyle: { icon: '💇', label: 'Hairstyle' },
+  hairStyle: { icon: '🙂', label: 'Head' },
   skin: { icon: '🧑', label: 'Skin' },
   hair: { icon: '🎨', label: 'Hair color' },
   eyes: { icon: '👀', label: 'Eyes' },
@@ -118,7 +118,7 @@ function gameItemStyle(group: PickGroup, id: string): React.CSSProperties {
 
 const characterOptions = {
   style: [{ id: 'girl', label: 'Girl' }, { id: 'boy', label: 'Boy' }],
-  hairStyle: [{ id: 'curls', label: 'Wavy' }, { id: 'bob', label: 'Bob' }, { id: 'short', label: 'Short' }],
+  hairStyle: [{ id: 'curls', label: 'Wavy' }, { id: 'bob', label: 'Bob' }, { id: 'short', label: 'Short' }, { id: 'coils', label: 'Coils' }],
   skin: [{ id: 'porcelain', color: '#f4c9a8' }, { id: 'peach', color: '#dea47f' }, { id: 'golden', color: '#bd7656' }, { id: 'caramel', color: '#9a5f43' }, { id: 'brown', color: '#70432f' }, { id: 'deep', color: '#4b2c24' }],
   hair: [{ id: 'black', color: '#211a19' }, { id: 'brown', color: '#573629' }, { id: 'auburn', color: '#8e4933' }, { id: 'blonde', color: '#d6a850' }, { id: 'red', color: '#b64932' }, { id: 'blue', color: '#397e9c' }],
   eyes: [{ id: 'brown', color: '#5a3827' }, { id: 'hazel', color: '#8d7440' }, { id: 'green', color: '#4e8060' }, { id: 'blue', color: '#4887aa' }, { id: 'gray', color: '#718088' }],
@@ -378,6 +378,19 @@ const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string
     },
   },
 };
+
+// Face-center point (in the shared 600x900 head-canvas pixel space) per
+// hairstyle, used only to crop the "choose your head" gallery thumbnails —
+// hair silhouettes differ enough in height between styles (short spikes
+// higher, coils/curls form a wider halo) that a single crop window would
+// clip eyes off some styles and show mostly hair on others.
+const HEAD_THUMB_FOCUS: Record<string, { x: number; y: number }> = {
+  curls: { x: 300, y: 252 },
+  bob: { x: 300, y: 259 },
+  short: { x: 300, y: 218 },
+  coils: { x: 300, y: 233 },
+};
+const HEAD_THUMB_ZOOM = 0.42;
 
 // Every shipped head has an eye-recolored variant alongside it
 // (<name>-eyes-<id>.png) for every non-default eye color — the heads were
@@ -808,7 +821,31 @@ export function LittleJetterApp() {
             <div className="little-category-sheet" onClick={(event) => event.stopPropagation()}>
               <div className="little-category-sheet-handle" aria-hidden="true" />
               <div className="little-category-sheet-head"><strong id="avatar-sheet-title">{AVATAR_BUTTON[feature].icon} {AVATAR_BUTTON[feature].label}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => setActiveAvatarSheet(null)}>×</button></div>
-              {feature === 'hairStyle' && <div className="little-character-options little-hairstyle-options">{characterOptions.hairStyle.map((option) => <button type="button" aria-pressed={character.hairStyle === option.id} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: option.id })); triggerCelebration(12); }} key={option.id}><img className="little-hair-icon" src={`/little-jetter/ui/hair-${option.id}.png`} alt="" aria-hidden="true" /><strong>{option.label}</strong></button>)}</div>}
+              {feature === 'hairStyle' && <div className="little-head-gallery">{characterOptions.hairStyle.map((styleOption) => <div className="little-head-gallery-group" key={styleOption.id}>
+                <small>{styleOption.label}</small>
+                <div className="little-character-options little-hairstyle-options">
+                  {characterOptions.skin.map((skinOption) => {
+                    const headUrl = PAINTERLY_HEAD_ASSETS[styleOption.id]?.[skinOption.id]?.brown;
+                    if (!headUrl) return null;
+                    const isChosen = character.hairStyle === styleOption.id && character.skin === skinOption.id;
+                    return <button type="button" aria-pressed={isChosen} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: styleOption.id, skin: skinOption.id })); triggerCelebration(12); }} key={skinOption.id}>
+                      <span className="little-head-thumb">
+                        <img
+                          src={headUrl}
+                          alt=""
+                          aria-hidden="true"
+                          style={{
+                            width: 600 * HEAD_THUMB_ZOOM,
+                            height: 900 * HEAD_THUMB_ZOOM,
+                            transform: `translate(${26 - HEAD_THUMB_FOCUS[styleOption.id].x * HEAD_THUMB_ZOOM}px, ${26 - HEAD_THUMB_FOCUS[styleOption.id].y * HEAD_THUMB_ZOOM}px)`,
+                          }}
+                        />
+                      </span>
+                      <strong>{skinOption.id}</strong>
+                    </button>;
+                  })}
+                </div>
+              </div>)}</div>}
               {feature === 'skin' && <div className="little-character-options little-swatch-options">{characterOptions.skin.map((option) => <button type="button" aria-label={`${option.id} skin`} aria-pressed={character.skin === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, skin: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
               {feature === 'hair' && <div className="little-character-options little-swatch-options">{characterOptions.hair.map((option) => <button type="button" aria-label={`${option.id} hair`} aria-pressed={character.hair === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, hair: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
               {feature === 'eyes' && <div className="little-character-options little-swatch-options">{characterOptions.eyes.map((option) => <button type="button" aria-label={`${option.id} eyes`} aria-pressed={character.eyes === option.id} style={{ '--choice-color': option.color } as React.CSSProperties} onClick={() => { setCharacter((current) => ({ ...current, eyes: option.id })); triggerCelebration(12); }} key={option.id} />)}</div>}
