@@ -42,6 +42,13 @@ const destinations: Destination[] = [
   { id: 'seoul', region: 'Asia', city: 'Seoul', country: 'South Korea', area: 'Seoul Special City', areaType: 'State', note: 'Palace colors & lively streets', weather: 'Crisp + clear', prompt: 'A comfortable layer is perfect for a long discovery day.', color: '#8c6292', icon: '□', adventure: 'You’re finding painted palace details, exploring a playful design shop, and watching the city glow after sunset.', exploreIcon: '□', notices: [{icon:'',label:'A painted pattern beneath a palace roof'},{icon:'',label:'A tiny charm on a backpack'},{icon:'',label:'A quiet garden gate'},{icon:'',label:'City lights reflected in the river'}], needsLayer: true, sandalsFriendly: false, passportPhrase: 'Palace-pattern explorer' },
 ];
 
+// Destinations with a real painterly doll-stage backdrop (public/little-jetter/<id>-doll-backdrop.png),
+// same treatment as tokyo — everything else falls back to the generic CSS scene.
+const DESTINATIONS_WITH_BACKDROP = new Set([
+  'tokyo', 'seoul', 'honolulu', 'new-york', 'mexico-city', 'san-jose', 'vancouver', 'barcelona',
+  'paris', 'nairobi', 'london', 'cartagena', 'rome', 'cape-town', 'sydney',
+]);
+
 const regions = ['All regions', ...Array.from(new Set(destinations.map((item) => item.region)))];
 const destinationTypes: Record<string, string> = {
   tokyo: 'Big city', honolulu: 'Beach + island', london: 'Historic city', cartagena: 'Coastal city', paris: 'Art + city', nairobi: 'City + wildlife',
@@ -1538,7 +1545,7 @@ export function LittleJetterApp() {
                   <div className="little-closet-heading"><strong>Make your Little Jetter.</strong></div>
                   <div className="little-doll-rail-wrap" id="little-doll-stage-anchor">
                     <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}`}>
-                      <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{selected.id === 'tokyo' && <img src="/little-jetter/tokyo-doll-backdrop.png" alt="" />}<i /><b /></div>
+                      <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{DESTINATIONS_WITH_BACKDROP.has(selected.id) && <img src={`/little-jetter/${selected.id}-doll-backdrop.png`} alt="" />}<i /><b /></div>
                       <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} />
                       <div className="little-dress-sparkles" key={`sparkles-${celebration}`} aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--spark': index } as React.CSSProperties}>✦</i>)}</div>
                       {dropActive && <div className="little-drop-message">Drop to dress</div>}
