@@ -708,15 +708,21 @@ const HEAD_THUMB_FOCUS: Record<string, { x: number; y: number }> = {
 };
 const HEAD_THUMB_ZOOM = 0.42;
 
-// Every shipped head has an eye-recolored variant alongside it
-// (<name>-eyes-<id>.png) for every non-default eye color — the heads were
+// The default "Medium Brown" hair bake has an eye-recolored variant alongside
+// it (<name>-eyes-<id>.png) for every non-default eye color — the heads were
 // baked with a fixed dark-brown iris, so this is what makes the eye-color
-// picker actually do something once a painterly head is showing.
+// picker actually do something once a painterly head is showing. Other hair
+// colors don't have eye overlays (see painterlyHeadUrl).
 function painterlyHeadUrl(character: Character): string | undefined {
   const bySkin = PAINTERLY_HEAD_ASSETS[character.hairStyle ?? 'curls']?.[character.skin];
   if (!bySkin) return undefined;
   const base = bySkin[character.hair] ?? bySkin.brown;
   if (!base || character.eyes === 'brown') return base;
+  // Eye-color overlays only exist for the default "Medium Brown" hair bake —
+  // generating them for all 17 other hair colors too would multiply an
+  // already-large asset set roughly 17x for a subtle iris-only difference,
+  // so a non-default hair color keeps natural brown eyes for now.
+  if (character.hair !== 'brown') return base;
   return base.replace(/\.png$/, `-eyes-${character.eyes}.png`);
 }
 
