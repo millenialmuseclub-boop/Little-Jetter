@@ -1,81 +1,2810 @@
 {
   "tokyo": {
     "gastronomy": [
-      { "name": "Sushi", "blurb": "Bite-sized rice and fish rolls, sometimes shaped like little rolls or cute animals." },
-      { "name": "Ramen", "blurb": "A steamy bowl of noodles in warm broth, perfect for a cool Tokyo evening." },
-      { "name": "Mochi", "blurb": "A soft, chewy rice cake, sometimes filled with sweet bean paste or ice cream." },
-      { "name": "Takoyaki", "blurb": "Round, golden dough balls cooked on a special pan, a favorite street-fair snack." },
-      { "name": "Taiyaki", "blurb": "A fish-shaped waffle cake, warm and filled with sweet custard or red bean." }
+      {
+        "name": "Sushi",
+        "blurb": "Bite-sized rice and fish rolls, sometimes shaped like little rolls or cute animals."
+      },
+      {
+        "name": "Ramen",
+        "blurb": "A steamy bowl of noodles in warm broth, perfect for a cool Tokyo evening."
+      },
+      {
+        "name": "Mochi",
+        "blurb": "A soft, chewy rice cake, sometimes filled with sweet bean paste or ice cream."
+      },
+      {
+        "name": "Takoyaki",
+        "blurb": "Round, golden dough balls cooked on a special pan, a favorite street-fair snack."
+      },
+      {
+        "name": "Taiyaki",
+        "blurb": "A fish-shaped waffle cake, warm and filled with sweet custard or red bean."
+      }
     ],
     "vocabulary": [
-      { "term": "Konnichiwa", "meaning": "Hello (said during the day)" },
-      { "term": "Arigatou", "meaning": "Thank you" },
-      { "term": "Sakura", "meaning": "Cherry blossom" },
-      { "term": "Oishii", "meaning": "Delicious!" }
+      {
+        "term": "Konnichiwa",
+        "meaning": "Hello (said during the day)"
+      },
+      {
+        "term": "Arigatou",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Sakura",
+        "meaning": "Cherry blossom"
+      },
+      {
+        "term": "Oishii",
+        "meaning": "Delicious!"
+      }
     ],
     "sites": [
-      { "name": "Tokyo Tower", "blurb": "A tall red-and-white tower that lights up the skyline at night." },
-      { "name": "Senso-ji Temple", "blurb": "An old lantern-lit temple with a giant paper lantern at the gate." },
-      { "name": "Shibuya Crossing", "blurb": "A giant crosswalk where streams of people cross from every direction." }
+      {
+        "name": "Tokyo Tower",
+        "blurb": "A tall red-and-white tower that lights up the skyline at night."
+      },
+      {
+        "name": "Senso-ji Temple",
+        "blurb": "An old lantern-lit temple with a giant paper lantern at the gate."
+      },
+      {
+        "name": "Shibuya Crossing",
+        "blurb": "A giant crosswalk where streams of people cross from every direction."
+      }
     ],
     "madlib": {
       "template": "Today in Tokyo, I saw a {0} lantern swinging over a {1} street. I tried a {2} snack that tasted so {3}, and a friendly {4} waved hello from a tiny shop window.",
       "blanks": [
-        { "label": "A color", "placeholder": "pink" },
-        { "label": "An adjective", "placeholder": "wobbly" },
-        { "label": "A silly food", "placeholder": "noodle-shaped" },
-        { "label": "A funny taste word", "placeholder": "sparkly" },
-        { "label": "An animal", "placeholder": "raccoon" }
+        {
+          "label": "A color",
+          "placeholder": "pink"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "wobbly"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "noodle-shaped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "sparkly"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "raccoon"
+        }
       ]
     }
   },
   "paris": {
     "gastronomy": [
-      { "name": "Croissant", "blurb": "A flaky, buttery pastry, warm and golden from the bakery oven." },
-      { "name": "Baguette", "blurb": "A long, crusty loaf of bread baked fresh every morning." },
-      { "name": "Macaron", "blurb": "A tiny, colorful sandwich cookie with a sweet filling in the middle." }
+      {
+        "name": "Croissant",
+        "blurb": "A flaky, buttery pastry, warm and golden from the bakery oven."
+      },
+      {
+        "name": "Baguette",
+        "blurb": "A long, crusty loaf of bread baked fresh every morning."
+      },
+      {
+        "name": "Macaron",
+        "blurb": "A tiny, colorful sandwich cookie with a sweet filling in the middle."
+      }
     ],
     "vocabulary": [
-      { "term": "Bonjour", "meaning": "Hello" },
-      { "term": "Merci", "meaning": "Thank you" },
-      { "term": "Croissant", "meaning": "A flaky, buttery pastry" }
+      {
+        "term": "Bonjour",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Merci",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Croissant",
+        "meaning": "A flaky, buttery pastry"
+      }
     ],
     "sites": [
-      { "name": "Eiffel Tower", "blurb": "An iron tower so tall it sparkles with lights every evening." },
-      { "name": "The Louvre", "blurb": "A giant museum shaped like a glass pyramid, full of famous art." }
+      {
+        "name": "Eiffel Tower",
+        "blurb": "An iron tower so tall it sparkles with lights every evening."
+      },
+      {
+        "name": "The Louvre",
+        "blurb": "A giant museum shaped like a glass pyramid, full of famous art."
+      }
     ],
     "madlib": {
       "template": "In Paris, I climbed a {0} tower and looked out over a {1} city. For a snack I ate a {2} pastry that smelled like {3}.",
       "blanks": [
-        { "label": "An adjective", "placeholder": "sparkly" },
-        { "label": "A color", "placeholder": "golden" },
-        { "label": "A silly food word", "placeholder": "bubbly" },
-        { "label": "Something sweet", "placeholder": "sugar clouds" }
+        {
+          "label": "An adjective",
+          "placeholder": "sparkly"
+        },
+        {
+          "label": "A color",
+          "placeholder": "golden"
+        },
+        {
+          "label": "A silly food word",
+          "placeholder": "bubbly"
+        },
+        {
+          "label": "Something sweet",
+          "placeholder": "sugar clouds"
+        }
       ]
     }
   },
   "honolulu": {
     "gastronomy": [
-      { "name": "Poke", "blurb": "Cubes of fresh fish tossed with rice and a tasty sauce." },
-      { "name": "Shave ice", "blurb": "A mountain of finely shaved ice soaked in bright, fruity syrups." }
+      {
+        "name": "Poke",
+        "blurb": "Cubes of fresh fish tossed with rice and a tasty sauce."
+      },
+      {
+        "name": "Shave ice",
+        "blurb": "A mountain of finely shaved ice soaked in bright, fruity syrups."
+      }
     ],
     "vocabulary": [
-      { "term": "Aloha", "meaning": "Hello and goodbye" },
-      { "term": "Mahalo", "meaning": "Thank you" }
+      {
+        "term": "Aloha",
+        "meaning": "Hello and goodbye"
+      },
+      {
+        "term": "Mahalo",
+        "meaning": "Thank you"
+      }
     ],
     "sites": [],
     "madlib": null
   },
   "london": {
     "gastronomy": [
-      { "name": "Fish and chips", "blurb": "Crispy battered fish with a big pile of golden fries, usually wrapped in paper." },
-      { "name": "Scone", "blurb": "A soft, crumbly bake served with jam and cream for afternoon tea." }
+      {
+        "name": "Fish and chips",
+        "blurb": "Crispy battered fish with a big pile of golden fries, usually wrapped in paper."
+      },
+      {
+        "name": "Scone",
+        "blurb": "A soft, crumbly bake served with jam and cream for afternoon tea."
+      }
     ],
     "vocabulary": [],
     "sites": [
-      { "name": "Big Ben", "blurb": "A famous clock tower that chimes loudly on the hour." },
-      { "name": "The Thames", "blurb": "A wide river that winds right through the middle of the city." }
+      {
+        "name": "Big Ben",
+        "blurb": "A famous clock tower that chimes loudly on the hour."
+      },
+      {
+        "name": "The Thames",
+        "blurb": "A wide river that winds right through the middle of the city."
+      }
     ],
     "madlib": null
+  },
+  "cartagena": {
+    "gastronomy": [
+      {
+        "name": "Arepa de huevo",
+        "blurb": "A crispy corn cake with a whole egg fried right inside it."
+      },
+      {
+        "name": "Patacones",
+        "blurb": "Crunchy fried plantain slices, perfect for dipping."
+      },
+      {
+        "name": "Cocadas",
+        "blurb": "Sweet coconut candies sold by vendors along the old city walls."
+      },
+      {
+        "name": "Limonada de coco",
+        "blurb": "A creamy, cool coconut limeade to beat the heat."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hola",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Gracias",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Rico",
+        "meaning": "Tasty / delicious"
+      },
+      {
+        "term": "Playa",
+        "meaning": "Beach"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Walled Old City",
+        "blurb": "Colorful balconies and flower-covered walls built centuries ago."
+      },
+      {
+        "name": "Castillo San Felipe",
+        "blurb": "A giant stone fortress with tunnels to explore."
+      },
+      {
+        "name": "Getsemaní",
+        "blurb": "A lively neighborhood covered in bright street murals."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Cartagena, I followed a {0} balcony dripping with flowers down a {1} street. I tried a {2} snack that tasted so {3}, while a {4} played music in the plaza.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "yellow"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "crooked"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "coconut-shaped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "zingy"
+        },
+        {
+          "label": "A musician",
+          "placeholder": "drummer"
+        }
+      ]
+    }
+  },
+  "nairobi": {
+    "gastronomy": [
+      {
+        "name": "Ugali",
+        "blurb": "A soft, filling cornmeal side dish served with almost every meal."
+      },
+      {
+        "name": "Nyama choma",
+        "blurb": "Smoky grilled meat, a favorite at family gatherings."
+      },
+      {
+        "name": "Chapati",
+        "blurb": "A soft, flaky flatbread perfect for scooping up stew."
+      },
+      {
+        "name": "Mandazi",
+        "blurb": "A lightly sweet fried bread, a bit like a puffy donut."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Jambo",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Asante",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Twiga",
+        "meaning": "Giraffe"
+      },
+      {
+        "term": "Rafiki",
+        "meaning": "Friend"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Nairobi National Park",
+        "blurb": "A wild safari park with lions and giraffes, right next to the city."
+      },
+      {
+        "name": "Giraffe Centre",
+        "blurb": "A place where you can feed a giraffe from your own hand."
+      },
+      {
+        "name": "Karura Forest",
+        "blurb": "A green forest trail with waterfalls just outside downtown."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Nairobi, I watched a {0} giraffe stretch for a leaf near a {1} tree. I tried a {2} snack that tasted so {3}, and heard a {4} rustling in the grass.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "spotted"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "towering"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "triangle-shaped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "toasty"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "zebra"
+        }
+      ]
+    }
+  },
+  "mexico-city": {
+    "gastronomy": [
+      {
+        "name": "Tacos",
+        "blurb": "Warm tortillas folded around your favorite tasty filling."
+      },
+      {
+        "name": "Elote",
+        "blurb": "Grilled corn on the cob dressed up with cheese and a squeeze of lime."
+      },
+      {
+        "name": "Churros",
+        "blurb": "Crispy, sugar-dusted fried dough, sometimes dipped in chocolate."
+      },
+      {
+        "name": "Agua fresca",
+        "blurb": "A refreshing fruit-flavored water, perfect for a warm afternoon."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hola",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Gracias",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Rico",
+        "meaning": "Tasty / delicious"
+      },
+      {
+        "term": "Amigo",
+        "meaning": "Friend"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Chapultepec Park",
+        "blurb": "A giant green park with a castle on a hill and paddle boats."
+      },
+      {
+        "name": "Frida Kahlo Museum",
+        "blurb": "The colorful blue house where a famous painter once lived."
+      },
+      {
+        "name": "Xochimilco",
+        "blurb": "Bright painted boats floating along old canals."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Mexico City, I found a {0} mural painted on a {1} wall in the park. I tried a {2} snack that tasted so {3}, and rode past a {4} floating on a canal.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "rainbow"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "giant"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "spiral-shaped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "tangy"
+        },
+        {
+          "label": "A boat",
+          "placeholder": "flower boat"
+        }
+      ]
+    }
+  },
+  "rome": {
+    "gastronomy": [
+      {
+        "name": "Gelato",
+        "blurb": "Rich, creamy Italian ice cream in every color of the rainbow."
+      },
+      {
+        "name": "Pizza al taglio",
+        "blurb": "Rectangular slices of pizza sold by weight from a big tray."
+      },
+      {
+        "name": "Supplì",
+        "blurb": "A crispy fried rice ball with a gooey cheese center."
+      },
+      {
+        "name": "Cornetto",
+        "blurb": "A flaky, sweet breakfast pastry, Italy’s cousin to the croissant."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Ciao",
+        "meaning": "Hello / goodbye"
+      },
+      {
+        "term": "Grazie",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Buonissimo",
+        "meaning": "Really delicious!"
+      },
+      {
+        "term": "Gatto",
+        "meaning": "Cat"
+      }
+    ],
+    "sites": [
+      {
+        "name": "The Colosseum",
+        "blurb": "A giant ancient stadium where gladiators once competed."
+      },
+      {
+        "name": "Trevi Fountain",
+        "blurb": "A grand fountain where visitors toss a coin for good luck."
+      },
+      {
+        "name": "Pantheon",
+        "blurb": "An ancient temple with a giant round hole open to the sky."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Rome, I tossed a {0} coin into a {1} fountain and made a wish. I tried a {2} gelato that tasted so {3}, and spotted a {4} sunning itself on some ruins.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "silver"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "splashy"
+        },
+        {
+          "label": "A silly flavor",
+          "placeholder": "bubblegum"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "dreamy"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "cat"
+        }
+      ]
+    }
+  },
+  "sydney": {
+    "gastronomy": [
+      {
+        "name": "Meat pie",
+        "blurb": "A warm, flaky hand pie filled with savory goodness."
+      },
+      {
+        "name": "Fairy bread",
+        "blurb": "Buttered white bread covered in colorful sprinkles, an Aussie party favorite."
+      },
+      {
+        "name": "Lamington",
+        "blurb": "A soft sponge cake dipped in chocolate and rolled in coconut."
+      },
+      {
+        "name": "Fish and chips",
+        "blurb": "Crispy fried fish and golden fries, best eaten by the harbor."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "G'day",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Thanks",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Beaut",
+        "meaning": "Wonderful / great"
+      },
+      {
+        "term": "Roo",
+        "meaning": "Kangaroo"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Sydney Opera House",
+        "blurb": "A famous building shaped like giant white sails by the water."
+      },
+      {
+        "name": "Sydney Harbour Bridge",
+        "blurb": "A huge steel bridge people can even climb to the top of."
+      },
+      {
+        "name": "Bondi Beach",
+        "blurb": "A wide sandy beach with rolling waves perfect for a swim."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Sydney, I watched a {0} sailboat glide past the {1} Opera House. I tried a {2} treat that tasted so {3}, and spotted a {4} on the harbor path.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "white"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "shell-shaped"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "sprinkle-covered"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "fizzy"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "parrot"
+        }
+      ]
+    }
+  },
+  "san-jose": {
+    "gastronomy": [
+      {
+        "name": "Gallo pinto",
+        "blurb": "A hearty breakfast of rice and beans cooked together."
+      },
+      {
+        "name": "Casado",
+        "blurb": "A plate piled with rice, beans, plantains, and your pick of protein."
+      },
+      {
+        "name": "Tres leches cake",
+        "blurb": "A soft, sweet cake soaked in three kinds of milk."
+      },
+      {
+        "name": "Fresh tropical fruit",
+        "blurb": "Juicy mango, pineapple, and papaya straight from the market."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hola",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Gracias",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Pura vida",
+        "meaning": "Pure life! (a happy Costa Rican greeting)"
+      },
+      {
+        "term": "Perezoso",
+        "meaning": "Sloth"
+      }
+    ],
+    "sites": [
+      {
+        "name": "National Theatre",
+        "blurb": "A grand old theater covered in gold detail."
+      },
+      {
+        "name": "Poás Volcano",
+        "blurb": "A giant volcano with a steaming, colorful crater lake."
+      },
+      {
+        "name": "Central Market",
+        "blurb": "A bustling market full of fruit, flowers, and fresh juice stands."
+      }
+    ],
+    "madlib": {
+      "template": "Today in San José, I heard a {0} bird singing from a {1} tree. I tried a {2} fruit that tasted so {3}, and spotted a {4} moving slowly through the leaves.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "green"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "towering"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "star-shaped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "juicy"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "sloth"
+        }
+      ]
+    }
+  },
+  "new-york": {
+    "gastronomy": [
+      {
+        "name": "New York pizza",
+        "blurb": "A giant, foldable slice with a thin, crispy crust."
+      },
+      {
+        "name": "Bagel with cream cheese",
+        "blurb": "A chewy, round bread roll sliced and spread thick."
+      },
+      {
+        "name": "Soft pretzel",
+        "blurb": "A warm, twisted, salty snack sold from carts on every corner."
+      },
+      {
+        "name": "Cheesecake",
+        "blurb": "A rich, creamy dessert New York is famous for."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hi",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Thanks",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Awesome",
+        "meaning": "Really great"
+      },
+      {
+        "term": "Subway",
+        "meaning": "The underground train"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Central Park",
+        "blurb": "A giant green park in the middle of the city, perfect for a stroll."
+      },
+      {
+        "name": "Statue of Liberty",
+        "blurb": "A giant green statue holding a torch up high on an island."
+      },
+      {
+        "name": "Empire State Building",
+        "blurb": "A super-tall skyscraper with a view over the whole city."
+      }
+    ],
+    "madlib": {
+      "template": "Today in New York, I watched a {0} taxi zoom past a {1} skyscraper. I tried a {2} snack that tasted so {3}, and a {4} played music in the park.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "yellow"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "sparkly"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "twisty"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "salty-sweet"
+        },
+        {
+          "label": "A musician",
+          "placeholder": "saxophone player"
+        }
+      ]
+    }
+  },
+  "barcelona": {
+    "gastronomy": [
+      {
+        "name": "Churros con chocolate",
+        "blurb": "Crispy fried dough dipped into warm, thick chocolate."
+      },
+      {
+        "name": "Pan con tomate",
+        "blurb": "Toasted bread rubbed with ripe tomato and olive oil."
+      },
+      {
+        "name": "Paella",
+        "blurb": "A big pan of golden rice with vegetables and seafood."
+      },
+      {
+        "name": "Turrón",
+        "blurb": "A sweet, nutty candy bar treat."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hola",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Gràcies",
+        "meaning": "Thank you (Catalan)"
+      },
+      {
+        "term": "Boníssim",
+        "meaning": "Really delicious! (Catalan)"
+      },
+      {
+        "term": "Platja",
+        "meaning": "Beach (Catalan)"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Sagrada Família",
+        "blurb": "A giant, still-unfinished church covered in fantastical towers."
+      },
+      {
+        "name": "Park Güell",
+        "blurb": "A whimsical park covered in colorful mosaic tiles."
+      },
+      {
+        "name": "La Rambla",
+        "blurb": "A lively tree-lined street full of street performers."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Barcelona, I found a {0} mosaic tile shaped like a {1} lizard. I tried a {2} treat that tasted so {3}, and watched a {4} perform on the street.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "turquoise"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "wiggly"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "chocolate-dipped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "melty"
+        },
+        {
+          "label": "A performer",
+          "placeholder": "living statue"
+        }
+      ]
+    }
+  },
+  "cape-town": {
+    "gastronomy": [
+      {
+        "name": "Bobotie",
+        "blurb": "A mildly spiced baked dish with a golden egg topping."
+      },
+      {
+        "name": "Biltong",
+        "blurb": "A chewy dried-meat snack, popular for hikes."
+      },
+      {
+        "name": "Malva pudding",
+        "blurb": "A warm, sticky sponge pudding served with custard."
+      },
+      {
+        "name": "Koeksisters",
+        "blurb": "A syrupy, braided sweet pastry."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Molo",
+        "meaning": "Hello (isiXhosa)"
+      },
+      {
+        "term": "Enkosi",
+        "meaning": "Thank you (isiXhosa)"
+      },
+      {
+        "term": "Lekker",
+        "meaning": "Nice / great"
+      },
+      {
+        "term": "Penguin",
+        "meaning": "A little tuxedoed swimmer found on Cape beaches"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Table Mountain",
+        "blurb": "A giant flat-topped mountain often capped with clouds."
+      },
+      {
+        "name": "Boulders Beach",
+        "blurb": "A sandy beach where wild penguins waddle right by visitors."
+      },
+      {
+        "name": "Bo-Kaap",
+        "blurb": "A hillside neighborhood painted in every color imaginable."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Cape Town, I watched a {0} cloud spill over a {1} mountain. I tried a {2} treat that tasted so {3}, and a {4} waddled past on the sand.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "white"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "flat-topped"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "syrup-covered"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "sticky-sweet"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "penguin"
+        }
+      ]
+    }
+  },
+  "vancouver": {
+    "gastronomy": [
+      {
+        "name": "Poutine",
+        "blurb": "Crispy fries topped with cheese curds and warm gravy."
+      },
+      {
+        "name": "Nanaimo bar",
+        "blurb": "A no-bake sweet treat with a chocolate top and creamy middle."
+      },
+      {
+        "name": "Salmon",
+        "blurb": "Fresh-caught fish, a favorite from the nearby coast."
+      },
+      {
+        "name": "Maple treats",
+        "blurb": "Sweet, syrupy candies made from real maple trees."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hello",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Thanks",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Toque",
+        "meaning": "A warm winter hat"
+      },
+      {
+        "term": "Eh",
+        "meaning": "A friendly Canadian \"right?\""
+      }
+    ],
+    "sites": [
+      {
+        "name": "Stanley Park Seawall",
+        "blurb": "A long path along the water with forest on one side."
+      },
+      {
+        "name": "Capilano Suspension Bridge",
+        "blurb": "A bouncy bridge stretched high above a forest canyon."
+      },
+      {
+        "name": "Granville Island Market",
+        "blurb": "A colorful market packed with treats and crafts."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Vancouver, I watched a {0} seaplane land near a {1} forest. I tried a {2} treat that tasted so {3}, and heard a {4} calling from the trees.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "red"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "misty"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "maple-drizzled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "gooey"
+        },
+        {
+          "label": "A bird",
+          "placeholder": "eagle"
+        }
+      ]
+    }
+  },
+  "seoul": {
+    "gastronomy": [
+      {
+        "name": "Kimbap",
+        "blurb": "Rice and veggies rolled up in seaweed, sliced into little rounds."
+      },
+      {
+        "name": "Tteokbokki",
+        "blurb": "Soft, chewy rice cakes in a slightly sweet, spicy sauce."
+      },
+      {
+        "name": "Bungeoppang",
+        "blurb": "A fish-shaped pastry filled with sweet red bean."
+      },
+      {
+        "name": "Bingsu",
+        "blurb": "A mountain of shaved ice topped with fruit and sweet syrup."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Annyeong",
+        "meaning": "Hi"
+      },
+      {
+        "term": "Gamsahamnida",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Masisseoyo",
+        "meaning": "It’s delicious!"
+      },
+      {
+        "term": "Palace",
+        "meaning": "A grand royal home, like Gyeongbokgung"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Gyeongbokgung Palace",
+        "blurb": "A grand old palace with painted roofs and a changing-of-the-guard show."
+      },
+      {
+        "name": "Namsan Tower",
+        "blurb": "A tower on a hill with a sparkling view of the whole city at night."
+      },
+      {
+        "name": "Bukchon Hanok Village",
+        "blurb": "A neighborhood of traditional wooden houses on a quiet hillside."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Seoul, I found a {0} pattern painted under a {1} palace roof. I tried a {2} treat that tasted so {3}, and spotted a {4} charm hanging from a backpack.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "teal"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "curved"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "fish-shaped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "sweet-and-icy"
+        },
+        {
+          "label": "An object",
+          "placeholder": "bell"
+        }
+      ]
+    }
+  },
+  "kyoto": {
+    "gastronomy": [
+      {
+        "name": "Matcha sweets",
+        "blurb": "Green-tea flavored treats, from ice cream to cookies."
+      },
+      {
+        "name": "Yatsuhashi",
+        "blurb": "A soft, cinnamon-scented rice cake sweet, a Kyoto specialty."
+      },
+      {
+        "name": "Tofu dishes",
+        "blurb": "Silky, delicate tofu, a Kyoto tradition for centuries."
+      },
+      {
+        "name": "Dorayaki",
+        "blurb": "Two fluffy pancakes with sweet red bean paste in between."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Konnichiwa",
+        "meaning": "Hello (said during the day)"
+      },
+      {
+        "term": "Arigatou",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Sakura",
+        "meaning": "Cherry blossom"
+      },
+      {
+        "term": "Torii",
+        "meaning": "A traditional gate marking a shrine"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Fushimi Inari Shrine",
+        "blurb": "A mountain path lined with thousands of bright orange gates."
+      },
+      {
+        "name": "Kinkaku-ji",
+        "blurb": "A shimmering temple covered entirely in gold leaf."
+      },
+      {
+        "name": "Arashiyama Bamboo Grove",
+        "blurb": "A quiet path through towering green bamboo stalks."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Kyoto, I walked beneath a {0} row of gates on a {1} hillside. I tried a {2} treat that tasted so {3}, and watched a {4} rustle in the bamboo.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "orange"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "misty"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "pancake-shaped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "earthy-sweet"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "sparrow"
+        }
+      ]
+    }
+  },
+  "bangkok": {
+    "gastronomy": [
+      {
+        "name": "Pad thai",
+        "blurb": "Stir-fried noodles with a sweet-and-tangy sauce."
+      },
+      {
+        "name": "Mango sticky rice",
+        "blurb": "Sweet sticky rice with fresh mango and coconut milk."
+      },
+      {
+        "name": "Roti",
+        "blurb": "A warm, buttery flatbread, sometimes rolled up with banana."
+      },
+      {
+        "name": "Thai iced tea",
+        "blurb": "A sweet, creamy orange-colored iced tea."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Sawasdee",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Khob khun",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Aroy",
+        "meaning": "Delicious!"
+      },
+      {
+        "term": "Tuk-tuk",
+        "meaning": "A three-wheeled taxi"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Grand Palace",
+        "blurb": "A dazzling complex of gold spires and colorful temples."
+      },
+      {
+        "name": "Wat Arun",
+        "blurb": "A riverside temple covered in tiny sparkling porcelain pieces."
+      },
+      {
+        "name": "Chatuchak Market",
+        "blurb": "A giant market with thousands of stalls to explore."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Bangkok, I spotted a {0} spire glittering above a {1} temple. I tried a {2} treat that tasted so {3}, and rode past on a {4}.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "gold"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "sparkling"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "mango-topped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "sweet-and-creamy"
+        },
+        {
+          "label": "A vehicle",
+          "placeholder": "tuk-tuk"
+        }
+      ]
+    }
+  },
+  "santorini": {
+    "gastronomy": [
+      {
+        "name": "Greek yogurt with honey",
+        "blurb": "Thick, creamy yogurt drizzled with golden honey."
+      },
+      {
+        "name": "Spanakopita",
+        "blurb": "Flaky pastry filled with spinach and cheese."
+      },
+      {
+        "name": "Souvlaki",
+        "blurb": "Grilled skewers of meat wrapped in soft pita bread."
+      },
+      {
+        "name": "Loukoumades",
+        "blurb": "Warm, honey-soaked dough balls, Greece’s answer to the donut."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Yassou",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Efharisto",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Nostimo",
+        "meaning": "Tasty!"
+      },
+      {
+        "term": "Thalassa",
+        "meaning": "Sea"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Oia Village",
+        "blurb": "White houses with blue domes stacked along a cliff by the sea."
+      },
+      {
+        "name": "Red Beach",
+        "blurb": "A beach with dramatic red-and-black cliffs."
+      },
+      {
+        "name": "Ancient Thera",
+        "blurb": "The ruins of an old clifftop city to explore."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Santorini, I looked out from a {0} house perched on a {1} cliff. I tried a {2} treat that tasted so {3}, and watched a {4} sail across the blue sea.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "white"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "steep"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "honey-drizzled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "golden-sweet"
+        },
+        {
+          "label": "A boat",
+          "placeholder": "sailboat"
+        }
+      ]
+    }
+  },
+  "dubai": {
+    "gastronomy": [
+      {
+        "name": "Dates",
+        "blurb": "Sweet, chewy fruit grown in the desert, a local favorite."
+      },
+      {
+        "name": "Hummus",
+        "blurb": "A creamy chickpea dip perfect for scooping with warm bread."
+      },
+      {
+        "name": "Shawarma",
+        "blurb": "Seasoned meat wrapped up in warm, soft flatbread."
+      },
+      {
+        "name": "Luqaimat",
+        "blurb": "Golden, crispy dumplings drizzled with sweet date syrup."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Marhaba",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Shukran",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Lazeez",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Sahra",
+        "meaning": "Desert"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Burj Khalifa",
+        "blurb": "The tallest building in the world, reaching high into the clouds."
+      },
+      {
+        "name": "Dubai Fountain",
+        "blurb": "A giant fountain that dances to music at night."
+      },
+      {
+        "name": "Desert dunes",
+        "blurb": "Golden sand hills perfect for an adventure ride."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Dubai, I looked way up at a {0} tower rising above a {1} skyline. I tried a {2} treat that tasted so {3}, and watched a {4} glide across the desert sand.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "silver"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "sparkling"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "syrup-drizzled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "honey-sweet"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "camel"
+        }
+      ]
+    }
+  },
+  "istanbul": {
+    "gastronomy": [
+      {
+        "name": "Turkish delight",
+        "blurb": "Soft, chewy squares of candy dusted in powdered sugar."
+      },
+      {
+        "name": "Simit",
+        "blurb": "A round, sesame-covered bread ring, a popular street snack."
+      },
+      {
+        "name": "Baklava",
+        "blurb": "Flaky layers of pastry with honey and chopped nuts."
+      },
+      {
+        "name": "Turkish tea",
+        "blurb": "Strong tea served in small tulip-shaped glasses."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Merhaba",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Tesekkürler",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Lezzetli",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Kedi",
+        "meaning": "Cat (Istanbul is full of friendly street cats!)"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Hagia Sophia",
+        "blurb": "A grand old domed building that was once a church and a mosque."
+      },
+      {
+        "name": "Grand Bazaar",
+        "blurb": "One of the world’s oldest covered markets, with thousands of stalls."
+      },
+      {
+        "name": "Bosphorus Strait",
+        "blurb": "The waterway where two continents meet."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Istanbul, I watched a {0} cat nap beside a {1} lantern shop. I tried a {2} treat that tasted so {3}, and a boat crossed the strait carrying a {4}.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "orange"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "glowing"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "honey-soaked"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "nutty-sweet"
+        },
+        {
+          "label": "A cargo",
+          "placeholder": "crate of oranges"
+        }
+      ]
+    }
+  },
+  "lima": {
+    "gastronomy": [
+      {
+        "name": "Ceviche",
+        "blurb": "Fresh fish marinated in citrus, a Peruvian classic."
+      },
+      {
+        "name": "Papa rellena",
+        "blurb": "A stuffed, fried potato ball filled with savory goodness."
+      },
+      {
+        "name": "Churros peruanos",
+        "blurb": "Sweet fried dough drizzled with manjar blanco."
+      },
+      {
+        "name": "Chicha morada",
+        "blurb": "A sweet purple corn drink with cinnamon and fruit."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hola",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Gracias",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Rico",
+        "meaning": "Tasty"
+      },
+      {
+        "term": "Llama",
+        "meaning": "A fluffy Andean animal"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Plaza Mayor",
+        "blurb": "A grand colonial square surrounded by colorful buildings."
+      },
+      {
+        "name": "Larco Museum",
+        "blurb": "A museum filled with ancient Peruvian treasures."
+      },
+      {
+        "name": "Miraflores cliffs",
+        "blurb": "A clifftop park overlooking the Pacific Ocean."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Lima, I looked out from a {0} cliff over a {1} ocean. I tried a {2} treat that tasted so {3}, and spotted a {4} in a museum display.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "blue"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "misty"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "citrus-splashed"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "zesty"
+        },
+        {
+          "label": "An artifact",
+          "placeholder": "golden mask"
+        }
+      ]
+    }
+  },
+  "montreal": {
+    "gastronomy": [
+      {
+        "name": "Poutine",
+        "blurb": "Crispy fries topped with cheese curds and warm gravy."
+      },
+      {
+        "name": "Montreal bagel",
+        "blurb": "A smaller, sweeter, wood-fired bagel."
+      },
+      {
+        "name": "Maple taffy",
+        "blurb": "Warm maple syrup poured on snow and rolled onto a stick."
+      },
+      {
+        "name": "Tourtière",
+        "blurb": "A savory, spiced meat pie, a Quebec tradition."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Bonjour",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Merci",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Délicieux",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Érable",
+        "meaning": "Maple"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Notre-Dame Basilica",
+        "blurb": "A stunning church with a deep blue, star-covered ceiling."
+      },
+      {
+        "name": "Mount Royal",
+        "blurb": "A hill in the middle of the city with a lookout over the skyline."
+      },
+      {
+        "name": "Old Montreal",
+        "blurb": "Cobblestone streets lined with historic stone buildings."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Montreal, I climbed a {0} hill to a {1} lookout over the city. I tried a {2} treat that tasted so {3}, and heard a {4} playing on a cobblestone street.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "green"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "breezy"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "syrup-covered"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "sticky-sweet"
+        },
+        {
+          "label": "A musician",
+          "placeholder": "fiddler"
+        }
+      ]
+    }
+  },
+  "queenstown": {
+    "gastronomy": [
+      {
+        "name": "Fergburger",
+        "blurb": "A famously giant, juicy burger from a local favorite spot."
+      },
+      {
+        "name": "Hokey pokey ice cream",
+        "blurb": "Vanilla ice cream with crunchy golden honeycomb bits."
+      },
+      {
+        "name": "Pavlova",
+        "blurb": "A crispy-on-the-outside, marshmallowy meringue dessert."
+      },
+      {
+        "name": "Manuka honey",
+        "blurb": "A special golden honey made by New Zealand bees."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Kia ora",
+        "meaning": "Hello (Māori)"
+      },
+      {
+        "term": "Thanks",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Sweet as",
+        "meaning": "Awesome / great"
+      },
+      {
+        "term": "Kiwi",
+        "meaning": "A fuzzy little flightless bird (and what Kiwis call themselves!)"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Lake Wakatipu",
+        "blurb": "A long, zigzag-shaped lake ringed by snowy mountains."
+      },
+      {
+        "name": "Skyline Gondola",
+        "blurb": "A cable car ride high above town for a mountaintop view."
+      },
+      {
+        "name": "Shotover River",
+        "blurb": "A rushing blue river perfect for a jet-boat ride."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Queenstown, I rode a gondola up a {0} mountain over a {1} lake. I tried a {2} treat that tasted so {3}, and a {4} sped down the river below.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "snowy"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "zigzag-shaped"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "honeycomb-crunched"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "sweet-and-crispy"
+        },
+        {
+          "label": "A boat",
+          "placeholder": "jet boat"
+        }
+      ]
+    }
+  },
+  "petra": {
+    "gastronomy": [
+      {
+        "name": "Mansaf",
+        "blurb": "Tender lamb in a creamy yogurt sauce over rice, Jordan’s national dish."
+      },
+      {
+        "name": "Hummus",
+        "blurb": "A creamy chickpea dip perfect for scooping with warm bread."
+      },
+      {
+        "name": "Knafeh",
+        "blurb": "A sweet, cheesy dessert topped with syrup and crushed pistachios."
+      },
+      {
+        "name": "Mint tea",
+        "blurb": "A warm, fragrant tea sipped throughout the day."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Marhaba",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Shukran",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Lazeez",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Jamal",
+        "meaning": "Camel"
+      }
+    ],
+    "sites": [
+      {
+        "name": "The Treasury",
+        "blurb": "A giant building carved directly into pink desert rock."
+      },
+      {
+        "name": "The Siq",
+        "blurb": "A narrow, winding canyon that leads into the ancient city."
+      },
+      {
+        "name": "The Monastery",
+        "blurb": "An enormous carved monument at the top of a long climb."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Petra, I walked through a {0} canyon toward a {1} carved building. I tried a {2} treat that tasted so {3}, and a {4} rested in the shade nearby.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "pink"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "towering"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "nut-covered"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "syrupy-sweet"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "camel"
+        }
+      ]
+    }
+  },
+  "maldives": {
+    "gastronomy": [
+      {
+        "name": "Mas huni",
+        "blurb": "A tasty mix of tuna, coconut, and onion, a favorite breakfast."
+      },
+      {
+        "name": "Fresh coconut water",
+        "blurb": "Cool, sweet water sipped straight from the shell."
+      },
+      {
+        "name": "Bondibaiy",
+        "blurb": "A sweet coconut rice pudding treat."
+      },
+      {
+        "name": "Grilled reef fish",
+        "blurb": "Fresh fish cooked right by the beach."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Assalaam alaikum",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Shukuriyaa",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Kanfaa",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Kihavah",
+        "meaning": "A small coral island"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Overwater bungalows",
+        "blurb": "Little huts built right above the clear turquoise sea."
+      },
+      {
+        "name": "Coral reef",
+        "blurb": "A colorful underwater world perfect for snorkeling."
+      },
+      {
+        "name": "Sandbank islands",
+        "blurb": "Tiny islands of pure white sand you can walk all the way around."
+      }
+    ],
+    "madlib": {
+      "template": "Today in the Maldives, I snorkeled above a {0} coral reef full of {1} fish. I tried a {2} treat that tasted so {3}, and spotted a {4} gliding through the water.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "turquoise"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "shimmering"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "coconut-sprinkled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "tropical-sweet"
+        },
+        {
+          "label": "A sea creature",
+          "placeholder": "sea turtle"
+        }
+      ]
+    }
+  },
+  "machu-picchu": {
+    "gastronomy": [
+      {
+        "name": "Quinoa soup",
+        "blurb": "A warm, hearty soup made with a grain grown high in the Andes."
+      },
+      {
+        "name": "Choclo",
+        "blurb": "Giant-kernel Andean corn, often served with cheese."
+      },
+      {
+        "name": "Chicha morada",
+        "blurb": "A sweet purple corn drink with cinnamon and fruit."
+      },
+      {
+        "name": "Alfajores",
+        "blurb": "Soft cookies sandwiched with sweet caramel filling."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hola",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Gracias",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Rico",
+        "meaning": "Tasty"
+      },
+      {
+        "term": "Llama",
+        "meaning": "A fluffy Andean animal that roams the ruins"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Machu Picchu ruins",
+        "blurb": "Ancient stone terraces and temples perched high in the mountains."
+      },
+      {
+        "name": "Huayna Picchu",
+        "blurb": "A steep peak with a trail climbing above the ruins."
+      },
+      {
+        "name": "Sacred Valley",
+        "blurb": "A lush valley dotted with old Incan villages."
+      }
+    ],
+    "madlib": {
+      "template": "Today at Machu Picchu, I climbed a {0} stone path high above a {1} valley. I tried a {2} treat that tasted so {3}, and a {4} wandered calmly through the ruins.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "green"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "misty"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "caramel-filled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "buttery-sweet"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "llama"
+        }
+      ]
+    }
+  },
+  "zanzibar": {
+    "gastronomy": [
+      {
+        "name": "Zanzibar pizza",
+        "blurb": "A folded, stuffed street-food snack unlike any other pizza."
+      },
+      {
+        "name": "Spiced coconut rice",
+        "blurb": "Fragrant rice cooked with coconut and warm spices."
+      },
+      {
+        "name": "Fresh mango and papaya",
+        "blurb": "Juicy tropical fruit grown right on the island."
+      },
+      {
+        "name": "Sugarcane juice",
+        "blurb": "A sweet drink pressed fresh from sugarcane stalks."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Jambo",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Asante",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Tamu",
+        "meaning": "Sweet / delicious"
+      },
+      {
+        "term": "Pwani",
+        "meaning": "Coast"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Stone Town",
+        "blurb": "A maze of old streets with carved wooden doors."
+      },
+      {
+        "name": "Spice farms",
+        "blurb": "Fields where cloves, cinnamon, and vanilla grow."
+      },
+      {
+        "name": "Nungwi Beach",
+        "blurb": "A beach with soft white sand and turquoise water."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Zanzibar, I walked past a {0} carved door in a {1} alley. I tried a {2} treat that tasted so {3}, and smelled a {4} growing on a spice farm.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "blue"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "winding"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "coconut-wrapped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "spice-sweet"
+        },
+        {
+          "label": "A spice",
+          "placeholder": "clove"
+        }
+      ]
+    }
+  },
+  "vilnius": {
+    "gastronomy": [
+      {
+        "name": "Cepelinai",
+        "blurb": "Big potato dumplings stuffed with savory meat."
+      },
+      {
+        "name": "Šakotis",
+        "blurb": "A tall, spiky cake baked slowly over a fire."
+      },
+      {
+        "name": "Kibinai",
+        "blurb": "A flaky hand pie filled with meat and onion."
+      },
+      {
+        "name": "Cold beet soup",
+        "blurb": "A bright pink chilled soup, a summer favorite."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Labas",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Ačiū",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Skanu",
+        "meaning": "Tasty"
+      },
+      {
+        "term": "Gintaras",
+        "meaning": "Amber"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Vilnius Old Town",
+        "blurb": "Cobblestone lanes lined with pastel-colored buildings."
+      },
+      {
+        "name": "Gediminas’ Tower",
+        "blurb": "An old red brick tower on a hill overlooking the city."
+      },
+      {
+        "name": "Užupis",
+        "blurb": "A quirky artsy neighborhood with its own tiny \"constitution\"."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Vilnius, I climbed a {0} hill to a {1} old tower. I tried a {2} treat that tasted so {3}, and found a {4} painted on a cobblestone wall.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "red"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "crumbling"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "dumpling-shaped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "hearty"
+        },
+        {
+          "label": "A mural",
+          "placeholder": "angel"
+        }
+      ]
+    }
+  },
+  "amsterdam": {
+    "gastronomy": [
+      {
+        "name": "Stroopwafel",
+        "blurb": "Two thin waffles with warm caramel syrup stuck in the middle."
+      },
+      {
+        "name": "Poffertjes",
+        "blurb": "Tiny, fluffy pancakes dusted with powdered sugar."
+      },
+      {
+        "name": "Dutch cheese",
+        "blurb": "Rounds of creamy, mild cheese sold at every market."
+      },
+      {
+        "name": "Fries with mayo",
+        "blurb": "Crispy fries served the Dutch way, with a dollop of mayonnaise."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hallo",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Dank je",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Lekker",
+        "meaning": "Tasty / nice"
+      },
+      {
+        "term": "Fiets",
+        "meaning": "Bicycle"
+      }
+    ],
+    "sites": [
+      {
+        "name": "The canals",
+        "blurb": "Pretty waterways lined with narrow, colorful houses."
+      },
+      {
+        "name": "Anne Frank House",
+        "blurb": "A quiet museum telling an important story from history."
+      },
+      {
+        "name": "Vondelpark",
+        "blurb": "A big green park perfect for a picnic or a bike ride."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Amsterdam, I rode a {0} bicycle along a {1} canal. I tried a {2} treat that tasted so {3}, and watched a {4} float slowly past the houses.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "yellow"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "winding"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "caramel-oozing"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "gooey-sweet"
+        },
+        {
+          "label": "A boat",
+          "placeholder": "houseboat"
+        }
+      ]
+    }
+  },
+  "reykjavik": {
+    "gastronomy": [
+      {
+        "name": "Icelandic skyr",
+        "blurb": "A thick, creamy yogurt-like treat, often with berries."
+      },
+      {
+        "name": "Pylsur",
+        "blurb": "A famous Icelandic hot dog piled high with toppings."
+      },
+      {
+        "name": "Rye bread ice cream",
+        "blurb": "A quirky local favorite mixing rye bread and ice cream."
+      },
+      {
+        "name": "Hot chocolate",
+        "blurb": "A warm treat perfect after a chilly walk outside."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Halló",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Takk",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Gott",
+        "meaning": "Tasty / good"
+      },
+      {
+        "term": "Hestur",
+        "meaning": "Horse (Iceland’s famous fluffy ponies)"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Hallgrímskirkja",
+        "blurb": "A tall, rocket-shaped church that towers over the city."
+      },
+      {
+        "name": "Blue Lagoon",
+        "blurb": "A warm, milky-blue geothermal pool to soak in."
+      },
+      {
+        "name": "Northern Lights",
+        "blurb": "Dancing green lights that sometimes glow across the night sky."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Reykjavik, I looked up at a {0} sky swirling with {1} lights. I tried a {2} treat that tasted so {3}, and spotted a fluffy {4} in a nearby field.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "green"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "dancing"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "berry-topped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "creamy-tart"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "pony"
+        }
+      ]
+    }
+  },
+  "marrakech": {
+    "gastronomy": [
+      {
+        "name": "Tagine",
+        "blurb": "A slow-cooked stew served in a cone-shaped clay pot."
+      },
+      {
+        "name": "Couscous",
+        "blurb": "Tiny fluffy grains served with vegetables and savory broth."
+      },
+      {
+        "name": "Moroccan mint tea",
+        "blurb": "Sweet, fragrant tea poured from high above the glass."
+      },
+      {
+        "name": "Chebakia",
+        "blurb": "A sesame cookie dipped in honey, twisted into a flower shape."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Salam",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Shukran",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Bnina",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Souk",
+        "meaning": "Marketplace"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Jemaa el-Fnaa",
+        "blurb": "A lively main square full of music, food stalls, and storytellers."
+      },
+      {
+        "name": "Majorelle Garden",
+        "blurb": "A peaceful garden painted in a bold, brilliant blue."
+      },
+      {
+        "name": "The souks",
+        "blurb": "Maze-like marketplace alleys full of lanterns and rugs."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Marrakech, I wandered through a {0} souk hung with {1} lanterns. I tried a {2} treat that tasted so {3}, and heard a {4} playing near the main square.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "golden"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "glowing"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "honey-twisted"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "sesame-sweet"
+        },
+        {
+          "label": "A musician",
+          "placeholder": "drummer"
+        }
+      ]
+    }
+  },
+  "singapore": {
+    "gastronomy": [
+      {
+        "name": "Chicken rice",
+        "blurb": "Tender chicken served over fragrant, savory rice."
+      },
+      {
+        "name": "Kaya toast",
+        "blurb": "Toasted bread spread with sweet coconut jam."
+      },
+      {
+        "name": "Chili crab",
+        "blurb": "A big, messy, saucy crab dish everyone shares together."
+      },
+      {
+        "name": "Ice kacang",
+        "blurb": "A colorful mountain of shaved ice with sweet syrups and jelly."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hello",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Xie xie / Terima kasih",
+        "meaning": "Thank you (Mandarin / Malay)"
+      },
+      {
+        "term": "Shiok",
+        "meaning": "Awesome! (a favorite Singlish word)"
+      },
+      {
+        "term": "Merlion",
+        "meaning": "A half-lion, half-fish statue and symbol of the city"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Gardens by the Bay",
+        "blurb": "Giant tree-shaped towers that light up at night."
+      },
+      {
+        "name": "Merlion Park",
+        "blurb": "A statue that spouts water into the bay."
+      },
+      {
+        "name": "Sentosa Island",
+        "blurb": "A fun island with beaches and rides just off the coast."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Singapore, I looked up at a {0} tree-tower glowing over the {1} bay. I tried a {2} treat that tasted so {3}, and watched water spout from the {4}.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "purple"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "glittering"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "jelly-topped"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "fruity-sweet"
+        },
+        {
+          "label": "A statue",
+          "placeholder": "Merlion"
+        }
+      ]
+    }
+  },
+  "lisbon": {
+    "gastronomy": [
+      {
+        "name": "Pastel de nata",
+        "blurb": "A warm custard tart with a flaky, crispy crust."
+      },
+      {
+        "name": "Bifana",
+        "blurb": "A soft roll filled with juicy, seasoned pork."
+      },
+      {
+        "name": "Bacalhau",
+        "blurb": "A salted codfish cooked in dozens of different ways."
+      },
+      {
+        "name": "Ginjinha",
+        "blurb": "A sweet cherry treat, sometimes served in a tiny chocolate cup."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Olá",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Obrigado",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Delicioso",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Elétrico",
+        "meaning": "The yellow tram"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Belém Tower",
+        "blurb": "A stone tower right at the water’s edge."
+      },
+      {
+        "name": "Tram 28",
+        "blurb": "A rattling yellow tram that climbs the city’s steep hills."
+      },
+      {
+        "name": "Alfama",
+        "blurb": "A hillside neighborhood of tiled houses and narrow lanes."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Lisbon, I rode a {0} tram up a {1} hill. I tried a {2} tart that tasted so {3}, and spotted a {4} painted on a tiled wall.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "yellow"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "steep"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "custard-filled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "creamy-sweet"
+        },
+        {
+          "label": "A pattern",
+          "placeholder": "swirl"
+        }
+      ]
+    }
+  },
+  "buenos-aires": {
+    "gastronomy": [
+      {
+        "name": "Empanadas",
+        "blurb": "Small hand pies stuffed with savory fillings."
+      },
+      {
+        "name": "Alfajores",
+        "blurb": "Soft cookies sandwiched with sweet caramel filling."
+      },
+      {
+        "name": "Choripán",
+        "blurb": "A grilled sausage sandwich, a favorite street food."
+      },
+      {
+        "name": "Dulce de leche",
+        "blurb": "A rich, caramel-like sweet spread on everything."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hola",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Gracias",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Rico",
+        "meaning": "Tasty"
+      },
+      {
+        "term": "Che",
+        "meaning": "A friendly \"hey\" used in Argentina"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Plaza de Mayo",
+        "blurb": "A historic square surrounded by grand pink buildings."
+      },
+      {
+        "name": "Caminito",
+        "blurb": "A colorful street lined with rainbow-painted houses."
+      },
+      {
+        "name": "Recoleta Cemetery",
+        "blurb": "A peaceful spot with elaborate old statues and tombs."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Buenos Aires, I watched a {0} tango dancer twirl near a {1} building. I tried a {2} treat that tasted so {3}, and heard a {4} playing in the plaza.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "pink"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "grand"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "caramel-filled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "buttery-sweet"
+        },
+        {
+          "label": "An instrument",
+          "placeholder": "accordion"
+        }
+      ]
+    }
+  },
+  "quebec-city": {
+    "gastronomy": [
+      {
+        "name": "Poutine",
+        "blurb": "Crispy fries topped with cheese curds and warm gravy."
+      },
+      {
+        "name": "Maple taffy",
+        "blurb": "Warm maple syrup poured on snow and rolled onto a stick."
+      },
+      {
+        "name": "Tourtière",
+        "blurb": "A savory, spiced meat pie, a Quebec tradition."
+      },
+      {
+        "name": "Queues de castor",
+        "blurb": "A flat, fried pastry topped with sweet toppings — its name means \"beaver tail\"!"
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Bonjour",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Merci",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Délicieux",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Érable",
+        "meaning": "Maple"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Château Frontenac",
+        "blurb": "A grand, castle-like hotel on a hill above the river."
+      },
+      {
+        "name": "Old Quebec walls",
+        "blurb": "Stone walls that have circled the old city for centuries."
+      },
+      {
+        "name": "Montmorency Falls",
+        "blurb": "A waterfall even taller than Niagara Falls."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Quebec City, I wandered beside a {0} stone wall near a {1} castle-hotel. I tried a {2} treat that tasted so {3}, and heard a {4} playing a tune on the street.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "gray"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "towering"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "maple-drizzled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "sticky-sweet"
+        },
+        {
+          "label": "A musician",
+          "placeholder": "fiddler"
+        }
+      ]
+    }
+  },
+  "bali": {
+    "gastronomy": [
+      {
+        "name": "Nasi goreng",
+        "blurb": "Fried rice tossed with vegetables and a fried egg on top."
+      },
+      {
+        "name": "Satay",
+        "blurb": "Grilled meat skewers with a rich peanut sauce."
+      },
+      {
+        "name": "Fresh coconut",
+        "blurb": "Sweet coconut water sipped straight from the shell."
+      },
+      {
+        "name": "Pisang goreng",
+        "blurb": "Crispy fried banana fritters."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Om swastiastu",
+        "meaning": "Hello (Balinese greeting)"
+      },
+      {
+        "term": "Terima kasih",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Enak",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Sawah",
+        "meaning": "Rice terrace"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Tegallalang Rice Terraces",
+        "blurb": "Bright green rice paddies stepping down a hillside."
+      },
+      {
+        "name": "Uluwatu Temple",
+        "blurb": "A temple perched on a cliff above crashing waves."
+      },
+      {
+        "name": "Sacred Monkey Forest",
+        "blurb": "A jungle sanctuary full of curious monkeys."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Bali, I walked between {0} rice terraces on a {1} hillside. I tried a {2} treat that tasted so {3}, and a {4} swung through the trees nearby.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "emerald"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "terraced"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "banana-fried"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "crispy-sweet"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "monkey"
+        }
+      ]
+    }
+  },
+  "auckland": {
+    "gastronomy": [
+      {
+        "name": "Hokey pokey ice cream",
+        "blurb": "Vanilla ice cream with crunchy golden honeycomb bits."
+      },
+      {
+        "name": "Pavlova",
+        "blurb": "A crispy-on-the-outside, marshmallowy meringue dessert."
+      },
+      {
+        "name": "Meat pie",
+        "blurb": "A warm, flaky hand pie filled with savory goodness."
+      },
+      {
+        "name": "Kiwifruit",
+        "blurb": "A fuzzy brown fruit with sweet, bright green flesh inside."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Kia ora",
+        "meaning": "Hello (Māori)"
+      },
+      {
+        "term": "Thanks",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Sweet as",
+        "meaning": "Awesome / great"
+      },
+      {
+        "term": "Waka",
+        "meaning": "A traditional Māori canoe"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Sky Tower",
+        "blurb": "A super tall tower with a glass floor to look straight down."
+      },
+      {
+        "name": "Auckland Harbour",
+        "blurb": "A busy harbor dotted with hundreds of white sails."
+      },
+      {
+        "name": "Rangitoto Island",
+        "blurb": "A volcano-shaped island just a boat ride away."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Auckland, I looked out from a {0} tower over a {1} harbor. I tried a {2} treat that tasted so {3}, and counted a hundred {4} dotting the water.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "white"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "sail-dotted"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "honeycomb-crunched"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "sweet-and-crispy"
+        },
+        {
+          "label": "An object",
+          "placeholder": "sailboat"
+        }
+      ]
+    }
+  },
+  "rio-de-janeiro": {
+    "gastronomy": [
+      {
+        "name": "Feijoada",
+        "blurb": "A hearty black bean and meat stew, Brazil’s favorite comfort food."
+      },
+      {
+        "name": "Pão de queijo",
+        "blurb": "Small, chewy cheese bread rolls."
+      },
+      {
+        "name": "Açaí bowl",
+        "blurb": "A cool, purple berry bowl topped with granola and fruit."
+      },
+      {
+        "name": "Brigadeiro",
+        "blurb": "A rich, fudgy chocolate truffle rolled in sprinkles."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Olá",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Obrigado",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Delicioso",
+        "meaning": "Delicious"
+      },
+      {
+        "term": "Praia",
+        "meaning": "Beach"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Christ the Redeemer",
+        "blurb": "A giant statue with open arms atop a mountain."
+      },
+      {
+        "name": "Sugarloaf Mountain",
+        "blurb": "A dome-shaped mountain with a cable car to the top."
+      },
+      {
+        "name": "Copacabana Beach",
+        "blurb": "A famous curved beach with a wave-patterned sidewalk."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Rio de Janeiro, I rode a cable car up a {0} mountain shaped like a {1} loaf. I tried a {2} treat that tasted so {3}, and watched a {4} game on the sandy beach.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "green"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "sugar"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "chocolate-rolled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "fudgy-sweet"
+        },
+        {
+          "label": "A sport",
+          "placeholder": "soccer"
+        }
+      ]
+    }
   }
 }
