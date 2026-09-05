@@ -3,6 +3,27 @@ import './little-jetter.css';
 import { realProductCatalog, type ProductCategory } from './catalog';
 import dressUpCatalog from './data/dressUpCatalog.json';
 import { destinationAssetUrls } from './data/garmentManifest';
+import exploreContentData from './data/exploreContent.json';
+
+type ExploreContent = {
+  gastronomy?: { name: string; blurb: string }[];
+  vocabulary?: { term: string; meaning: string }[];
+  sites?: { name: string; blurb: string }[];
+  madlib?: { template: string; blanks: { label: string; placeholder: string }[] } | null;
+};
+const EXPLORE_CONTENT: Record<string, ExploreContent> = exploreContentData;
+
+const KINDNESS_PROMPTS = [
+  'Tell someone in your family one thing you appreciate about them today.',
+  'Draw a picture for someone and give it to them as a surprise.',
+  'Say thank you to someone who helped you this week, and tell them why.',
+  'Share something of yours with a friend or sibling today.',
+  'Give someone a genuine compliment before the day is over.',
+  'Help with a chore at home without being asked.',
+  'Write down one thing about today that you feel grateful for.',
+  'Smile and say hello to someone you don’t usually talk to.',
+];
+const KINDNESS_KEY = 'little-jetter-kindness-journal';
 
 type Destination = {
   id: string;
@@ -1151,7 +1172,7 @@ export function LittleJetterApp() {
   const [garmentRotation, setGarmentRotation] = useState<Record<string, number>>({});
   const [resizeTarget, setResizeTarget] = useState<string | null>(null);
   const pinchStartRef = useRef<{ distance: number; angle: number; scale: number; rotation: number } | null>(null);
-  const dragStartRef = useRef<{ x: number; y: number; offset: { x: number; y: number }; moved: boolean } | null>(null);
+  const dragStartRef = useRef<{ x: number; y: number; offset: { x: number; y: number }; moved: boolean; target: string | null } | null>(null);
   const [savedLooks, setSavedLooks] = useState<SavedLook[]>([]);
   const [passportStamps, setPassportStamps] = useState<string[]>([]);
   const [transitioning, setTransitioning] = useState(false);
@@ -1167,12 +1188,16 @@ export function LittleJetterApp() {
   const [showMoreChoices, setShowMoreChoices] = useState(false);
   const [celebration, setCelebration] = useState(0);
   const [travelMode, setTravelMode] = useState(true);
-  const [foundNotices, setFoundNotices] = useState<string[]>([]);
-  const [journalChoice, setJournalChoice] = useState('');
   const [openClosetDrawer, setOpenClosetDrawer] = useState<string>('tops');
   const [activeCategorySheet, setActiveCategorySheet] = useState<ClothingGroup | null>(null);
   const [styleFilter, setStyleFilter] = useState<'dress' | 'pajama' | 'swim' | 'hat' | null>(null);
   const [activeAvatarSheet, setActiveAvatarSheet] = useState<AvatarFeature | null>(null);
+  const [exploreView, setExploreView] = useState<'journal' | 'gastronomy' | 'memory' | 'words' | 'sites'>('journal');
+  const [kindnessPromptIndex, setKindnessPromptIndex] = useState(0);
+  const [kindnessDraft, setKindnessDraft] = useState('');
+  const [kindnessEntries, setKindnessEntries] = useState<{ prompt: string; text: string; date: string }[]>([]);
+  const [madlibAnswers, setMadlibAnswers] = useState<Record<string, string[]>>({});
+  const [madlibDone, setMadlibDone] = useState<Record<string, boolean>>({});
   const selected = useMemo(() => destinations.find((item) => item.id === selectedId) ?? destinations[0], [selectedId]);
   const visibleDestinations = destinations.filter((item) => (regionFilter === 'All regions' || item.region === regionFilter) && (destinationTypeFilter === 'All types' || destinationTypes[item.id] === destinationTypeFilter));
   const availableWardrobe = (group: Exclude<PickGroup, 'buddies'>) => wardrobe[group]
@@ -1199,8 +1224,49 @@ export function LittleJetterApp() {
     setSavedProducts(JSON.parse(window.localStorage.getItem('little-jetter-saved-picks') ?? '[]'));
     setSavedLooks(JSON.parse(window.localStorage.getItem('little-jetter-saved-looks') ?? '[]'));
     setPassportStamps(JSON.parse(window.localStorage.getItem(PASSPORT_KEY) ?? '[]'));
+    setKindnessEntries(JSON.parse(window.localStorage.getItem(KINDNESS_KEY) ?? '[]'));
+    setKindnessPromptIndex(Math.floor(Math.random() * KINDNESS_PROMPTS.length));
     return () => { document.documentElement.style.colorScheme = ''; };
   }, []);
+
+  function saveKindnessEntry() {
+    if (!kindnessDraft.trim()) return;
+    const entry = { prompt: KINDNESS_PROMPTS[kindnessPromptIndex], text: kindnessDraft.trim(), date: new Date().toLocaleDateString() };
+    setKindnessEntries((current) => {
+      const next = [entry, ...current].slice(0, 20);
+      window.localStorage.setItem(KINDNESS_KEY, JSON.stringify(next));
+      return next;
+    });
+    setKindnessDraft('');
+    setKindnessPromptIndex((current) => {
+      let next = Math.floor(Math.random() * KINDNESS_PROMPTS.length);
+      while (next === current && KINDNESS_PROMPTS.length > 1) next = Math.floor(Math.random() * KINDNESS_PROMPTS.length);
+      return next;
+    });
+    triggerCelebration([20, 30, 45]);
+  }
+
+  function shuffleKindnessPrompt() {
+    setKindnessPromptIndex((current) => {
+      let next = Math.floor(Math.random() * KINDNESS_PROMPTS.length);
+      while (next === current && KINDNESS_PROMPTS.length > 1) next = Math.floor(Math.random() * KINDNESS_PROMPTS.length);
+      return next;
+    });
+  }
+
+  function setMadlibBlank(destinationId: string, blankIndex: number, value: string, blankCount: number) {
+    setMadlibAnswers((current) => {
+      const existing = current[destinationId] ?? Array.from({ length: blankCount }, () => '');
+      const next = [...existing];
+      next[blankIndex] = value;
+      return { ...current, [destinationId]: next };
+    });
+  }
+
+  function submitMadlib(destinationId: string) {
+    setMadlibDone((current) => ({ ...current, [destinationId]: true }));
+    triggerCelebration([18, 28, 40]);
+  }
 
 
   function beginTrip() {
@@ -1235,16 +1301,8 @@ export function LittleJetterApp() {
     setStarted(false);
     setGameStep(1);
     setPacked([]);
-    setFoundNotices([]);
-    setJournalChoice('');
+    setExploreView('journal');
     triggerCelebration([25, 35, 25]);
-  }
-
-  function toggleNotice(label: string) {
-    if (foundNotices.includes(label)) return;
-    setFoundNotices((current) => [...current, label]);
-    showTravelConfirmation(`Discovery stamped: ${label}`);
-    triggerCelebration(14);
   }
 
   function showTravelConfirmation(message: string) {
@@ -1327,7 +1385,12 @@ export function LittleJetterApp() {
       pinchStartRef.current = { distance: pinchDistance(event.touches), angle: pinchAngle(event.touches), scale: garmentScale[resizeTarget] ?? 1, rotation: garmentRotation[resizeTarget] ?? 0 };
       dragStartRef.current = null;
     } else if (event.touches.length === 1) {
-      dragStartRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY, offset: resizeTarget ? garmentOffset[resizeTarget] ?? { x: 0, y: 0 } : { x: 0, y: 0 }, moved: false };
+      // Hit-test right away so the finger grabs whichever equipped piece is
+      // actually under it, not whatever was equipped or tapped last.
+      const hit = hitTestDoll(event.currentTarget, event.touches[0].clientX, event.touches[0].clientY);
+      const target = hit ? hit.id : resizeTarget;
+      if (hit && hit.id !== resizeTarget) setResizeTarget(hit.id);
+      dragStartRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY, offset: target ? garmentOffset[target] ?? { x: 0, y: 0 } : { x: 0, y: 0 }, moved: false, target };
       pinchStartRef.current = null;
     }
   }
@@ -1341,13 +1404,13 @@ export function LittleJetterApp() {
       setGarmentScale((current) => ({ ...current, [resizeTarget]: nextScale }));
       setGarmentRotation((current) => ({ ...current, [resizeTarget]: nextRotation }));
     } else if (event.touches.length === 1 && dragStartRef.current) {
-      const { x: startX, y: startY, offset } = dragStartRef.current;
+      const { x: startX, y: startY, offset, target } = dragStartRef.current;
       const dx = event.touches[0].clientX - startX;
       const dy = event.touches[0].clientY - startY;
       if (Math.hypot(dx, dy) > 5) dragStartRef.current.moved = true;
-      if (resizeTarget && dragStartRef.current.moved) {
+      if (target && dragStartRef.current.moved) {
         if (event.cancelable) event.preventDefault();
-        setGarmentOffset((current) => ({ ...current, [resizeTarget]: { x: offset.x + dx, y: offset.y + dy } }));
+        setGarmentOffset((current) => ({ ...current, [target]: { x: offset.x + dx, y: offset.y + dy } }));
       }
     }
   }
@@ -1368,17 +1431,24 @@ export function LittleJetterApp() {
 
   function handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
     if (event.button !== 0) return;
-    dragStartRef.current = { x: event.clientX, y: event.clientY, offset: resizeTarget ? garmentOffset[resizeTarget] ?? { x: 0, y: 0 } : { x: 0, y: 0 }, moved: false };
+    // Hit-test right away so a single click-and-drag grabs whichever
+    // equipped piece is actually under the cursor, not just the most
+    // recently equipped/selected one (resizeTarget only updates on a
+    // completed click otherwise, which is too late for the same gesture).
+    const hit = hitTestDoll(event.currentTarget, event.clientX, event.clientY);
+    const target = hit ? hit.id : resizeTarget;
+    if (hit && hit.id !== resizeTarget) setResizeTarget(hit.id);
+    dragStartRef.current = { x: event.clientX, y: event.clientY, offset: target ? garmentOffset[target] ?? { x: 0, y: 0 } : { x: 0, y: 0 }, moved: false, target };
   }
 
   function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
     if (!dragStartRef.current) return;
-    const { x: startX, y: startY, offset } = dragStartRef.current;
+    const { x: startX, y: startY, offset, target } = dragStartRef.current;
     const dx = event.clientX - startX;
     const dy = event.clientY - startY;
     if (Math.hypot(dx, dy) > 5) dragStartRef.current.moved = true;
-    if (resizeTarget && dragStartRef.current.moved) {
-      setGarmentOffset((current) => ({ ...current, [resizeTarget]: { x: offset.x + dx, y: offset.y + dy } }));
+    if (target && dragStartRef.current.moved) {
+      setGarmentOffset((current) => ({ ...current, [target]: { x: offset.x + dx, y: offset.y + dy } }));
     }
   }
 
@@ -1742,20 +1812,90 @@ export function LittleJetterApp() {
               <div className="little-day-card"><span className="little-day-art" aria-hidden="true" /><small>Adventure forecast</small><strong>{selected.weather}</strong></div>
             </div>
 
-            {gameStep === 2 && (
+            {gameStep === 2 && (() => {
+              const content = EXPLORE_CONTENT[selected.id] ?? {};
+              const gastronomy = content.gastronomy ?? [];
+              const vocabulary = content.vocabulary ?? [];
+              const sites = content.sites ?? [];
+              const madlib = content.madlib ?? null;
+              const madlibAnswerList = madlibAnswers[selected.id] ?? (madlib ? Array.from({ length: madlib.blanks.length }, () => '') : []);
+              const madlibComplete = Boolean(madlib) && madlibAnswerList.every((value) => value.trim().length > 0);
+              const madlibIsDone = Boolean(madlibDone[selected.id]);
+              const EXPLORE_TABS: { id: typeof exploreView; icon: string; label: string }[] = [
+                { id: 'journal', icon: '💛', label: 'Kindness journal' },
+                { id: 'gastronomy', icon: '🍡', label: 'Gastronomy' },
+                { id: 'memory', icon: '📖', label: 'Silly memory' },
+                { id: 'words', icon: '🗣️', label: 'Words' },
+                { id: 'sites', icon: '📍', label: 'Sites to see' },
+              ];
+              return (
               <div className="little-explore-panel little-game-panel">
                 <div className="little-section-art little-explore-art" aria-hidden="true"><img src="/little-jetter/explore-postcard.png" alt="" /><span>My travel journal · {selected.city}</span></div>
-                <div className="little-journal-progress"><div><small>Journal mission</small><strong>{foundNotices.length}/4 discoveries collected</strong></div><span><i style={{ width: `${foundNotices.length * 25}%` }} /></span></div>
-                <details className="little-task-drawer" open><summary><span>01</span><strong>Today’s journal page</strong><b>Open / close</b></summary><div className="little-postcard little-journal-page" style={{ backgroundColor: selected.color }}><span className="little-postcard-mark" aria-hidden="true" /><small>{destinationTypes[selected.id]} · {selected.country}</small><strong>Dear travel journal...</strong><p>{selected.adventure}</p><em>{selected.passportPhrase}</em></div></details>
-                <details className="little-task-drawer" open><summary><span>02</span><strong>Tap what you discover</strong><b>Open / close</b></summary><div className="little-find-game">
-                  <div className="little-find-scene"><img src="/little-jetter/explore-postcard.png" alt={`Find four hidden discoveries in the ${selected.city} travel illustration.`} />{selected.notices.map((item, index) => <button type="button" className={`little-hotspot hotspot-${index + 1} ${foundNotices.includes(item.label) ? 'is-found' : ''}`} aria-label={`Find ${item.label}`} aria-pressed={foundNotices.includes(item.label)} onClick={() => toggleNotice(item.label)} key={item.label}><span>{foundNotices.includes(item.label) ? '✓' : '?'}</span></button>)}</div>
-                  <div className="little-notice-grid">{selected.notices.map((item, index) => <div className={foundNotices.includes(item.label) ? 'is-found' : ''} key={item.label}><span className={`little-notice-art notice-${index + 1}`} aria-hidden="true" /><b>{foundNotices.includes(item.label) ? 'Found' : `Clue ${index + 1}`}</b>{item.label}</div>)}</div>
-                </div></details>
-                <details className="little-task-drawer" open><summary><span>03</span><strong>Finish the memory</strong><b>Open / close</b></summary><div className="little-journal-prompts"><p>The best part of this adventure would be...</p>{['Something I spotted', 'Something I tasted', 'Something I learned', 'Someone I met'].map((choice) => <button type="button" aria-pressed={journalChoice === choice} onClick={() => { setJournalChoice(choice); triggerCelebration(18); }} key={choice}>{choice}</button>)}{journalChoice && <strong>Saved to your {selected.city} journal.</strong>}</div></details>
-                <details className="little-task-drawer"><summary><span>04</span><strong>Real-life look for a parent</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realLook.map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><img src={product.imageUrl} alt="" /><strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : `Inspired by ${chosen('tops').name}`}</small></button>)}</div></details>
+                <nav className="little-explore-tabs" aria-label="Travel journal sections">
+                  {EXPLORE_TABS.map((tab) => <button type="button" key={tab.id} aria-pressed={exploreView === tab.id} onClick={() => setExploreView(tab.id)}><span aria-hidden="true">{tab.icon}</span>{tab.label}</button>)}
+                </nav>
+
+                <div className="little-explore-view" key={exploreView}>
+                  {exploreView === 'journal' && (
+                    <div className="little-kindness-journal">
+                      <p className="little-kicker">Gratitude &amp; kindness</p>
+                      <div className="little-kindness-prompt"><strong>{KINDNESS_PROMPTS[kindnessPromptIndex]}</strong><button type="button" onClick={shuffleKindnessPrompt} aria-label="Get a different prompt">🔀 New idea</button></div>
+                      <textarea className="little-kindness-input" value={kindnessDraft} onChange={(event) => setKindnessDraft(event.target.value)} placeholder="Tell your journal what happened... (words or even just emoji!)" rows={3} />
+                      <button type="button" className="little-kindness-save" disabled={!kindnessDraft.trim()} onClick={saveKindnessEntry}>💾 Save to my journal</button>
+                      {kindnessEntries.length > 0 && <div className="little-kindness-log"><small>Your last entries</small>{kindnessEntries.slice(0, 5).map((entry, index) => <div key={`${entry.date}-${index}`}><b>{entry.date}</b><em>{entry.prompt}</em><p>{entry.text}</p></div>)}</div>}
+                    </div>
+                  )}
+
+                  {exploreView === 'gastronomy' && (
+                    <div className="little-gastronomy-page">
+                      <p className="little-kicker">Foods to try in {selected.city}</p>
+                      {gastronomy.length > 0
+                        ? <div className="little-food-grid">{gastronomy.map((food) => <div className="little-food-card" key={food.name}><strong>{food.name}</strong><p>{food.blurb}</p></div>)}</div>
+                        : <p className="little-explore-empty">Foods for {selected.city} are coming soon!</p>}
+                    </div>
+                  )}
+
+                  {exploreView === 'memory' && (
+                    <div className="little-madlib">
+                      <p className="little-kicker">Finish the memory</p>
+                      {madlib ? (madlibIsDone ? (
+                        <div className="little-madlib-story">
+                          <p>{madlib.template.split(/\{(\d+)\}/).map((part, index) => index % 2 === 1 ? <em key={index}>{madlibAnswerList[Number(part)] || madlib.blanks[Number(part)].placeholder}</em> : <span key={index}>{part}</span>)}</p>
+                          <button type="button" onClick={() => { setMadlibDone((current) => ({ ...current, [selected.id]: false })); setMadlibAnswers((current) => ({ ...current, [selected.id]: Array.from({ length: madlib.blanks.length }, () => '') })); }}>Write another one</button>
+                        </div>
+                      ) : (
+                        <div className="little-madlib-form">
+                          {madlib.blanks.map((blank, index) => <label key={blank.label}><small>{blank.label}</small><input type="text" value={madlibAnswerList[index] ?? ''} placeholder={blank.placeholder} onChange={(event) => setMadlibBlank(selected.id, index, event.target.value, madlib.blanks.length)} /></label>)}
+                          <button type="button" disabled={!madlibComplete} onClick={() => submitMadlib(selected.id)}>Read my silly story</button>
+                        </div>
+                      )) : <p className="little-explore-empty">A silly {selected.city} story is coming soon!</p>}
+                    </div>
+                  )}
+
+                  {exploreView === 'words' && (
+                    <div className="little-vocab-page">
+                      <p className="little-kicker">Words &amp; phrases in {selected.city}</p>
+                      {vocabulary.length > 0
+                        ? <div className="little-vocab-grid">{vocabulary.map((word) => <div className="little-word-card" key={word.term}><strong>{word.term}</strong><small>{word.meaning}</small></div>)}</div>
+                        : <p className="little-explore-empty">Words for {selected.city} are coming soon!</p>}
+                    </div>
+                  )}
+
+                  {exploreView === 'sites' && (
+                    <div className="little-sites-page">
+                      <p className="little-kicker">Sites to see in {selected.city}</p>
+                      {sites.length > 0
+                        ? <div className="little-sites-grid">{sites.map((site) => <div className="little-site-card" key={site.name}><strong>{site.name}</strong><p>{site.blurb}</p></div>)}</div>
+                        : <p className="little-explore-empty">Sites for {selected.city} are coming soon!</p>}
+                    </div>
+                  )}
+                </div>
+
+                <details className="little-task-drawer"><summary><span>★</span><strong>Real-life look for a parent</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realLook.map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><img src={product.imageUrl} alt="" /><strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : `Inspired by ${chosen('tops').name}`}</small></button>)}</div></details>
                 <button type="button" className="little-next" onClick={() => showStep('shop')}>Visit the Jetter Shop <span>→</span></button>
               </div>
-            )}
+              );
+            })()}
 
             {gameStep === 1 && (
               <div className="little-dress-layout little-game-panel">

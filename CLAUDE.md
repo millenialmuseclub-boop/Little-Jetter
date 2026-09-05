@@ -37,7 +37,7 @@ All doll assets use the `little-jetter-neutral-v1` transparent 600 × 900 canvas
 - Saved looks, Surprise Me, and Clear Look
 - Compass travel transition
 - Passport-stamp gating
-- Explore hotspots
+- Explore sub-pages (Gratitude/Kindness journal, Gastronomy, Mad-libs memory, Vocabulary, Sites to see) driven by `src/data/exploreContent.json`
 - Destination filter scrolling
 - Mobile destination background
 - Parent-gated commerce

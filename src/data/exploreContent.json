@@ -1,0 +1,81 @@
+{
+  "tokyo": {
+    "gastronomy": [
+      { "name": "Sushi", "blurb": "Bite-sized rice and fish rolls, sometimes shaped like little rolls or cute animals." },
+      { "name": "Ramen", "blurb": "A steamy bowl of noodles in warm broth, perfect for a cool Tokyo evening." },
+      { "name": "Mochi", "blurb": "A soft, chewy rice cake, sometimes filled with sweet bean paste or ice cream." },
+      { "name": "Takoyaki", "blurb": "Round, golden dough balls cooked on a special pan, a favorite street-fair snack." },
+      { "name": "Taiyaki", "blurb": "A fish-shaped waffle cake, warm and filled with sweet custard or red bean." }
+    ],
+    "vocabulary": [
+      { "term": "Konnichiwa", "meaning": "Hello (said during the day)" },
+      { "term": "Arigatou", "meaning": "Thank you" },
+      { "term": "Sakura", "meaning": "Cherry blossom" },
+      { "term": "Oishii", "meaning": "Delicious!" }
+    ],
+    "sites": [
+      { "name": "Tokyo Tower", "blurb": "A tall red-and-white tower that lights up the skyline at night." },
+      { "name": "Senso-ji Temple", "blurb": "An old lantern-lit temple with a giant paper lantern at the gate." },
+      { "name": "Shibuya Crossing", "blurb": "A giant crosswalk where streams of people cross from every direction." }
+    ],
+    "madlib": {
+      "template": "Today in Tokyo, I saw a {0} lantern swinging over a {1} street. I tried a {2} snack that tasted so {3}, and a friendly {4} waved hello from a tiny shop window.",
+      "blanks": [
+        { "label": "A color", "placeholder": "pink" },
+        { "label": "An adjective", "placeholder": "wobbly" },
+        { "label": "A silly food", "placeholder": "noodle-shaped" },
+        { "label": "A funny taste word", "placeholder": "sparkly" },
+        { "label": "An animal", "placeholder": "raccoon" }
+      ]
+    }
+  },
+  "paris": {
+    "gastronomy": [
+      { "name": "Croissant", "blurb": "A flaky, buttery pastry, warm and golden from the bakery oven." },
+      { "name": "Baguette", "blurb": "A long, crusty loaf of bread baked fresh every morning." },
+      { "name": "Macaron", "blurb": "A tiny, colorful sandwich cookie with a sweet filling in the middle." }
+    ],
+    "vocabulary": [
+      { "term": "Bonjour", "meaning": "Hello" },
+      { "term": "Merci", "meaning": "Thank you" },
+      { "term": "Croissant", "meaning": "A flaky, buttery pastry" }
+    ],
+    "sites": [
+      { "name": "Eiffel Tower", "blurb": "An iron tower so tall it sparkles with lights every evening." },
+      { "name": "The Louvre", "blurb": "A giant museum shaped like a glass pyramid, full of famous art." }
+    ],
+    "madlib": {
+      "template": "In Paris, I climbed a {0} tower and looked out over a {1} city. For a snack I ate a {2} pastry that smelled like {3}.",
+      "blanks": [
+        { "label": "An adjective", "placeholder": "sparkly" },
+        { "label": "A color", "placeholder": "golden" },
+        { "label": "A silly food word", "placeholder": "bubbly" },
+        { "label": "Something sweet", "placeholder": "sugar clouds" }
+      ]
+    }
+  },
+  "honolulu": {
+    "gastronomy": [
+      { "name": "Poke", "blurb": "Cubes of fresh fish tossed with rice and a tasty sauce." },
+      { "name": "Shave ice", "blurb": "A mountain of finely shaved ice soaked in bright, fruity syrups." }
+    ],
+    "vocabulary": [
+      { "term": "Aloha", "meaning": "Hello and goodbye" },
+      { "term": "Mahalo", "meaning": "Thank you" }
+    ],
+    "sites": [],
+    "madlib": null
+  },
+  "london": {
+    "gastronomy": [
+      { "name": "Fish and chips", "blurb": "Crispy battered fish with a big pile of golden fries, usually wrapped in paper." },
+      { "name": "Scone", "blurb": "A soft, crumbly bake served with jam and cream for afternoon tea." }
+    ],
+    "vocabulary": [],
+    "sites": [
+      { "name": "Big Ben", "blurb": "A famous clock tower that chimes loudly on the hour." },
+      { "name": "The Thames", "blurb": "A wide river that winds right through the middle of the city." }
+    ],
+    "madlib": null
+  }
+}
