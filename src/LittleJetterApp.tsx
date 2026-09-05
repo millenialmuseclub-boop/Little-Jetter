@@ -1685,14 +1685,26 @@ export function LittleJetterApp() {
                         <span className="little-destination-number">{String(index + 1).padStart(3, '0')}</span>{DESTINATIONS_WITH_BACKDROP.has(destination.id) ? <span className="little-destination-icon little-destination-photo" aria-hidden="true"><img src={`/little-jetter/${destination.id}-doll-backdrop.png`} alt="" /></span> : <span className="little-destination-icon little-destination-art" aria-hidden="true" />}<span className="little-destination-city">{destination.city}</span><span className="little-destination-country">{destination.area}</span><span className="little-destination-note">{destinationTypes[destination.id]} · {destination.note}</span><span className="little-stamp-edge" aria-hidden="true" />
                       </button>
                       {isSelected && (
-                        <aside className="little-adventure-ticker" aria-live="polite" onClick={beginTrip} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') beginTrip(); }} aria-label={started ? `Continue ${selected.city} trip` : `Let’s go to ${selected.city}`} key={`ticker-${destination.id}`}>
+                        <aside className="little-adventure-ticker" aria-live="polite" key={`ticker-${destination.id}`}>
                           <div className="little-adventure-ticker-track" aria-hidden="true">
                             <div className="little-adventure-ticker-row">
                               <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
                               <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
                             </div>
                           </div>
-                          <b className="little-adventure-ticker-cta" aria-hidden="true">{started ? 'CONTINUE →' : 'GO →'}</b>
+                          <nav className="little-adventure-ticker-stops" aria-label="Jump to an adventure step">
+                            {(['style', 'explore', 'shop'] as const).map((step) => (
+                              <button
+                                type="button"
+                                key={step}
+                                aria-current={currentStep === step ? 'step' : undefined}
+                                disabled={step !== 'style' && !started}
+                                onClick={() => (!started ? beginTrip() : showStep(step))}
+                              >
+                                {step === 'style' ? (started ? 'CONTINUE' : 'GO') : step.slice(0, 4).toUpperCase()}
+                              </button>
+                            ))}
+                          </nav>
                         </aside>
                       )}
                     </>})}</div>
