@@ -1077,7 +1077,7 @@ const PAINTERLY_BODY_ASSETS: Record<string, string> = {
 
 const LAYER_BASE_Z: Record<string, number> = { shoes: 2, bottom: 3, top: 4, outerwear: 5, face: 6, accessory: 7 };
 
-function CatalogDoll({ destinationId, picks, character, garmentColors, garmentScale = {}, garmentOffset = {}, garmentZBoost = {}, garmentRotation = {}, activeItemId }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors; garmentScale?: GarmentScales; garmentOffset?: Record<string, { x: number; y: number }>; garmentZBoost?: Record<string, number>; garmentRotation?: Record<string, number>; activeItemId?: string | null }) {
+function CatalogDoll({ destinationId, picks, character, garmentColors, garmentScale = {}, garmentOffset = {}, garmentZBoost = {}, garmentRotation = {}, activeItemId, hatPick = 'none' }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors; garmentScale?: GarmentScales; garmentOffset?: Record<string, { x: number; y: number }>; garmentZBoost?: Record<string, number>; garmentRotation?: Record<string, number>; activeItemId?: string | null; hatPick?: string }) {
   function adjustStyle(id: string): React.CSSProperties | undefined {
     const style: React.CSSProperties = {};
     if (garmentScale[id]) (style as Record<string, unknown>)['--resize-scale'] = garmentScale[id];
@@ -1100,6 +1100,8 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
     .filter(({ item }) => Boolean(catalogImageFor(item, item ? garmentColors[item.id] : undefined)));
   const headUrl = painterlyHeadUrl(character);
   const bodyUrl = PAINTERLY_BODY_ASSETS[character.skin];
+  const hatItem = hatPick !== 'none' ? catalogItemFor(destinationId, 'accessories', hatPick) : undefined;
+  const hatImageUrl = catalogImageFor(hatItem, hatItem ? garmentColors[hatItem.id] : undefined);
   const SLOT_BY_GROUP: Record<ClothingGroup, string> = { tops: 'top', bottoms: 'bottom', layers: 'outerwear', shoes: 'shoes', accessories: 'accessory' };
   const noneSlots = CLOSET_GROUPS.filter((group) => picks[group] === 'none').map((group) => SLOT_BY_GROUP[group]);
   const hiddenLayers: string[] = (illustrated.map(({ item }) => item?.slot ?? '') as string[])
@@ -1110,7 +1112,7 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
     .concat(noneSlots);
   return <div className="little-catalog-doll" data-template={catalog.template.id}>
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
-    {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" key={`body-${character.skin}`} />}
+    {bodyUrl && <img className={`little-illustrated-layer layer-body${activeItemId === 'body' ? ' is-selected-for-resize' : ''}`} data-item-id="body" data-group="body" src={bodyUrl} alt="" aria-hidden="true" style={adjustStyle('body')} key={`body-${character.skin}`} />}
     {headUrl && <img className={`little-illustrated-layer layer-face${activeItemId === 'head' ? ' is-selected-for-resize' : ''}`} data-item-id="head" data-group="head" src={headUrl} alt="" aria-hidden="true" style={adjustStyle('head')} key={`head-${character.hairStyle}-${character.skin}-${character.hair}`} />}
     {headUrl && character.eyes !== 'brown' && (
       <div
@@ -1142,6 +1144,18 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
         />
       );
     })}
+    {hatItem && hatImageUrl && (
+      <img
+        className={`little-illustrated-layer layer-hat${hatItem.id === activeItemId ? ' is-selected-for-resize' : ''}`}
+        data-item-id={hatItem.id}
+        data-group="hat"
+        src={hatImageUrl}
+        alt=""
+        aria-hidden="true"
+        style={adjustStyle(hatItem.id)}
+        key={`hat-${hatItem.id}-${garmentColors[hatItem.id] ?? 'default'}`}
+      />
+    )}
   </div>;
 }
 
@@ -1191,6 +1205,11 @@ export function LittleJetterApp() {
   const [openClosetDrawer, setOpenClosetDrawer] = useState<string>('tops');
   const [activeCategorySheet, setActiveCategorySheet] = useState<ClothingGroup | null>(null);
   const [styleFilter, setStyleFilter] = useState<'dress' | 'pajama' | 'swim' | 'hat' | null>(null);
+  // Hats live in the accessories catalog list but equip independently of
+  // picks.accessories (a separate React state, not a new PickGroup) so a
+  // child can wear a bag/sunglasses and a hat at the same time instead of
+  // the two competing for one slot.
+  const [hatPick, setHatPick] = useState('none');
   const [activeAvatarSheet, setActiveAvatarSheet] = useState<AvatarFeature | null>(null);
   const [exploreView, setExploreView] = useState<'journal' | 'gastronomy' | 'memory' | 'words' | 'sites'>('journal');
   const [kindnessPromptIndex, setKindnessPromptIndex] = useState(0);
@@ -1274,7 +1293,19 @@ export function LittleJetterApp() {
     setStarted(true);
     showStep('style');
     triggerCelebration([25, 40, 25]);
-    window.setTimeout(() => document.getElementById('adventure-studio')?.scrollIntoView({ behavior: 'smooth' }), 30);
+  }
+
+  // Scrolling is scheduled a couple of times with retries rather than one
+  // fire-and-forget scrollIntoView: right after a step switch the doll/photo
+  // assets for the new view are still loading in, which can block the main
+  // thread long enough that a single scheduled smooth-scroll never actually
+  // runs (or starts after the browser dropped the animation), leaving the
+  // page looking stuck on the old screen even though the state did change.
+  function scrollToStep(step: 'destination' | 'style' | 'explore' | 'shop', attempt = 0) {
+    const target = document.querySelector(`[data-app-view="${step}"]`);
+    if (!target) { if (attempt < 6) window.setTimeout(() => scrollToStep(step, attempt + 1), 80); return; }
+    target.scrollIntoView({ behavior: attempt === 0 ? 'smooth' : 'auto', block: 'start' });
+    if (attempt < 3) window.setTimeout(() => scrollToStep(step, attempt + 1), 150);
   }
 
   function showStep(step: 'destination' | 'style' | 'explore' | 'shop') {
@@ -1287,7 +1318,7 @@ export function LittleJetterApp() {
       if (step === 'style') setGameStep(1);
       if (step === 'explore') setGameStep(2);
       setTransitioning(false);
-      window.setTimeout(() => document.querySelector(`[data-app-view="${step}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 20);
+      scrollToStep(step);
     }, 220);
   }
 
@@ -1790,7 +1821,7 @@ export function LittleJetterApp() {
               <div className="little-category-sheet-handle" aria-hidden="true" />
               <div className="little-category-sheet-head"><strong id="category-sheet-title">{sheetTitle}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => { setActiveCategorySheet(null); setStyleFilter(null); }}>×</button></div>
               <div className="little-item-row">
-                {sheetItems.map(({ group: itemGroup, item }) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} aria-pressed={picks[itemGroup] === item.id} onClick={() => choose(itemGroup, item.id)} key={`${itemGroup}-${item.id}`}><GarmentPreview destinationId={selected.id} group={itemGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} />{!item.tags.includes('illustrated') && <em className="little-sketch-badge">Sketch</em>}<strong>{item.name}</strong><small>{item.description}</small></button>)}
+                {sheetItems.map(({ group: itemGroup, item }) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} aria-pressed={styleFilter === 'hat' ? hatPick === item.id : picks[itemGroup] === item.id} onClick={() => { if (styleFilter === 'hat') { setHatPick((current) => current === item.id ? 'none' : item.id); triggerCelebration(18); } else choose(itemGroup, item.id); }} key={`${itemGroup}-${item.id}`}><GarmentPreview destinationId={selected.id} group={itemGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} />{!item.tags.includes('illustrated') && <em className="little-sketch-badge">Sketch</em>}<strong>{item.name}</strong><small>{item.description}</small></button>)}
               </div>
               {variants.length > 1 && <div className="little-color-swatches" data-color-slot={group} aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{variants.map((variant) => <button type="button" aria-label={`Use ${variant.id} for ${chosen(group).name}`} aria-pressed={(garmentColors[picks[group]] ?? variants[0].swatch) === variant.swatch} style={{ '--swatch': variant.swatch } as React.CSSProperties} onClick={() => recolor(group, variant.swatch)} key={variant.id} />)}</div>}
             </div>
@@ -1905,7 +1936,7 @@ export function LittleJetterApp() {
                     <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onClick={handleDollClick} onWheel={handleWheelResize} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}. Tap a piece to move, resize, or delete it.`}>
                       <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{DESTINATIONS_WITH_BACKDROP.has(selected.id) && <img src={`/little-jetter/${selected.id}-doll-backdrop.png`} alt="" />}<i /><b /></div>
                       {travelMode && <div className="little-doll-sky" aria-hidden="true"><span className="little-doll-plane">✈</span><span className="little-doll-cloud cloud-one">☁</span><span className="little-doll-cloud cloud-two">☁</span></div>}
-                      <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} garmentScale={garmentScale} garmentOffset={garmentOffset} garmentZBoost={garmentZBoost} garmentRotation={garmentRotation} activeItemId={resizeTarget} />
+                      <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${hatPick}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} garmentScale={garmentScale} garmentOffset={garmentOffset} garmentZBoost={garmentZBoost} garmentRotation={garmentRotation} activeItemId={resizeTarget} hatPick={hatPick} />
                       <div className="little-dress-sparkles" key={`sparkles-${celebration}`} aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--spark': index } as React.CSSProperties}>✦</i>)}</div>
                       {dropActive && <div className="little-drop-message">Drop to dress</div>}
                     </div>
