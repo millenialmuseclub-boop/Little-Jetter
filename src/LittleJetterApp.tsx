@@ -1688,22 +1688,14 @@ export function LittleJetterApp() {
             })}
           </div>
 
-          <aside className="little-trip-ticker" style={{ '--trip-color': selected.color } as React.CSSProperties} aria-live="polite">
-            <span className="little-ticker-flag" aria-hidden="true">✦ NOW BOARDING</span>
-            <div className="little-ticker-track" aria-hidden="true">
-              <div className="little-ticker-row">
-                <span>{selected.city.toUpperCase()} IS CALLING</span><i>·</i>
-                <span>{selected.weather.toUpperCase()}</span><i>·</i>
-                <span>{selected.prompt.toUpperCase()}</span><i>·</i>
-                <span>{selected.city.toUpperCase()} IS CALLING</span><i>·</i>
-                <span>{selected.weather.toUpperCase()}</span><i>·</i>
-                <span>{selected.prompt.toUpperCase()}</span><i>·</i>
+          <aside className="little-adventure-ticker" aria-live="polite" onClick={beginTrip} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') beginTrip(); }} aria-label={started ? `Continue ${selected.city} trip` : `Let’s go to ${selected.city}`}>
+            <div className="little-adventure-ticker-track" aria-hidden="true">
+              <div className="little-adventure-ticker-row">
+                <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
+                <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
               </div>
             </div>
-            <button type="button" className="little-begin little-ticker-begin" onClick={beginTrip}>
-              {started ? `Continue ${selected.city} trip` : `Let’s go to ${selected.city}`}
-              <span aria-hidden="true">→</span>
-            </button>
+            <b className="little-adventure-ticker-cta" aria-hidden="true">{started ? 'CONTINUE →' : 'GO →'}</b>
           </aside>
           {started && <p className="little-saved-note" role="status">✓ Your {selected.city} adventure is saved on this device. Next up: explore the destination.</p>}
         </section>

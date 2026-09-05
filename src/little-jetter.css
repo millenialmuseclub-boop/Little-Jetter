@@ -90,19 +90,19 @@
 /* A slim departure-board style ticker instead of a tall floating card — a
    compact fixed strip (like an airport/ferry board) rather than a big block
    that visually dominates and overlaps the page underneath it. */
-.little-trip-ticker { display:flex; align-items:center; gap:16px; height:52px; padding:0 16px; border-top:1px solid color-mix(in srgb,var(--trip-color) 55%,transparent); background:var(--ink); color:#f4ead2; box-shadow:0 -12px 30px -18px rgba(0,0,0,.35); position:fixed; left:0; right:0; bottom:0; z-index:40; font-family:'Fraunces',serif; }
-.little-ticker-flag { flex:none; font-size:10px; font-weight:700; letter-spacing:.12em; padding:5px 10px; border-radius:999px; background:color-mix(in srgb,var(--trip-color) 65%,#e85849); color:#fffaf0; white-space:nowrap; }
-.little-ticker-track { flex:1 1 auto; min-width:0; overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); }
-.little-ticker-row { display:flex; align-items:center; gap:10px; white-space:nowrap; width:max-content; font-size:12px; font-weight:600; letter-spacing:.06em; animation:little-ticker-scroll 22s linear infinite; }
-.little-ticker-row i { opacity:.5; font-style:normal; }
-@keyframes little-ticker-scroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
-.little-ticker-begin { flex:none; padding:9px 16px; font-size:12px; box-shadow:none; }
-.little-ticker-begin span { margin-left:6px; }
-@media (prefers-reduced-motion: reduce) { .little-ticker-row { animation:none; } }
-@media (max-width:680px) { .little-trip-ticker { height:auto; padding:8px 12px; flex-wrap:wrap; row-gap:6px; } .little-ticker-flag { order:1; } .little-ticker-begin { order:2; margin-left:auto; } .little-ticker-track { order:3; flex-basis:100%; } }
+/* A real split-flap departure-board strip: one thin dark line, monospace
+   amber text scrolling right-to-left, nothing else — no badges, no big
+   buttons. The whole strip is the tap target. */
+.little-adventure-ticker { display:flex; align-items:stretch; height:30px; cursor:pointer; position:fixed; left:0; right:0; bottom:0; z-index:40; background:#0d1f26; border-top:1px solid #e8aa31; font-family:'DM Sans',sans-serif; }
+.little-adventure-ticker-track { flex:1 1 auto; min-width:0; overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent); mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent); }
+.little-adventure-ticker-row { display:flex; height:100%; align-items:center; gap:48px; padding-left:16px; white-space:nowrap; width:max-content; animation:little-adventure-ticker-scroll 26s linear infinite; }
+.little-adventure-ticker-row span { color:#e8aa31; font-size:10px; font-weight:700; letter-spacing:.1em; }
+@keyframes little-adventure-ticker-scroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+.little-adventure-ticker-cta { flex:none; display:flex; align-items:center; padding:0 12px; font-size:10px; font-weight:800; letter-spacing:.08em; color:#0d1f26; background:#e8aa31; }
+@media (prefers-reduced-motion: reduce) { .little-adventure-ticker-row { animation:none; } }
 /* Reserve room at the bottom of the destination list so the fixed ticker
    never overlaps the last few destinations. */
-.little-destination-library { margin-bottom:90px; }
+.little-destination-library { margin-bottom:44px; }
 /* `.little-tab-view` plays a one-shot entrance animation with fill-mode
    "both", which leaves a resolved (identity) `transform` on the element
    forever after — and any transform, even an identity one, turns an
