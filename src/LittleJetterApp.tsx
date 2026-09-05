@@ -1688,15 +1688,19 @@ export function LittleJetterApp() {
             })}
           </div>
 
-          <aside className="little-trip-card" style={{ '--trip-color': selected.color } as React.CSSProperties} aria-live="polite">
-            <div className="little-trip-seal" aria-hidden="true"><span className="little-seal-art" />{selected.city}</div>
-            <div className="little-trip-copy">
-              <p className="little-kicker">Your next adventure</p>
-              <h3>{selected.city} is calling</h3>
-              <div className="little-weather"><span className="little-weather-mark" aria-hidden="true" /><div><small>What it feels like</small><strong>{selected.weather}</strong></div></div>
-              <p>{selected.prompt}</p>
+          <aside className="little-trip-ticker" style={{ '--trip-color': selected.color } as React.CSSProperties} aria-live="polite">
+            <span className="little-ticker-flag" aria-hidden="true">✦ NOW BOARDING</span>
+            <div className="little-ticker-track" aria-hidden="true">
+              <div className="little-ticker-row">
+                <span>{selected.city.toUpperCase()} IS CALLING</span><i>·</i>
+                <span>{selected.weather.toUpperCase()}</span><i>·</i>
+                <span>{selected.prompt.toUpperCase()}</span><i>·</i>
+                <span>{selected.city.toUpperCase()} IS CALLING</span><i>·</i>
+                <span>{selected.weather.toUpperCase()}</span><i>·</i>
+                <span>{selected.prompt.toUpperCase()}</span><i>·</i>
+              </div>
             </div>
-            <button type="button" className="little-begin" onClick={beginTrip}>
+            <button type="button" className="little-begin little-ticker-begin" onClick={beginTrip}>
               {started ? `Continue ${selected.city} trip` : `Let’s go to ${selected.city}`}
               <span aria-hidden="true">→</span>
             </button>

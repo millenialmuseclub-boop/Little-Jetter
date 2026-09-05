@@ -87,10 +87,22 @@
    through the whole list — float it as a bottom bar for the destination
    step (safe because .little-chooser is only ever in the DOM/visible while
    that step is active, see `hidden={currentStep !== 'destination'}`). */
-.little-trip-card { margin-top:36px; min-height:190px; padding:28px 32px; display:grid; grid-template-columns:130px 1fr auto; gap:28px; align-items:center; border:1px solid color-mix(in srgb,var(--trip-color) 38%,transparent); background:color-mix(in srgb,var(--trip-color) 7%,#fffaf0); box-shadow:0 24px 50px -42px var(--ink); position:fixed; left:clamp(22px,5vw,72px); right:clamp(22px,5vw,72px); bottom:16px; max-width:calc(1240px - 2*clamp(22px,5vw,72px)); margin-inline:auto; z-index:40; }
-/* Reserve room at the bottom of the destination list so the floating card
+/* A slim departure-board style ticker instead of a tall floating card — a
+   compact fixed strip (like an airport/ferry board) rather than a big block
+   that visually dominates and overlaps the page underneath it. */
+.little-trip-ticker { display:flex; align-items:center; gap:16px; height:52px; padding:0 16px; border-top:1px solid color-mix(in srgb,var(--trip-color) 55%,transparent); background:var(--ink); color:#f4ead2; box-shadow:0 -12px 30px -18px rgba(0,0,0,.35); position:fixed; left:0; right:0; bottom:0; z-index:40; font-family:'Fraunces',serif; }
+.little-ticker-flag { flex:none; font-size:10px; font-weight:700; letter-spacing:.12em; padding:5px 10px; border-radius:999px; background:color-mix(in srgb,var(--trip-color) 65%,#e85849); color:#fffaf0; white-space:nowrap; }
+.little-ticker-track { flex:1 1 auto; min-width:0; overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); }
+.little-ticker-row { display:flex; align-items:center; gap:10px; white-space:nowrap; width:max-content; font-size:12px; font-weight:600; letter-spacing:.06em; animation:little-ticker-scroll 22s linear infinite; }
+.little-ticker-row i { opacity:.5; font-style:normal; }
+@keyframes little-ticker-scroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+.little-ticker-begin { flex:none; padding:9px 16px; font-size:12px; box-shadow:none; }
+.little-ticker-begin span { margin-left:6px; }
+@media (prefers-reduced-motion: reduce) { .little-ticker-row { animation:none; } }
+@media (max-width:680px) { .little-trip-ticker { height:auto; padding:8px 12px; flex-wrap:wrap; row-gap:6px; } .little-ticker-flag { order:1; } .little-ticker-begin { order:2; margin-left:auto; } .little-ticker-track { order:3; flex-basis:100%; } }
+/* Reserve room at the bottom of the destination list so the fixed ticker
    never overlaps the last few destinations. */
-.little-destination-library { margin-bottom:210px; }
+.little-destination-library { margin-bottom:90px; }
 /* `.little-tab-view` plays a one-shot entrance animation with fill-mode
    "both", which leaves a resolved (identity) `transform` on the element
    forever after — and any transform, even an identity one, turns an
