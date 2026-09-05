@@ -1680,23 +1680,26 @@ export function LittleJetterApp() {
                   <summary><span>{String(countryIndex + 1).padStart(2,'0')}</span><strong>{country}</strong><small>{regionPlaces.filter((item) => item.country === country).length} cities</small></summary>
                   <div className="little-country-cities">{regionPlaces.filter((item) => item.country === country).map((destination) => {
                     const isSelected = destination.id === selected.id; const index = destinations.findIndex((item) => item.id === destination.id);
-                    return <button type="button" className={`little-destination ${isSelected ? 'is-selected' : ''}`} style={{ '--stamp-color': destination.color } as React.CSSProperties} aria-pressed={isSelected} onClick={() => selectDestination(destination)} key={destination.id}>
-                      <span className="little-destination-number">{String(index + 1).padStart(3, '0')}</span>{DESTINATIONS_WITH_BACKDROP.has(destination.id) ? <span className="little-destination-icon little-destination-photo" aria-hidden="true"><img src={`/little-jetter/${destination.id}-doll-backdrop.png`} alt="" /></span> : <span className="little-destination-icon little-destination-art" aria-hidden="true" />}<span className="little-destination-city">{destination.city}</span><span className="little-destination-country">{destination.area}</span><span className="little-destination-note">{destinationTypes[destination.id]} · {destination.note}</span><span className="little-stamp-edge" aria-hidden="true" />
-                    </button>})}</div>
+                    return <>
+                      <button type="button" className={`little-destination ${isSelected ? 'is-selected' : ''}`} style={{ '--stamp-color': destination.color } as React.CSSProperties} aria-pressed={isSelected} onClick={() => selectDestination(destination)} key={destination.id}>
+                        <span className="little-destination-number">{String(index + 1).padStart(3, '0')}</span>{DESTINATIONS_WITH_BACKDROP.has(destination.id) ? <span className="little-destination-icon little-destination-photo" aria-hidden="true"><img src={`/little-jetter/${destination.id}-doll-backdrop.png`} alt="" /></span> : <span className="little-destination-icon little-destination-art" aria-hidden="true" />}<span className="little-destination-city">{destination.city}</span><span className="little-destination-country">{destination.area}</span><span className="little-destination-note">{destinationTypes[destination.id]} · {destination.note}</span><span className="little-stamp-edge" aria-hidden="true" />
+                      </button>
+                      {isSelected && (
+                        <aside className="little-adventure-ticker" aria-live="polite" onClick={beginTrip} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') beginTrip(); }} aria-label={started ? `Continue ${selected.city} trip` : `Let’s go to ${selected.city}`} key={`ticker-${destination.id}`}>
+                          <div className="little-adventure-ticker-track" aria-hidden="true">
+                            <div className="little-adventure-ticker-row">
+                              <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
+                              <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
+                            </div>
+                          </div>
+                          <b className="little-adventure-ticker-cta" aria-hidden="true">{started ? 'CONTINUE →' : 'GO →'}</b>
+                        </aside>
+                      )}
+                    </>})}</div>
                 </details>)}</div>
               </details>;
             })}
           </div>
-
-          <aside className="little-adventure-ticker" aria-live="polite" onClick={beginTrip} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') beginTrip(); }} aria-label={started ? `Continue ${selected.city} trip` : `Let’s go to ${selected.city}`}>
-            <div className="little-adventure-ticker-track" aria-hidden="true">
-              <div className="little-adventure-ticker-row">
-                <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
-                <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
-              </div>
-            </div>
-            <b className="little-adventure-ticker-cta" aria-hidden="true">{started ? 'CONTINUE →' : 'GO →'}</b>
-          </aside>
           {started && <p className="little-saved-note" role="status">✓ Your {selected.city} adventure is saved on this device. Next up: explore the destination.</p>}
         </section>
 

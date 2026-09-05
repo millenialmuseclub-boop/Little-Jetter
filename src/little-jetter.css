@@ -92,8 +92,11 @@
    that visually dominates and overlaps the page underneath it. */
 /* A real split-flap departure-board strip: one thin dark line, monospace
    amber text scrolling right-to-left, nothing else — no badges, no big
-   buttons. The whole strip is the tap target. */
-.little-adventure-ticker { display:flex; align-items:stretch; height:30px; cursor:pointer; position:fixed; left:0; right:0; bottom:0; z-index:40; background:#0d1f26; border-top:1px solid #e8aa31; font-family:'DM Sans',sans-serif; }
+   buttons. The whole strip is the tap target. Pops in right under the
+   destination card that was just tapped (it's inserted inline as a grid
+   item spanning the full row) instead of pinning to the screen edge. */
+.little-adventure-ticker { grid-column:1/-1; display:flex; align-items:stretch; height:30px; cursor:pointer; background:#0d1f26; border:1px solid #e8aa31; border-radius:4px; overflow:hidden; font-family:'DM Sans',sans-serif; animation:little-adventure-ticker-pop .28s cubic-bezier(.2,1.6,.4,1); }
+@keyframes little-adventure-ticker-pop { from { transform:scaleY(.3); opacity:0; } to { transform:scaleY(1); opacity:1; } }
 .little-adventure-ticker-track { flex:1 1 auto; min-width:0; overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent); mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent); }
 .little-adventure-ticker-row { display:flex; height:100%; align-items:center; gap:48px; padding-left:16px; white-space:nowrap; width:max-content; animation:little-adventure-ticker-scroll 26s linear infinite; }
 .little-adventure-ticker-row span { color:#e8aa31; font-size:10px; font-weight:700; letter-spacing:.1em; }
@@ -102,7 +105,6 @@
 @media (prefers-reduced-motion: reduce) { .little-adventure-ticker-row { animation:none; } }
 /* Reserve room at the bottom of the destination list so the fixed ticker
    never overlaps the last few destinations. */
-.little-destination-library { margin-bottom:44px; }
 /* `.little-tab-view` plays a one-shot entrance animation with fill-mode
    "both", which leaves a resolved (identity) `transform` on the element
    forever after — and any transform, even an identity one, turns an
