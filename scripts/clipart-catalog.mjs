@@ -102,12 +102,7 @@ export const CLIPART_ITEMS = [
   { i: 96, id: 'olive-trapper-hat', name: 'Olive trapper hat', category: "accessories", anchor: "hat" },
   { i: 97, id: 'cream-trapper-hat', name: 'Cream trapper hat', category: "accessories", anchor: "hat" },
   { i: 98, id: 'blue-daisy-bucket-hat', name: 'Blue daisy bucket hat', category: "accessories", anchor: "hat" },
-  { i: 99, id: 'pink-heart-sunglasses', name: 'Pink heart sunglasses', category: 'accessories', anchor: 'face' },
-  { i: 100, id: 'pink-heart-sunglasses-2', name: 'Pink heart sunglasses (rose)', category: 'accessories', anchor: 'face' },
-  { i: 101, id: 'round-brown-sunglasses', name: 'Round brown sunglasses', category: 'accessories', anchor: 'face' },
-  { i: 102, id: 'round-brown-sunglasses-2', name: 'Round brown sunglasses (tan)', category: 'accessories', anchor: 'face' },
-  { i: 103, id: 'flower-red-sunglasses', name: 'Flower red sunglasses', category: 'accessories', anchor: 'face' },
-  { i: 104, id: 'flower-red-sunglasses-2', name: 'Flower red sunglasses (pink)', category: 'accessories', anchor: 'face' },
+  // Sunglasses (items 99-104) removed from the closet per direct request.
   { i: 105, id: 'cream-bow-headband', name: 'Cream bow headband', category: "accessories", anchor: "hat" },
   { i: 106, id: 'pink-hair-bow', name: 'Pink hair bow', category: "accessories", anchor: "hat" },
   { i: 107, id: 'blue-scrunchie', name: 'Blue scrunchie', category: "accessories", anchor: "hat" },
