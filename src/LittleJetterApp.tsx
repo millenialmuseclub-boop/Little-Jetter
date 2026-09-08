@@ -161,9 +161,10 @@ const CATEGORY_BUTTON: Record<ClothingGroup, { icon: string; label: string; spot
   shoes: { icon: '👟', label: 'Shoes', spot: 'spot-shoes' },
   accessories: { icon: '🎒', label: 'Accessory', spot: 'spot-accessories' },
 };
-type AvatarFeature = 'hairStyle';
+type AvatarFeature = 'hairStyle' | 'eyes';
 const AVATAR_BUTTON: Record<AvatarFeature, { icon: string; label: string }> = {
   hairStyle: { icon: '🙂', label: 'Head' },
+  eyes: { icon: '◉', label: 'Eyes' },
 };
 const LAYERS = { base: 0, hairBack: 10, shoes: 20, bottom: 25, top: 30, dress: 35, outerwear: 50, hairFront: 60, accessory: 70, hat: 80 } as const;
 const PRODUCT_CATEGORY_ICON: Record<ProductCategory, string> = {
@@ -1878,6 +1879,12 @@ export function LittleJetterApp() {
                   </div>)}
                 </div>;
               })()}
+              {feature === 'eyes' && <div className="little-character-options">
+                {characterOptions.eyes.map((option) => <button type="button" aria-pressed={character.eyes === option.id} aria-label={`${option.label} eyes`} onClick={() => { setCharacter((current) => ({ ...current, eyes: option.id })); triggerCelebration(8); }} key={option.id}>
+                  <span className="little-swatch" style={{ backgroundColor: option.color }} aria-hidden="true" />
+                  <strong>{option.label}</strong>
+                </button>)}
+              </div>}
             </div>
           </div>;
         })()}
@@ -2026,7 +2033,7 @@ export function LittleJetterApp() {
                     </div>
                     <div className="little-side-rail">
                       <div className="little-category-rail little-avatar-rail" aria-label="Avatar features">
-                        {(['hairStyle'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => openAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
+                        {(['hairStyle', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => openAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
                       </div>
                       <div className="little-rail-divider" aria-hidden="true" />
                       <div className="little-category-rail" aria-label="Clothing categories">
