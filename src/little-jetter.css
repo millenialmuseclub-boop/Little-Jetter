@@ -477,6 +477,8 @@
 .little-site-card p{margin:5px 0 0;font-size:12px;color:var(--ink-soft);line-height:1.5}
 @media(max-width:680px){.little-vocab-grid,.little-food-grid{grid-template-columns:1fr}.little-explore-tabs button{min-width:0;font-size:9px;padding:0 8px}}
 
+.little-doll-stage img{-webkit-user-drag:none;user-select:none}
+
 @media (prefers-reduced-motion: reduce) {
   .little-destination,.little-begin { transition:none; }.little-confetti,.little-more-choices,.little-surprise-bar button,.little-destination-icon,.little-choice-modal > div,.little-popup-products button,[aria-pressed='true'],.little-flying-plane,.little-moving-train,.little-cloud,.little-compass,.little-compass i,.little-departure-board,.little-product-departures button,.little-travel-toggle,.little-game-panel,.little-avatar span,.little-suitcase,.little-suitcase>div span,.little-earned-stamp,.little-shop-drawer .little-product-grid,.little-product-grid article,.little-task-drawer[open]>:not(summary),.little-parent-modal>div,.little-section-art img { animation:none!important; }
 }

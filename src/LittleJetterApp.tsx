@@ -161,10 +161,9 @@ const CATEGORY_BUTTON: Record<ClothingGroup, { icon: string; label: string; spot
   shoes: { icon: '👟', label: 'Shoes', spot: 'spot-shoes' },
   accessories: { icon: '🎒', label: 'Accessory', spot: 'spot-accessories' },
 };
-type AvatarFeature = 'hairStyle' | 'eyes';
+type AvatarFeature = 'hairStyle';
 const AVATAR_BUTTON: Record<AvatarFeature, { icon: string; label: string }> = {
   hairStyle: { icon: '🙂', label: 'Head' },
-  eyes: { icon: '◉', label: 'Eyes' },
 };
 const LAYERS = { base: 0, hairBack: 10, shoes: 20, bottom: 25, top: 30, dress: 35, outerwear: 50, hairFront: 60, accessory: 70, hat: 80 } as const;
 const PRODUCT_CATEGORY_ICON: Record<ProductCategory, string> = {
@@ -1879,12 +1878,6 @@ export function LittleJetterApp() {
                   </div>)}
                 </div>;
               })()}
-              {feature === 'eyes' && <div className="little-character-options">
-                {characterOptions.eyes.map((option) => <button type="button" aria-pressed={character.eyes === option.id} aria-label={`${option.label} eyes`} onClick={() => { setCharacter((current) => ({ ...current, eyes: option.id })); triggerCelebration(8); }} key={option.id}>
-                  <span className="little-swatch" style={{ backgroundColor: option.color }} aria-hidden="true" />
-                  <strong>{option.label}</strong>
-                </button>)}
-              </div>}
             </div>
           </div>;
         })()}
@@ -2017,7 +2010,7 @@ export function LittleJetterApp() {
                 <aside className="little-look-preview">
                   <div className="little-closet-heading"><strong>Make your Little Jetter.</strong></div>
                   <div className="little-doll-rail-wrap" id="little-doll-stage-anchor">
-                    <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onClick={handleDollClick} onWheel={handleWheelResize} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}. Tap a piece to move, resize, or delete it.`}>
+                    <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragStart={(event) => event.preventDefault()} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onClick={handleDollClick} onWheel={handleWheelResize} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}. Tap a piece to move, resize, or delete it.`}>
                       <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{DESTINATIONS_WITH_BACKDROP.has(selected.id) && <img src={`/little-jetter/${selected.id}-doll-backdrop.png`} alt="" />}<i /><b /></div>
                       {travelMode && <div className="little-doll-sky" aria-hidden="true"><span className="little-doll-plane">✈</span><span className="little-doll-cloud cloud-one">☁</span><span className="little-doll-cloud cloud-two">☁</span></div>}
                       <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${hatPick}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} garmentScale={garmentScale} garmentOffset={garmentOffset} garmentZBoost={garmentZBoost} garmentRotation={garmentRotation} activeItemId={resizeTarget} hatPick={hatPick} />
@@ -2033,7 +2026,7 @@ export function LittleJetterApp() {
                     </div>
                     <div className="little-side-rail">
                       <div className="little-category-rail little-avatar-rail" aria-label="Avatar features">
-                        {(['hairStyle', 'eyes'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => openAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
+                        {(['hairStyle'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => openAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
                       </div>
                       <div className="little-rail-divider" aria-hidden="true" />
                       <div className="little-category-rail" aria-label="Clothing categories">
