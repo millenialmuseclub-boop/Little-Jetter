@@ -1861,7 +1861,7 @@ export function LittleJetterApp() {
                   return urls.size > 1;
                 });
                 return <div className="little-head-gallery">
-                  <p className="little-head-gallery-note">Choose any hairstyle with any skin tone. Every look is for every kid.</p>
+                  <p className="little-head-gallery-note">Choose a hairstyle and skin tone.</p>
                   {classicStyles.map((styleOption) => <div className="little-head-gallery-group" key={styleOption.id}>
                     <small>{styleOption.label}</small>
                     <div className="little-character-options little-hairstyle-options">

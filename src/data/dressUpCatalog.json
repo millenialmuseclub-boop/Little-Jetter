@@ -1097,7 +1097,7 @@
           "id": "rain",
           "name": "Sunny raincoat",
           "description": "A clever rainy-day layer",
-          "imageUrl": "/little-jetter/catalog/tokyo/rain/default.png",
+          "imageUrl": "/little-jetter/catalog/tokyo/rain/outerwear-v2.png",
           "slot": "outerwear",
           "tags": [
             "destination:tokyo",
@@ -2781,7 +2781,7 @@
           "id": "rain",
           "name": "Japanese rain slicker",
           "description": "A bright tactile layer for a cool Tokyo turn",
-          "imageUrl": "/little-jetter/catalog/tokyo/rain/default.png",
+          "imageUrl": "/little-jetter/catalog/tokyo/rain/outerwear-v2.png",
           "slot": "outerwear",
           "tags": [
             "destination:tokyo",
