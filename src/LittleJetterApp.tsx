@@ -24,6 +24,21 @@ const KINDNESS_PROMPTS = [
   'Smile and say hello to someone you don’t usually talk to.',
 ];
 const KINDNESS_KEY = 'little-jetter-kindness-journal';
+const PARENT_SETTINGS_KEY = 'little-jetter-parent-settings';
+const PARENT_SESSION_KEY = 'little-jetter-parent-session';
+const PARENT_SESSION_MS = 15 * 60 * 1000;
+
+type ParentSettings = {
+  shoppingEnabled: boolean;
+  externalLinksEnabled: boolean;
+  soundEnabled: boolean;
+};
+
+const DEFAULT_PARENT_SETTINGS: ParentSettings = {
+  shoppingEnabled: true,
+  externalLinksEnabled: true,
+  soundEnabled: true,
+};
 
 type Destination = {
   id: string;
@@ -1019,7 +1034,7 @@ const HEAD_THUMB_FOCUS: Record<string, { x: number; y: number }> = {
   'wavy-daisy-auburn': { x: 300, y: 223 },
   'pigtail-buns': { x: 300, y: 224 },
   'bob-bangs': { x: 300, y: 222 },
-  'braids-dark': { x: 300, y: 181 },
+  'braids-dark': { x: 300, y: 225 },
   'wavy-clip': { x: 300, y: 224 },
   'blonde-wavy-daisy': { x: 300, y: 227 },
   'curly-fro': { x: 300, y: 233 },
@@ -1043,10 +1058,13 @@ const HEAD_THUMB_FOCUS: Record<string, { x: number; y: number }> = {
   'short-dark-boy': { x: 300, y: 227 },
   'curly-auburn-boy': { x: 300, y: 231 },
 };
-const HEAD_THUMB_ZOOM = 0.42;
+const HEAD_THUMB_ZOOM = 0.3;
+const APPROVED_HEAD_STYLES = new Set(['curls', 'bob', 'short', 'coils']);
 
 function painterlyHeadUrl(character: Character): string | undefined {
-  const bySkin = PAINTERLY_HEAD_ASSETS[character.hairStyle ?? 'curls']?.[character.skin];
+  const requestedStyle = character.hairStyle ?? 'curls';
+  const safeStyle = APPROVED_HEAD_STYLES.has(requestedStyle) ? requestedStyle : 'curls';
+  const bySkin = PAINTERLY_HEAD_ASSETS[safeStyle]?.[character.skin];
   if (!bySkin) return undefined;
   return bySkin[character.hair] ?? bySkin.brown;
 }
@@ -1060,7 +1078,8 @@ function painterlyHeadUrl(character: Character): string | undefined {
 // pick). One small iris-shaped mask per hairstyle (scripts/generate-iris-
 // masks.mjs) works for every skin/hairColor combination instead.
 function irisMaskUrl(hairStyle: string | undefined): string {
-  return `/little-jetter/catalog/tokyo/head/${hairStyle ?? 'curls'}-iris-mask.png`;
+  const safeStyle = hairStyle && APPROVED_HEAD_STYLES.has(hairStyle) ? hairStyle : 'curls';
+  return `/little-jetter/catalog/tokyo/head/${safeStyle}-iris-mask.png`;
 }
 
 // Painterly bare-limbs body base (arms/torso/legs), one per skin tone, replacing
@@ -1089,12 +1108,10 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
   const topItem = catalogItemFor(destinationId, 'tops', picks.tops);
   const coversBottom = topItem?.tags.includes('covers-bottom') ?? false;
   const layerItem = catalogItemFor(destinationId, 'layers', picks.layers);
-  // A worn jacket/coat already covers the whole torso in the art, so the
-  // main piece underneath would only ever peek out at the collar — hide it
-  // entirely rather than leave a sliver of mismatched fabric showing.
   const layerCoversTop = Boolean(catalogImageFor(layerItem, layerItem ? garmentColors[layerItem.id] : undefined));
+  const layerCoversBottom = layerItem?.tags.includes('covers-bottom') ?? false;
   const illustrated = CLOSET_GROUPS
-    .filter((group) => !(coversBottom && group === 'bottoms'))
+    .filter((group) => !((coversBottom || layerCoversBottom) && group === 'bottoms'))
     .filter((group) => !(layerCoversTop && group === 'tops'))
     .map((group) => ({ group, item: catalogItemFor(destinationId, group, picks[group]) }))
     .filter(({ item }) => Boolean(catalogImageFor(item, item ? garmentColors[item.id] : undefined)));
@@ -1107,13 +1124,13 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
   const hiddenLayers: string[] = (illustrated.map(({ item }) => item?.slot ?? '') as string[])
     .concat(headUrl ? ['face', 'hair'] : [])
     .concat(bodyUrl ? ['base'] : [])
-    .concat(coversBottom ? ['bottom'] : [])
+    .concat(coversBottom || layerCoversBottom ? ['bottom'] : [])
     .concat(layerCoversTop ? ['top'] : [])
     .concat(noneSlots);
   return <div className="little-catalog-doll" data-template={catalog.template.id}>
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
-    {bodyUrl && <img className={`little-illustrated-layer layer-body${activeItemId === 'body' ? ' is-selected-for-resize' : ''}`} data-item-id="body" data-group="body" src={bodyUrl} alt="" aria-hidden="true" style={adjustStyle('body')} key={`body-${character.skin}`} />}
-    {headUrl && <img className={`little-illustrated-layer layer-face${activeItemId === 'head' ? ' is-selected-for-resize' : ''}`} data-item-id="head" data-group="head" src={headUrl} alt="" aria-hidden="true" style={adjustStyle('head')} key={`head-${character.hairStyle}-${character.skin}-${character.hair}`} />}
+    {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" key={`body-${character.skin}`} />}
+    {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}-${character.hair}`} />}
     {headUrl && character.eyes !== 'brown' && (
       <div
         className="little-illustrated-layer layer-iris-tint"
@@ -1199,6 +1216,7 @@ export function LittleJetterApp() {
   const [parentGateOpen, setParentGateOpen] = useState(false);
   const [parentAnswer, setParentAnswer] = useState('');
   const [parentUnlocked, setParentUnlocked] = useState(false);
+  const [parentSettings, setParentSettings] = useState<ParentSettings>(DEFAULT_PARENT_SETTINGS);
   const [showMoreChoices, setShowMoreChoices] = useState(false);
   const [celebration, setCelebration] = useState(0);
   const [travelMode, setTravelMode] = useState(true);
@@ -1244,6 +1262,12 @@ export function LittleJetterApp() {
     setSavedLooks(JSON.parse(window.localStorage.getItem('little-jetter-saved-looks') ?? '[]'));
     setPassportStamps(JSON.parse(window.localStorage.getItem(PASSPORT_KEY) ?? '[]'));
     setKindnessEntries(JSON.parse(window.localStorage.getItem(KINDNESS_KEY) ?? '[]'));
+    const storedParentSettings = window.localStorage.getItem(PARENT_SETTINGS_KEY);
+    if (storedParentSettings) {
+      try { setParentSettings({ ...DEFAULT_PARENT_SETTINGS, ...JSON.parse(storedParentSettings) }); } catch { /* Keep safe defaults. */ }
+    }
+    const parentSession = Number(window.sessionStorage.getItem(PARENT_SESSION_KEY) ?? 0);
+    if (parentSession > Date.now()) setParentUnlocked(true);
     setKindnessPromptIndex(Math.floor(Math.random() * KINDNESS_PROMPTS.length));
     return () => { document.documentElement.style.colorScheme = ''; };
   }, []);
@@ -1496,6 +1520,41 @@ export function LittleJetterApp() {
     setGarmentScale((current) => ({ ...current, [resizeTarget]: clampGarmentScale((current[resizeTarget] ?? 1) + delta) }));
   }
 
+  function resizeSelected(delta: number) {
+    if (!resizeTarget) return;
+    setGarmentScale((current) => ({ ...current, [resizeTarget]: clampGarmentScale((current[resizeTarget] ?? 1) + delta) }));
+    playHaptic(10);
+  }
+
+  function rotateSelected(delta: number) {
+    if (!resizeTarget) return;
+    setGarmentRotation((current) => ({ ...current, [resizeTarget]: (current[resizeTarget] ?? 0) + delta }));
+    playHaptic(10);
+  }
+
+  function resetSelectedFit() {
+    if (!resizeTarget) return;
+    const target = resizeTarget;
+    setGarmentScale((current) => { const next = { ...current }; delete next[target]; return next; });
+    setGarmentOffset((current) => { const next = { ...current }; delete next[target]; return next; });
+    setGarmentRotation((current) => { const next = { ...current }; delete next[target]; return next; });
+    setGarmentZBoost((current) => { const next = { ...current }; delete next[target]; return next; });
+    playHaptic(12);
+  }
+
+  function removeSelectedItem() {
+    if (!resizeTarget || resizeTarget === 'body' || resizeTarget === 'head') return;
+    const target = resizeTarget;
+    if (hatPick === target) setHatPick('none');
+    else setPicks((current) => {
+      const group = CLOSET_GROUPS.find((candidate) => current[candidate] === target);
+      return group ? { ...current, [group]: 'none' } : current;
+    });
+    resetSelectedFit();
+    setResizeTarget(null);
+    playHaptic(16);
+  }
+
   function recolor(group: ClothingGroup, color: string) {
     const activeItemId = picks[group];
     setGarmentColors((current) => ({ ...current, [activeItemId]: color }));
@@ -1559,8 +1618,22 @@ export function LittleJetterApp() {
     triggerCelebration([15, 25, 15]);
   }
 
+  function updateParentSetting(key: keyof ParentSettings, value: boolean) {
+    setParentSettings((current) => {
+      const next = { ...current, [key]: value };
+      window.localStorage.setItem(PARENT_SETTINGS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }
+
+  function unlockParentReview() {
+    if (parentAnswer.trim() !== '12') return;
+    setParentUnlocked(true);
+    window.sessionStorage.setItem(PARENT_SESSION_KEY, String(Date.now() + PARENT_SESSION_MS));
+  }
+
   function playHaptic(pattern: number | number[]) {
-    if ('vibrate' in navigator) navigator.vibrate(pattern);
+    if (parentSettings.soundEnabled && 'vibrate' in navigator) navigator.vibrate(pattern);
   }
 
   function triggerCelebration(pattern: number | number[] = [20, 35, 20]) {
@@ -1752,7 +1825,18 @@ export function LittleJetterApp() {
           <div>
             <button type="button" className="little-modal-close" aria-label="Close grown-up review" onClick={() => setParentGateOpen(false)}>×</button>
             <p className="little-kicker">Grown-ups only</p><h2 id="parent-title">Review the saved real-life look</h2>
-            {!parentUnlocked ? <><p>Please answer this quick check before leaving Little Jetter: what is 7 + 5?</p><form onSubmit={(event) => { event.preventDefault(); if (parentAnswer.trim() === '12') setParentUnlocked(true); }}><label htmlFor="parent-check">Answer</label><input id="parent-check" inputMode="numeric" value={parentAnswer} onChange={(event) => setParentAnswer(event.target.value)} /><button type="submit">Continue</button></form></> : <><p>{savedProducts.length} saved picks are ready for you to review. Product pages open only for a grown-up.</p>{ltkCollectionUrl ? <a href={ltkCollectionUrl} target="_blank" rel="noreferrer sponsored">View the saved look ↗</a> : <p className="little-link-needed">The real-product preview is ready. Verified retailer links will appear here as each drawer is connected.</p>}</>}
+            {!parentUnlocked ? <><p>Please answer this quick check before leaving Little Jetter: what is 7 + 5?</p><form onSubmit={(event) => { event.preventDefault(); unlockParentReview(); }}><label htmlFor="parent-check">Answer</label><input id="parent-check" inputMode="numeric" value={parentAnswer} onChange={(event) => setParentAnswer(event.target.value)} /><button type="submit">Continue</button></form></> : <div className="little-parent-review">
+              <p>{savedProducts.length} saved picks are ready for you to review. Product pages open only for a grown-up.</p>
+              <fieldset><legend>Parent settings</legend>
+                <label><input type="checkbox" checked={parentSettings.shoppingEnabled} onChange={(event) => updateParentSetting('shoppingEnabled', event.target.checked)} /> Enable shopping handoff</label>
+                <label><input type="checkbox" checked={parentSettings.externalLinksEnabled} onChange={(event) => updateParentSetting('externalLinksEnabled', event.target.checked)} /> Allow external retailer links</label>
+                <label><input type="checkbox" checked={parentSettings.soundEnabled} onChange={(event) => updateParentSetting('soundEnabled', event.target.checked)} /> Enable tactile feedback</label>
+              </fieldset>
+              {parentSettings.shoppingEnabled && <div className="little-parent-picks">{realProductCatalog.filter((product) => savedProducts.includes(product.id)).map((product) => <div key={product.id}><img src={product.imageUrl} alt="" /><span><small>{product.brand}</small><strong>{product.name}</strong></span>{parentSettings.externalLinksEnabled && product.sourceUrl && <a href={product.sourceUrl} target="_blank" rel="noreferrer sponsored">View product ↗</a>}</div>)}</div>}
+              {parentSettings.shoppingEnabled && parentSettings.externalLinksEnabled && ltkCollectionUrl ? <a href={ltkCollectionUrl} target="_blank" rel="noreferrer sponsored">View the Little Jetter collection ↗</a> : !parentSettings.shoppingEnabled || !parentSettings.externalLinksEnabled ? <p className="little-link-needed">Shopping links are off in parent settings.</p> : <p className="little-link-needed">Verified product links appear beside saved picks. A collection link can be added when the Little Jetter LTK collection URL is available.</p>}
+              <p className="little-parent-disclosure">Little Jetter stores choices only on this device. External shopping links may be affiliate links, which can earn Little Jetter a commission at no extra cost to you.</p>
+              <button type="button" className="little-parent-reset" onClick={() => { if (!window.confirm('Clear saved looks, products, passport stamps, and journal entries from this device?')) return; ['little-jetter-saved-picks', 'little-jetter-saved-looks', PASSPORT_KEY, KINDNESS_KEY].forEach((key) => window.localStorage.removeItem(key)); setSavedProducts([]); setSavedLooks([]); setPassportStamps([]); setKindnessEntries([]); }}>Clear child data from this device</button>
+            </div>}
           </div>
         </div>}
 
@@ -1765,35 +1849,19 @@ export function LittleJetterApp() {
               {feature === 'hairStyle' && (() => {
                 const thumbStyleFor = (styleId: string) => {
                   const focus = HEAD_THUMB_FOCUS[styleId] ?? { x: 300, y: 220 };
+                  const faceCenterY = focus.y + 20;
                   return {
                     width: 600 * HEAD_THUMB_ZOOM,
                     height: 900 * HEAD_THUMB_ZOOM,
-                    transform: `translate(${26 - focus.x * HEAD_THUMB_ZOOM}px, ${26 - focus.y * HEAD_THUMB_ZOOM}px)`,
+                    transform: `translate(${26 - focus.x * HEAD_THUMB_ZOOM}px, ${26 - faceCenterY * HEAD_THUMB_ZOOM}px)`,
                   };
                 };
                 const classicStyles = characterOptions.hairStyle.filter((styleOption) => {
                   const urls = new Set(characterOptions.skin.map((s) => PAINTERLY_HEAD_ASSETS[styleOption.id]?.[s.id]?.brown).filter(Boolean));
                   return urls.size > 1;
                 });
-                const moreStyles = characterOptions.hairStyle.filter((s) => !classicStyles.includes(s));
-                const boyStyleIds = new Set(['curly-fro-boy', 'wavy-blonde-boy', 'wavy-brown-boy', 'cap-green-boy', 'wavy-blonde-boy2', 'cap-tan-boy', 'short-dark-boy', 'curly-auburn-boy']);
-                const girlMoreStyles = moreStyles.filter((s) => !boyStyleIds.has(s.id));
-                const boyMoreStyles = moreStyles.filter((s) => boyStyleIds.has(s.id));
-                const renderMoreGroup = (label: string, styles: typeof moreStyles) => styles.length > 0 && <div className="little-head-gallery-group" key={label}>
-                  <small>{label}</small>
-                  <div className="little-character-options little-hairstyle-options little-hairstyle-options-compact">
-                    {styles.map((styleOption) => {
-                      const headUrl = PAINTERLY_HEAD_ASSETS[styleOption.id]?.golden?.brown;
-                      if (!headUrl) return null;
-                      const isChosen = character.hairStyle === styleOption.id;
-                      return <button type="button" aria-pressed={isChosen} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: styleOption.id })); setResizeTarget('head'); triggerCelebration(12); }} key={styleOption.id}>
-                        <span className="little-head-thumb"><img src={headUrl} alt="" aria-hidden="true" style={thumbStyleFor(styleOption.id)} /></span>
-                        <strong>{styleOption.label}</strong>
-                      </button>;
-                    })}
-                  </div>
-                </div>;
                 return <div className="little-head-gallery">
+                  <p className="little-head-gallery-note">Choose any hairstyle with any skin tone. Every look is for every kid.</p>
                   {classicStyles.map((styleOption) => <div className="little-head-gallery-group" key={styleOption.id}>
                     <small>{styleOption.label}</small>
                     <div className="little-character-options little-hairstyle-options">
@@ -1801,15 +1869,13 @@ export function LittleJetterApp() {
                         const headUrl = PAINTERLY_HEAD_ASSETS[styleOption.id]?.[skinOption.id]?.brown;
                         if (!headUrl) return null;
                         const isChosen = character.hairStyle === styleOption.id && character.skin === skinOption.id;
-                        return <button type="button" aria-pressed={isChosen} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: styleOption.id, skin: skinOption.id })); setResizeTarget('head'); triggerCelebration(12); }} key={skinOption.id}>
+                        return <button type="button" aria-pressed={isChosen} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: styleOption.id, skin: skinOption.id })); setResizeTarget(null); triggerCelebration(12); }} key={skinOption.id}>
                           <span className="little-head-thumb"><img src={headUrl} alt="" aria-hidden="true" style={thumbStyleFor(styleOption.id)} /></span>
-                          <strong>{skinOption.id}</strong>
+                          <strong>{`Tone ${characterOptions.skin.findIndex((option) => option.id === skinOption.id) + 1}`}</strong>
                         </button>;
                       })}
                     </div>
                   </div>)}
-                  {renderMoreGroup('More Looks · Girls', girlMoreStyles)}
-                  {renderMoreGroup('More Looks · Boys', boyMoreStyles)}
                 </div>;
               })()}
             </div>
@@ -1948,6 +2014,13 @@ export function LittleJetterApp() {
                       <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{DESTINATIONS_WITH_BACKDROP.has(selected.id) && <img src={`/little-jetter/${selected.id}-doll-backdrop.png`} alt="" />}<i /><b /></div>
                       {travelMode && <div className="little-doll-sky" aria-hidden="true"><span className="little-doll-plane">✈</span><span className="little-doll-cloud cloud-one">☁</span><span className="little-doll-cloud cloud-two">☁</span></div>}
                       <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${hatPick}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} garmentScale={garmentScale} garmentOffset={garmentOffset} garmentZBoost={garmentZBoost} garmentRotation={garmentRotation} activeItemId={resizeTarget} hatPick={hatPick} />
+                      {resizeTarget && <div className="little-item-toolbar" aria-label="Adjust selected doll item" onMouseDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()} onTouchStart={(event) => event.stopPropagation()}>
+                        <button type="button" aria-label="Make selected item smaller" onClick={() => resizeSelected(-0.05)}><span>−</span><small>Smaller</small></button>
+                        <button type="button" aria-label="Make selected item bigger" onClick={() => resizeSelected(0.05)}><span>+</span><small>Bigger</small></button>
+                        <button type="button" aria-label="Rotate selected item left" onClick={() => rotateSelected(-3)}><span>↶</span><small>Turn</small></button>
+                        <button type="button" aria-label="Reset selected item fit" onClick={resetSelectedFit}><span>↺</span><small>Reset</small></button>
+                        {resizeTarget !== 'body' && resizeTarget !== 'head' && <button type="button" className="is-delete" aria-label="Remove selected item" onClick={removeSelectedItem}><span>×</span><small>Remove</small></button>}
+                      </div>}
                       <div className="little-dress-sparkles" key={`sparkles-${celebration}`} aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--spark': index } as React.CSSProperties}>✦</i>)}</div>
                       {dropActive && <div className="little-drop-message">Drop to dress</div>}
                     </div>
@@ -1996,7 +2069,7 @@ export function LittleJetterApp() {
                 <div className="little-section-art little-pack-art" aria-hidden="true"><img src="/little-jetter/packing-buddies.png" alt="" /><span>Ready, set, pack!</span></div>
                 <details className="little-task-drawer" open><summary><span>01</span><strong>Your suitcase</strong><b>Open / close</b></summary><div className="little-suitcase"><p>Packed <strong>{packed.length}/6</strong></p><div>{packed.map((id) => { const group = (Object.keys(wardrobe) as PickGroup[]).find((key) => wardrobe[key].some((entry) => entry.id === id)); const item = group ? wardrobe[group].find((entry) => entry.id === id) : undefined; return item && group ? <span className="little-packed-art" style={gameItemStyle(group, item.id)} key={id} title={item.name} /> : <span className="little-packed-essential" key={id}>{id === 'book' ? 'BOOK' : 'KIT'}</span>; })}</div><small>{packed.length < 4 ? 'Choose at least four things for the adventure.' : 'Everything fits. Nicely packed!'}</small></div></details>
                 <details className="little-task-drawer" open><summary><span>02</span><strong>Pack each piece</strong><b>Open / close</b></summary><div className="little-pack-list">
-                  {([chosen('tops'), chosen('bottoms'), chosen('layers'), chosen('shoes'), chosen('accessories'), chosen('buddies'), { id:'toothbrush',icon:'',name:'Travel kit',note:'A getting-ready essential' }, { id:'book',icon:'',name:'Travel book',note:'For quiet moments' }] as Array<{id:string;name:string;note:string}>).map((item) => { const group = (Object.keys(wardrobe) as PickGroup[]).find((key) => wardrobe[key].some((entry) => entry.id === item.id)); return <button type="button" aria-pressed={packed.includes(item.id)} onClick={() => togglePacked(item.id)} key={item.id}><span className={group ? 'little-pack-art' : 'little-pack-essential'} style={group ? gameItemStyle(group, item.id) : undefined}>{group ? '' : item.id === 'book' ? 'BOOK' : 'KIT'}</span><div><strong>{item.name}</strong><small>{item.note}</small></div><b>{packed.includes(item.id) ? 'Packed' : 'Add'}</b></button>; })}
+                  {([chosen('tops'), chosen('bottoms'), chosen('layers'), chosen('shoes'), chosen('accessories'), chosen('buddies'), { id:'toothbrush',icon:'',name:'Travel kit',note:'A getting-ready essential' }, { id:'book',icon:'',name:'Travel book',note:'For quiet moments' }] as Array<{id:string;name:string;note:string}>).map((item, index) => { const group = (Object.keys(wardrobe) as PickGroup[]).find((key) => wardrobe[key].some((entry) => entry.id === item.id)); return <button type="button" aria-pressed={packed.includes(item.id)} onClick={() => togglePacked(item.id)} key={`${index}-${item.id}`}><span className={group ? 'little-pack-art' : 'little-pack-essential'} style={group ? gameItemStyle(group, item.id) : undefined}>{group ? '' : item.id === 'book' ? 'BOOK' : 'KIT'}</span><div><strong>{item.name}</strong><small>{item.note}</small></div><b>{packed.includes(item.id) ? 'Packed' : 'Add'}</b></button>; })}
                   <button type="button" className="little-next" disabled={!readyToStamp} onClick={stampPassport}>Stamp my passport <span>→</span></button>
                 </div></details>
               </div>
