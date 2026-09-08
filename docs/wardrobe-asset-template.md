@@ -7,7 +7,8 @@ The canvas, anchor, and slot-bounds numbers below are also encoded in code at [`
 ## Master canvas
 
 - Canvas: **600 × 900 px**, transparent RGBA PNG or lossless WebP
-- Pose: front-facing neutral child pose, arms relaxed, feet planted
+- Pose: front-facing neutral child pose, arms relaxed slightly away from the torso, legs straight and together, ankles nearly touching, feet parallel
+- Stance lock: knees and ankles must not splay outward; both legs stay inside the bottom/shoe anchor bounds so one garment set fits every approved doll
 - Center line: **x = 300**
 - Head center: **x = 300, y = 218**
 - Shoulder line: **y = 330**
@@ -50,7 +51,8 @@ Two normalization paths exist and do the same geometric job (trim → fit inside
 
 1. Canvas is exactly 600 × 900 with a real alpha channel (automated by `qcCheck()` in the generation pipeline).
 2. Composited onto the doll, the garment lands on the documented anchor points — no per-item CSS position/transform hacks.
-3. Painterly quality and palette match the five existing reference pieces (raincoat, striped tee, jeans, crossbody bag, red high-tops). Human judgment call — automated QC cannot verify this.
-4. Fully transparent background, no stray flat-lay table/background pixels left over from trimming.
-5. Correct destination motifs only, or none — never another destination's icon.
-6. Once added with its real `imageUrl` and the `illustrated` tag, the item's drawer "Sketch" badge disappears automatically.
+3. Doll stance matches the locked template: straight closed legs, nearly touching ankles, parallel feet, and identical shoulder/waist/ankle coordinates.
+4. Painterly quality and palette match the five existing reference pieces (raincoat, striped tee, jeans, crossbody bag, red high-tops). Human judgment call — automated QC cannot verify this.
+5. Fully transparent background, no stray flat-lay table/background pixels left over from trimming.
+6. Correct destination motifs only, or none — never another destination's icon.
+7. Once added with its real `imageUrl` and the `illustrated` tag, the item's drawer "Sketch" badge disappears automatically.

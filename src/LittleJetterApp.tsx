@@ -1108,7 +1108,7 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
   const topItem = catalogItemFor(destinationId, 'tops', picks.tops);
   const coversBottom = topItem?.tags.includes('covers-bottom') ?? false;
   const layerItem = catalogItemFor(destinationId, 'layers', picks.layers);
-  const layerCoversTop = Boolean(catalogImageFor(layerItem, layerItem ? garmentColors[layerItem.id] : undefined));
+  const layerCoversTop = layerItem?.tags.includes('covers-top') ?? false;
   const layerCoversBottom = layerItem?.tags.includes('covers-bottom') ?? false;
   const illustrated = CLOSET_GROUPS
     .filter((group) => !((coversBottom || layerCoversBottom) && group === 'bottoms'))

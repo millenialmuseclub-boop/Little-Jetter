@@ -8,10 +8,17 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "mobile:sync": "npm run build && cap sync",
+    "mobile:android": "npm run mobile:sync && cap open android",
+    "mobile:ios": "npm run mobile:sync && cap open ios",
     "typecheck:server": "tsc --noEmit -p tsconfig.server.json",
     "generate:tokyo": "tsx scripts/generate-destination.ts tokyo"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/cli": "^8.5.1",
+    "@capacitor/core": "^8.5.1",
+    "@capacitor/ios": "^8.5.1",
     "@vercel/blob": "^2.8.0",
     "@vitejs/plugin-react": "^6.0.3",
     "react": "^19.2.7",
