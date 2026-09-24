@@ -1,6 +1,6 @@
 # Little Jetter polish and release status
 
-Status: implementation improved and web checks passing; **not ready for store submission**. A Vercel preview was deployed for web testing. No commit, native signing, or store submission was performed. Existing unrelated workspace changes were preserved.
+Status: release candidate 1.1 (build 7) verified and prepared for one signed App Store upload. Existing unrelated workspace changes were preserved.
 
 ## Doll System
 
@@ -14,10 +14,10 @@ Status: implementation improved and web checks passing; **not ready for store su
 
 ## Wardrobe
 
-- Catalog: 170 clothing/accessory items and three buddies. 179 referenced image files including variants audited.
+- Catalog: 193 clothing/accessory items and three buddies. All referenced image files and variants audited.
 - 177 image files retained; two individually regenerated and replaced: `cream-bow-blouse/default.png` and `little-jetter-logo-tee/default.png`.
-- 179 consistently framed, compressed drawer thumbnails generated. Full-size wardrobe preloading removed. Packing previews use the corresponding individual artwork where available.
-- All 179 pass canvas/alpha/outer-edge checks. A dressed-doll audit now also composites all 33 outerwear pieces and all 37 dresses, rompers, pajama sets, and one-piece swim looks against the shared body anchors. Evidence: `docs/qa/outfits/outerwear-on-doll.png` and `docs/qa/outfits/full-pieces-on-doll.png`.
+- 193 consistently framed, compressed drawer thumbnails generated. Full-size wardrobe preloading removed. Packing previews use the corresponding individual artwork where available.
+- All 193 pass canvas/alpha/outer-edge checks. A dressed-doll audit also composites representative outerwear and full-piece looks against the shared body anchors. Evidence: `docs/qa/outfits/outerwear-on-doll.png` and `docs/qa/outfits/full-pieces-on-doll.png`.
 - **Remaining:** the legacy sheet-derived wardrobe is not fully regenerated. Sage tank-set regeneration was rejected after repeated outputs lacked real alpha; the existing production item remains. Other sheet-derived pieces still require replacement and visual fitting checks. No new production asset was sliced from a sheet.
 - Evidence: `docs/qa/wardrobe/audit.json`, category QA sheets, and `docs/qa/dolls/`. QA sheets are evidence only, never production sources.
 
@@ -34,8 +34,8 @@ Status: implementation improved and web checks passing; **not ready for store su
 - Explicit eye/hair controls, clearer Tops label, full-item thumbnails, remove controls, and save-failure feedback.
 - Reconnected journal → buddy → packing → stamp, added visible back actions, excluded empty clothing from packing, added a water bottle, and fixed the misleading fixed packing count.
 - Dresses, pajama sets, rompers, and one-piece swimwear now suppress the bottoms layer, preventing pants and shorts from showing through full-piece artwork. Backpacks and suitcases use one shared floor anchor beside the doll instead of covering the torso.
-- Switching destinations preserves the doll and clothes. All 38 destinations retained. Missing Honolulu and London silly-story content completed.
-- Automated audit: all 38 destinations have backgrounds and required Explore sections; 672 referenced images exist.
+- Switching destinations preserves the doll and clothes. All 43 destinations are retained, including Accra, Mumbai, Copenhagen, Salvador, and New Orleans.
+- Automated audit: all 43 destinations have backgrounds and required Explore sections; 506 current catalog/explore image references exist with none missing.
 - Desktop home rendered and was captured before later changes. Static composites of the three new heads were inspected.
 - Subsequent browser smoke test at 390 × 844 verified outfit randomization and braided-head selection with no reported browser errors. Fixed mobile dress-up card overflow; both cards now fit within the viewport. Evidence: `docs/qa/mobile-layout-fixed.png`. Build, lint, three unit tests, and release asset audit passed.
 - **Not verified:** full dress-up regression, small/standard/large iPhone devices, Android phones, iPad/tablet portrait/landscape, screen readers, native cold start/resume/back, offline installation, slow network.
@@ -51,7 +51,7 @@ Status: implementation improved and web checks passing; **not ready for store su
 
 ## iOS
 
-- Bundle ID: `com.littlejetter.app`; display name: Little Jetter; version/build: 1.0 / 1. Web package: 1.0.0.
+- Bundle ID: `com.littlejetter.app`; display name: Little Jetter; version/build: 1.1 / 7. Web package: 1.1.0.
 - Capacitor build/copy/sync passed. The privacy manifest is included, tracking is disabled, and non-exempt encryption is declared false for export-compliance review.
 - Final painterly compass-star and paper-airplane icon exported as an opaque 1024px iOS/store master and 512px Google Play icon. Matching Android adaptive/legacy icons and native splash artwork were regenerated from the same source.
 - Native compilation/archive **not run**: this host is Windows with no Xcode.
@@ -69,7 +69,7 @@ Status: implementation improved and web checks passing; **not ready for store su
 
 ### READY
 
-- Web production build, lint, three storage tests, 38-destination/reference audit, 179-asset geometry audit, 11-point mobile readiness audit, and both Capacitor syncs.
+- Web production build, lint, six state/interaction tests, 43-destination/reference audit, 193-asset wardrobe audit, 15-point mobile readiness audit, and final Capacitor iOS sync.
 - Draft icons, splash art, metadata below and this checklist.
 
 ### NEEDS MY INPUT

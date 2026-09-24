@@ -5,5 +5,8 @@ dist/
 .vercel/
 .env*
 *.log
+*.jks
+*.keystore
+keystore.properties
 .DS_Store
 public/little-jetter/catalog/source/

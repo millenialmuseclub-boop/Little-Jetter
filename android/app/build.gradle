@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+// Signing material is supplied by the owner/CI and never stored in the repository.
+def releaseStore = System.getenv('LITTLE_JETTER_KEYSTORE')
+def releaseStorePassword = System.getenv('LITTLE_JETTER_STORE_PASSWORD')
+def releaseAlias = System.getenv('LITTLE_JETTER_KEY_ALIAS')
+def releaseKeyPassword = System.getenv('LITTLE_JETTER_KEY_PASSWORD')
+def releaseSigningReady = releaseStore && releaseStorePassword && releaseAlias && releaseKeyPassword
+
 android {
     namespace = "com.littlejetter.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +14,8 @@ android {
         applicationId "com.littlejetter.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 7
+        versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +23,30 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (releaseSigningReady) {
+            release {
+                storeFile file(releaseStore)
+                storePassword releaseStorePassword
+                keyAlias releaseAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
     buildTypes {
         release {
+            debuggable false
+            if (releaseSigningReady) signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+tasks.configureEach { task ->
+    if (task.name == 'bundleRelease' || task.name == 'assembleRelease') {
+        doFirst {
+            if (!releaseSigningReady) throw new GradleException('Release signing requires LITTLE_JETTER_KEYSTORE, LITTLE_JETTER_STORE_PASSWORD, LITTLE_JETTER_KEY_ALIAS, and LITTLE_JETTER_KEY_PASSWORD.')
         }
     }
 }

@@ -1,5 +1,9 @@
 # Little Jetter wardrobe asset contract
 
+## Production rule: individual assets only
+
+Generate each new or replacement wardrobe piece individually. Never generate a contact sheet and slice it into production items. The old clipart extraction/positioning scripts are historical and must not be used for new production art or to overwrite individually regenerated items. QA contact sheets are permitted only for inspecting already separate assets. Runtime fitting is fixed to the exported master canvas; do not restore free drag/scale/rotation to compensate for poor fit.
+
 Every illustrated doll asset uses the same `little-jetter-neutral-v1` coordinate system. This contract is intentionally independent of destination and is the only template the catalog renderer accepts.
 
 The canvas, anchor, and slot-bounds numbers below are also encoded in code at [`server/closet/assetSpec.ts`](../server/closet/assetSpec.ts) — that file is what the generation pipeline actually imports. If this document and that file ever disagree, the code is stale relative to this doc (or vice versa); fix whichever one drifted rather than trusting either blindly.
