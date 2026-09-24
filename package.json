@@ -1,7 +1,7 @@
 {
   "name": "little-jetter",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,14 +12,20 @@
     "mobile:android": "npm run mobile:sync && cap open android",
     "mobile:ios": "npm run mobile:sync && cap open ios",
     "typecheck:server": "tsc --noEmit -p tsconfig.server.json",
-    "generate:tokyo": "tsx scripts/generate-destination.ts tokyo"
+    "generate:tokyo": "tsx scripts/generate-destination.ts tokyo",
+    "test": "node --test tests/*.test.mjs",
+    "audit:release": "node scripts/release-audit.mjs",
+    "audit:mobile": "node scripts/mobile-readiness-audit.mjs",
+    "audit:wardrobe": "node scripts/audit-wardrobe.mjs",
+    "audit:assets": "node scripts/audit-assets.mjs",
+    "build:head-thumbnails": "node scripts/build-head-thumbnails.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
     "@capacitor/cli": "^8.5.1",
     "@capacitor/core": "^8.5.1",
     "@capacitor/ios": "^8.5.1",
-    "@capawesome/capacitor-live-update": "^8.4.2",
+    "@capgo/capacitor-updater": "^8.51.15",
     "@vercel/blob": "^2.8.0",
     "@vitejs/plugin-react": "^6.0.3",
     "react": "^19.2.7",

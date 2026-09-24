@@ -1,0 +1,476 @@
+[
+  {
+    "type": "outerwear",
+    "destinationId": "tokyo",
+    "itemId": "rain",
+    "url": "/little-jetter/catalog/tokyo/rain/outerwear-v2.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "tokyo",
+    "itemId": "denim",
+    "url": "/little-jetter/catalog/tokyo/denim/default.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "tokyo",
+    "itemId": "windbreaker",
+    "url": "/little-jetter/catalog/tokyo/windbreaker/default.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "tokyo",
+    "itemId": "trench-coat",
+    "url": "/little-jetter/catalog/tokyo/trench-coat/default.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "tokyo",
+    "itemId": "pink-hoodie",
+    "url": "/little-jetter/catalog/tokyo/pink-hoodie/default.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "denim-jacket-classic",
+    "url": "/little-jetter/catalog/tokyo/denim-jacket-classic/default.png",
+    "removed": 113,
+    "components": 35
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "pink-bow-cardigan",
+    "url": "/little-jetter/catalog/tokyo/pink-bow-cardigan/default.png",
+    "removed": 71,
+    "components": 15
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "cream-cable-cardigan",
+    "url": "/little-jetter/catalog/tokyo/cream-cable-cardigan/default.png",
+    "removed": 56,
+    "components": 13
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "blue-airplane-hoodie",
+    "url": "/little-jetter/catalog/tokyo/blue-airplane-hoodie/default.png",
+    "removed": 28,
+    "components": 10
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "olive-heart-jacket",
+    "url": "/little-jetter/catalog/tokyo/olive-heart-jacket/default.png",
+    "removed": 54,
+    "components": 14
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "pink-wrap-coat",
+    "url": "/little-jetter/catalog/tokyo/pink-wrap-coat/default.png",
+    "removed": 0,
+    "components": 3
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "explore-hoodie",
+    "url": "/little-jetter/catalog/tokyo/explore-hoodie/default.png",
+    "removed": 0,
+    "components": 5
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "jet-set-hoodie",
+    "url": "/little-jetter/catalog/tokyo/jet-set-hoodie/default.png",
+    "removed": 32,
+    "components": 22
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "pink-heart-hoodie",
+    "url": "/little-jetter/catalog/tokyo/pink-heart-hoodie/default.png",
+    "removed": 12,
+    "components": 14
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "colorblock-jacket",
+    "url": "/little-jetter/catalog/tokyo/colorblock-jacket/default.png",
+    "removed": 0,
+    "components": 7
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "brown-sherpa-jacket",
+    "url": "/little-jetter/catalog/tokyo/brown-sherpa-jacket/default.png",
+    "removed": 23,
+    "components": 14
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "denim-sherpa-collar-jacket",
+    "url": "/little-jetter/catalog/tokyo/denim-sherpa-collar-jacket/default.png",
+    "removed": 0,
+    "components": 3
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "black-moto-jacket",
+    "url": "/little-jetter/catalog/tokyo/black-moto-jacket/default.png",
+    "removed": 0,
+    "components": 4
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "cream-cherry-cardigan",
+    "url": "/little-jetter/catalog/tokyo/cream-cherry-cardigan/default.png",
+    "removed": 0,
+    "components": 3
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "red-heart-cardigan",
+    "url": "/little-jetter/catalog/tokyo/red-heart-cardigan/default.png",
+    "removed": 0,
+    "components": 2
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "navy-stripe-cardigan",
+    "url": "/little-jetter/catalog/tokyo/navy-stripe-cardigan/default.png",
+    "removed": 7,
+    "components": 5
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "yellow-puffer-jacket",
+    "url": "/little-jetter/catalog/tokyo/yellow-puffer-jacket/default.png",
+    "removed": 14,
+    "components": 4
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "pink-puffer-jacket",
+    "url": "/little-jetter/catalog/tokyo/pink-puffer-jacket/default.png",
+    "removed": 64,
+    "components": 8
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "blue-cloud-puffer-jacket",
+    "url": "/little-jetter/catalog/tokyo/blue-cloud-puffer-jacket/default.png",
+    "removed": 68,
+    "components": 13
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "olive-puffer-jacket",
+    "url": "/little-jetter/catalog/tokyo/olive-puffer-jacket/default.png",
+    "removed": 86,
+    "components": 23
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "cream-sherpa-hood-puffer",
+    "url": "/little-jetter/catalog/tokyo/cream-sherpa-hood-puffer/default.png",
+    "removed": 135,
+    "components": 21
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "purple-heart-puffer-jacket",
+    "url": "/little-jetter/catalog/tokyo/purple-heart-puffer-jacket/default.png",
+    "removed": 0,
+    "components": 9
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "navy-puffer-jacket",
+    "url": "/little-jetter/catalog/tokyo/navy-puffer-jacket/default.png",
+    "removed": 35,
+    "components": 8
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "brown-bear-hood-puffer",
+    "url": "/little-jetter/catalog/tokyo/brown-bear-hood-puffer/default.png",
+    "removed": 33,
+    "components": 6
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "panda-hood-puffer",
+    "url": "/little-jetter/catalog/tokyo/panda-hood-puffer/default.png",
+    "removed": 10,
+    "components": 13
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "red-fox-hood-puffer",
+    "url": "/little-jetter/catalog/tokyo/red-fox-hood-puffer/default.png",
+    "removed": 22,
+    "components": 11
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "olive-dino-hood-puffer",
+    "url": "/little-jetter/catalog/tokyo/olive-dino-hood-puffer/default.png",
+    "removed": 22,
+    "components": 13
+  },
+  {
+    "type": "outerwear",
+    "destinationId": "all",
+    "itemId": "pink-bear-hood-puffer",
+    "url": "/little-jetter/catalog/tokyo/pink-bear-hood-puffer/default.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "bandana-bun",
+    "url": "/little-jetter/catalog/tokyo/head/style-bandana-bun.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "blonde-wavy-daisy",
+    "url": "/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "bob-bangs",
+    "url": "/little-jetter/catalog/tokyo/head/style-bob-bangs.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "bob-blonde-clip",
+    "url": "/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "bow-curly",
+    "url": "/little-jetter/catalog/tokyo/head/style-bow-curly.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "braids-auburn",
+    "url": "/little-jetter/catalog/tokyo/head/style-braids-auburn.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "braids-dark",
+    "url": "/little-jetter/catalog/tokyo/head/style-braids-dark.png",
+    "removed": 0,
+    "components": 2
+  },
+  {
+    "type": "head",
+    "itemId": "bucket-hat-pink",
+    "url": "/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png",
+    "removed": 0,
+    "components": 2
+  },
+  {
+    "type": "head",
+    "itemId": "bun-auburn",
+    "url": "/little-jetter/catalog/tokyo/head/style-bun-auburn.png",
+    "removed": 0,
+    "components": 2
+  },
+  {
+    "type": "head",
+    "itemId": "bun-blonde-bow",
+    "url": "/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "cap-brown",
+    "url": "/little-jetter/catalog/tokyo/head/style-cap-brown.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "cap-green-boy",
+    "url": "/little-jetter/catalog/tokyo/head/style-cap-green-boy.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "cap-tan-boy",
+    "url": "/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "curly-auburn-boy",
+    "url": "/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "curly-bow",
+    "url": "/little-jetter/catalog/tokyo/head/style-curly-bow.png",
+    "removed": 0,
+    "components": 3
+  },
+  {
+    "type": "head",
+    "itemId": "curly-fro-boy",
+    "url": "/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "curly-fro",
+    "url": "/little-jetter/catalog/tokyo/head/style-curly-fro.png",
+    "removed": 0,
+    "components": 2
+  },
+  {
+    "type": "head",
+    "itemId": "curly-topknot",
+    "url": "/little-jetter/catalog/tokyo/head/style-curly-topknot.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "headband-curly",
+    "url": "/little-jetter/catalog/tokyo/head/style-headband-curly.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "long-straight-dark",
+    "url": "/little-jetter/catalog/tokyo/head/style-long-straight-dark.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "messy-bun",
+    "url": "/little-jetter/catalog/tokyo/head/style-messy-bun.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "pigtail-buns",
+    "url": "/little-jetter/catalog/tokyo/head/style-pigtail-buns.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "pigtails-bows",
+    "url": "/little-jetter/catalog/tokyo/head/style-pigtails-bows.png",
+    "removed": 0,
+    "components": 3
+  },
+  {
+    "type": "head",
+    "itemId": "short-dark-boy",
+    "url": "/little-jetter/catalog/tokyo/head/style-short-dark-boy.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "wavy-blonde-boy",
+    "url": "/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "wavy-blonde-boy2",
+    "url": "/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png",
+    "removed": 0,
+    "components": 2
+  },
+  {
+    "type": "head",
+    "itemId": "wavy-brown-boy",
+    "url": "/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png",
+    "removed": 0,
+    "components": 2
+  },
+  {
+    "type": "head",
+    "itemId": "wavy-clip",
+    "url": "/little-jetter/catalog/tokyo/head/style-wavy-clip.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "wavy-daisy-auburn",
+    "url": "/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png",
+    "removed": 0,
+    "components": 1
+  },
+  {
+    "type": "head",
+    "itemId": "wavy-long-dark",
+    "url": "/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png",
+    "removed": 0,
+    "components": 2
+  }
+]

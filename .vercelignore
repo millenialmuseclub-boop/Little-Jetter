@@ -1,0 +1,10 @@
+.env*
+android/
+ios/
+docs/
+resources/
+tests/
+scripts/
+.claude/
+CLAUDE.md
+public/little-jetter/catalog/source/

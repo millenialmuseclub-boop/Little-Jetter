@@ -163,7 +163,23 @@
       }
     ],
     "sites": [],
-    "madlib": null
+    "madlib": {
+      "template": "In Honolulu, I spotted a {0} near the shore. My travel buddy packed a {1}, and we spent the afternoon feeling {2}.",
+      "blanks": [
+        {
+          "label": "Something you might see",
+          "placeholder": "seashell"
+        },
+        {
+          "label": "A silly thing to pack",
+          "placeholder": "tiny umbrella"
+        },
+        {
+          "label": "A feeling",
+          "placeholder": "curious"
+        }
+      ]
+    }
   },
   "london": {
     "gastronomy": [
@@ -187,7 +203,23 @@
         "blurb": "A wide river that winds right through the middle of the city."
       }
     ],
-    "madlib": null
+    "madlib": {
+      "template": "In London, our {0} took us past a big clock. Then a {1} joined our adventure, and we all said {2}!",
+      "blanks": [
+        {
+          "label": "A way to travel",
+          "placeholder": "red bus"
+        },
+        {
+          "label": "An animal",
+          "placeholder": "pigeon"
+        },
+        {
+          "label": "A silly greeting",
+          "placeholder": "hello, sunshine"
+        }
+      ]
+    }
   },
   "cartagena": {
     "gastronomy": [

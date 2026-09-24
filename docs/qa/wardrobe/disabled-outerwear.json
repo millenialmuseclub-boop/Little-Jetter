@@ -1,0 +1,127 @@
+[
+  {
+    "destinationId": "all",
+    "id": "pink-bow-cardigan",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "cream-cable-cardigan",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "olive-heart-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "pink-wrap-coat",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "jet-set-hoodie",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "pink-heart-hoodie",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "colorblock-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "brown-sherpa-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "denim-sherpa-collar-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "black-moto-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "cream-cherry-cardigan",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "red-heart-cardigan",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "navy-stripe-cardigan",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "yellow-puffer-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "pink-puffer-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "blue-cloud-puffer-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "olive-puffer-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "cream-sherpa-hood-puffer",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "purple-heart-puffer-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "navy-puffer-jacket",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "brown-bear-hood-puffer",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "panda-hood-puffer",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "red-fox-hood-puffer",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "olive-dino-hood-puffer",
+    "reason": "failed-outerwear-visual-qc"
+  },
+  {
+    "destinationId": "all",
+    "id": "pink-bear-hood-puffer",
+    "reason": "failed-outerwear-visual-qc"
+  }
+]

@@ -13,6 +13,20 @@ export const ASSET_TEMPLATE = {
   anchors: dressUpCatalog.template.anchors,
 } as const;
 
+export const DOLL_LAYER_ORDER = {
+  body: 1,
+  shoes: 2,
+  bottom: 3,
+  top: 4,
+  outerwear: 5,
+  // Full head art includes hair below the jaw. Keep it behind garments so
+  // long styles tuck naturally under tops and coats while hats/accessories
+  // remain above the face.
+  head: 2.5,
+  accessory: 7,
+  hat: 8,
+} as const;
+
 /**
  * Canonical location for a garment asset, following the existing convention:
  * `public/little-jetter/catalog/<destination>/<itemId>/<variantId ?? 'default'>.png`
@@ -22,8 +36,67 @@ export function catalogAssetPath(destinationId: string, itemId: string, variantI
   return `/little-jetter/catalog/${destinationId}/${itemId}/${variantId ?? 'default'}.png`;
 }
 
-type ManifestCatalogItem = { imageUrl?: string; variants?: { imageUrl: string }[] };
+type ManifestCatalogItem = {
+  id: string;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  thumbnailUrl?: string;
+  slot?: keyof typeof DOLL_LAYER_ORDER;
+  tags?: string[];
+  enabled?: boolean;
+  disabledReason?: string;
+  variants?: { id?: string; imageUrl: string; thumbnailUrl?: string }[];
+};
 type ManifestCatalogDestination = Record<string, ManifestCatalogItem[] | undefined>;
+
+export type GarmentAssetRecord = {
+  id: string;
+  destinationId: string;
+  group: string;
+  itemId: string;
+  variantId: string;
+  name: string;
+  imageUrl: string;
+  thumbnailUrl?: string;
+  templateId: string;
+  canvas: { width: number; height: number };
+  anchors: typeof ASSET_TEMPLATE.anchors;
+  slot: keyof typeof DOLL_LAYER_ORDER;
+  layer: number;
+  enabled: boolean;
+  disabledReason?: string;
+  tags: string[];
+};
+
+/** Complete, deterministic inventory used by audits, preloaders, and future asset drops. */
+export const GARMENT_MANIFEST: GarmentAssetRecord[] = Object.entries(
+  dressUpCatalog.destinations as Record<string, ManifestCatalogDestination>,
+).flatMap(([destinationId, groups]) => Object.entries(groups).flatMap(([group, items]) =>
+  (items ?? []).flatMap((item) => {
+    if (!item.imageUrl) return [];
+    const slot = item.slot && item.slot in DOLL_LAYER_ORDER ? item.slot : 'accessory';
+    const variants = item.variants?.length ? item.variants : [{ id: 'default', imageUrl: item.imageUrl, thumbnailUrl: item.thumbnailUrl }];
+    return variants.map((variant) => ({
+      id: `${destinationId}:${group}:${item.id}:${variant.id ?? 'default'}`,
+      destinationId,
+      group,
+      itemId: item.id,
+      variantId: variant.id ?? 'default',
+      name: item.name,
+      imageUrl: variant.imageUrl,
+      thumbnailUrl: variant.thumbnailUrl ?? item.thumbnailUrl,
+      templateId: ASSET_TEMPLATE.id,
+      canvas: { width: ASSET_TEMPLATE.width, height: ASSET_TEMPLATE.height },
+      anchors: ASSET_TEMPLATE.anchors,
+      slot,
+      layer: DOLL_LAYER_ORDER[slot],
+      enabled: item.enabled !== false,
+      disabledReason: item.disabledReason,
+      tags: item.tags ?? [],
+    }));
+  }),
+));
 
 /**
  * Every real (illustrated) image URL for a destination — base items and color

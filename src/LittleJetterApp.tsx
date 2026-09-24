@@ -1,9 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
 import './little-jetter.css';
 import { realProductCatalog, type ProductCategory } from './catalog';
 import dressUpCatalog from './data/dressUpCatalog.json';
-import { destinationAssetUrls } from './data/garmentManifest';
+import { readLocal, writeLocal, PLAY_KEY, isRecord, stringList, isSavedLook } from './localData';
+import wardrobeThumbnails from './data/wardrobeThumbnails.json';
 import exploreContentData from './data/exploreContent.json';
+import { COMPLETE_HEADS, HEAD_FILTERS } from './data/headManifest';
+import { DOLL_LAYER_ORDER } from './data/garmentManifest';
+import { ParentUpdates } from './ParentUpdates';
+import { equipPiece } from './wardrobeLogic';
 
 type ExploreContent = {
   gastronomy?: { name: string; blurb: string }[];
@@ -14,18 +19,17 @@ type ExploreContent = {
 const EXPLORE_CONTENT: Record<string, ExploreContent> = exploreContentData;
 
 const KINDNESS_PROMPTS = [
-  'Tell someone in your family one thing you appreciate about them today.',
+  'What do you love about your family?',
   'Draw a picture for someone and give it to them as a surprise.',
-  'Say thank you to someone who helped you this week, and tell them why.',
+  'Who helped you today?',
   'Share something of yours with a friend or sibling today.',
-  'Give someone a genuine compliment before the day is over.',
+  'What kind words can you say?',
   'Help with a chore at home without being asked.',
-  'Write down one thing about today that you feel grateful for.',
+  'What made you smile today?',
   'Smile and say hello to someone you don’t usually talk to.',
 ];
 const KINDNESS_KEY = 'little-jetter-kindness-journal';
 const PARENT_SETTINGS_KEY = 'little-jetter-parent-settings';
-const PARENT_SESSION_KEY = 'little-jetter-parent-session';
 const PARENT_SESSION_MS = 15 * 60 * 1000;
 
 type ParentSettings = {
@@ -59,6 +63,10 @@ type Destination = {
   sandalsFriendly: boolean;
   passportPhrase: string;
 };
+
+// Updates stay behind the grown-up gate and run only after the adult chooses
+// to check. The production Capgo app is owned and available again.
+const OTA_ENABLED = true;
 
 const destinations: Destination[] = [
   { id: 'tokyo', region: 'Asia', city: 'Tokyo', country: 'Japan', area: 'Tokyo Metropolis', areaType: 'Prefecture', note: 'Neon streets & tiny treasures', weather: 'Cool + bright', prompt: 'A light jacket belongs in this adventure.', color: '#e85849', icon: '☂', adventure: 'You’re exploring a lantern street, visiting a tiny toy shop, and stopping for a special snack. It may turn cool later.', exploreIcon: '🏮', notices: [{icon:'🍡',label:'A perfect row of snacks'},{icon:'🚆',label:'A train arriving on time'},{icon:'🏮',label:'A lantern glowing'},{icon:'🪀',label:'A tiny toy in a window'}], needsLayer: true, sandalsFriendly: false, passportPhrase: 'Curious city explorer' },
@@ -123,17 +131,12 @@ const destinationTypes: Record<string, string> = {
   'buenos-aires': 'Art + city', 'quebec-city': 'Historic city', bali: 'Beach + island', auckland: 'Harbor + beach',
   'rio-de-janeiro': 'Harbor + beach',
 };
-const allDestinationTypes = ['All types', ...Array.from(new Set(Object.values(destinationTypes)))];
-const adventureTemperatures: Record<string, string> = {
-  tokyo: '55°F', honolulu: '79°F', london: '52°F', cartagena: '84°F', paris: '59°F', nairobi: '72°F', 'mexico-city': '66°F', rome: '73°F', sydney: '70°F', 'san-jose': '75°F', 'new-york': '61°F', barcelona: '71°F', 'cape-town': '65°F', vancouver: '54°F', seoul: '57°F',
-  kyoto: '62°F', bangkok: '91°F', santorini: '75°F', dubai: '95°F', istanbul: '64°F', lima: '68°F', montreal: '50°F', queenstown: '48°F', petra: '78°F', maldives: '86°F', 'machu-picchu': '58°F', zanzibar: '82°F', vilnius: '47°F', amsterdam: '55°F', reykjavik: '41°F', marrakech: '80°F', singapore: '88°F', lisbon: '68°F', 'buenos-aires': '66°F', 'quebec-city': '46°F', bali: '85°F', auckland: '64°F', 'rio-de-janeiro': '84°F',
-};
 
 const STORAGE_KEY = 'little-jetter-first-trip';
 const PASSPORT_KEY = 'little-jetter-passport-stamps';
 
 type CatalogVariant = { id: string; swatch: string; imageUrl: string };
-type CatalogItem = { id: string; name: string; description: string; imageUrl: string; slot: 'top' | 'bottom' | 'outerwear' | 'shoes' | 'accessory' | 'buddy'; tags: string[]; variants?: CatalogVariant[] };
+type CatalogItem = { id: string; name: string; description: string; imageUrl: string; slot: 'top' | 'bottom' | 'outerwear' | 'shoes' | 'accessory' | 'buddy'; tags: string[]; variants?: CatalogVariant[]; enabled?: boolean };
 type CatalogDestination = { tops: CatalogItem[]; bottoms: CatalogItem[]; layers: CatalogItem[]; shoes: CatalogItem[]; accessories: CatalogItem[]; buddies: CatalogItem[] };
 type DressUpCatalog = { schemaVersion: number; template: { id: string; width: number; height: number; anchors: Record<string, number> }; destinations: Record<string, Partial<CatalogDestination>> & { all: CatalogDestination } };
 const catalog = dressUpCatalog as unknown as DressUpCatalog;
@@ -144,22 +147,22 @@ type Picks = Record<PickGroup, string>;
 type ClothingGroup = Exclude<PickGroup, 'buddies'>;
 type GarmentColors = Record<string, string>;
 type GarmentScales = Record<string, number>;
+type GarmentOffsets = Record<string, { x: number; y: number }>;
+type GarmentRotations = Record<string, number>;
 const MIN_GARMENT_SCALE = 0.6;
 const MAX_GARMENT_SCALE = 1.6;
-function clampGarmentScale(value: number) {
-  return Math.min(MAX_GARMENT_SCALE, Math.max(MIN_GARMENT_SCALE, value));
-}
+function clampGarmentScale(value: number) { return Math.min(MAX_GARMENT_SCALE, Math.max(MIN_GARMENT_SCALE, value)); }
 const SANDAL_SHOE_IDS = new Set(['sandals', 'purple-sandals', 'navy-sandals', 'brown-strap-sandals', 'brown-buckle-sandals', 'blue-strap-sandals']);
-type Character = { style: string; skin: string; hair: string; hairStyle: string; eyes: string };
-type SavedLook = { id: string; name: string; picks: Picks; character: Character; colors: GarmentColors; scales?: GarmentScales; offsets?: Record<string, { x: number; y: number }>; rotations?: Record<string, number> };
+type Character = { style: string; skin: string; hair: string; hairStyle: string; eyes: string; headId?: string };
+type SavedLook = { id: string; name: string; picks: Picks; character: Character; colors: GarmentColors; hatPick?: string; scales?: GarmentScales; offsets?: GarmentOffsets; rotations?: GarmentRotations };
 
 const CLOSET_GROUPS: ClothingGroup[] = ['bottoms', 'tops', 'layers', 'shoes', 'accessories'];
 const CATEGORY_BUTTON: Record<ClothingGroup, { icon: string; label: string; spot: string }> = {
-  tops: { icon: '👕', label: 'Main piece', spot: 'spot-tops' },
-  bottoms: { icon: '👖', label: 'Bottom', spot: 'spot-bottoms' },
-  layers: { icon: '🧥', label: 'Layer', spot: 'spot-layers' },
+  tops: { icon: '👕', label: 'Tops', spot: 'spot-tops' },
+  bottoms: { icon: '👖', label: 'Pants', spot: 'spot-bottoms' },
+  layers: { icon: '🧥', label: 'Coats', spot: 'spot-layers' },
   shoes: { icon: '👟', label: 'Shoes', spot: 'spot-shoes' },
-  accessories: { icon: '🎒', label: 'Accessory', spot: 'spot-accessories' },
+  accessories: { icon: '🎒', label: 'Extras', spot: 'spot-accessories' },
 };
 type AvatarFeature = 'hairStyle';
 const AVATAR_BUTTON: Record<AvatarFeature, { icon: string; label: string }> = {
@@ -170,28 +173,22 @@ const PRODUCT_CATEGORY_ICON: Record<ProductCategory, string> = {
   top: '👕', bottom: '👖', dress: '👗', outerwear: '🧥', shoe: '👟',
   accessory: '🎒', luggage: '🧳', toy: '🧸', book: '📘', swim: '🩱',
 };
-// Gives every product-card tile a colorful backdrop keyed by category, so a
-// real product photo reads just as "dressed up" as the fallback-icon cards
-// (which already sat on a warm gradient) instead of a plain white square.
-const PRODUCT_CATEGORY_BG: Record<ProductCategory, string> = {
-  top: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#ffe3ea 100%)',
-  bottom: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#e3edff 100%)',
-  dress: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#ffe0f6 100%)',
-  outerwear: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#fff0d6 100%)',
-  shoe: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#ffe6d2 100%)',
-  accessory: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#e3f7f0 100%)',
-  luggage: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#f4e6ff 100%)',
-  toy: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#fff3d8 100%)',
-  book: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#e0f0ff 100%)',
-  swim: 'radial-gradient(circle at 50% 40%,#fff 0 26%,#d9f5f5 100%)',
-};
-
 const gameSheets: Record<PickGroup, string> = {
   tops: '/little-jetter/game-tops.png', bottoms: '/little-jetter/game-bottoms.png', layers: '/little-jetter/game-layers.png',
   shoes: '/little-jetter/game-shoes.png', accessories: '/little-jetter/game-accessories.png', buddies: '/little-jetter/game-buddies.png',
 };
 
+function BuddyPicture({ id }: { id: string }) {
+  const clipId = useId();
+  const box = id === 'bunny' ? '30 0 720 724' : id === 'robot' ? '760 0 600 724' : '1340 0 832 724';
+  const [x, y, width, height] = box.split(' ').map(Number);
+  return <svg viewBox={box} aria-hidden="true" width="100%" height="100%"><defs><clipPath id={clipId} clipPathUnits="userSpaceOnUse"><rect x={x} y={y} width={width} height={height} /></clipPath></defs><image href="/little-jetter/game-buddies.png" width="2172" height="724" clipPath={`url(#${clipId})`} /></svg>;
+}
+
 function gameItemStyle(group: PickGroup, id: string): React.CSSProperties {
+  const item = wardrobe[group].find(item => item.id === id);
+  const thumbnail = item?.imageUrl && (wardrobeThumbnails as Record<string, string>)[item.imageUrl];
+  if (thumbnail) return { backgroundImage: `url(${thumbnail})`, backgroundPosition: 'center', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', filter: 'none' };
   const index = wardrobe[group].findIndex((item) => item.id === id);
   const spriteIndex = Math.max(index, 0) % 3;
   const variantFilter = index === 3 ? 'hue-rotate(65deg) saturate(1.25)' : index === 4 ? 'hue-rotate(155deg) saturate(1.15)' : undefined;
@@ -223,6 +220,7 @@ const characterOptions = {
     { id: 'purple', label: 'Purple', color: '#784696' },
   ],
   eyes: [
+    { id: 'dark-brown', label: 'Deep Brown', color: '#241b18' },
     { id: 'brown', label: 'Brown', color: '#5a3827' },
     { id: 'light-brown', label: 'Light Brown', color: '#966e3c' },
     { id: 'hazel', label: 'Hazel', color: '#8d7440' },
@@ -235,8 +233,8 @@ const characterOptions = {
 };
 
 function catalogItemFor(destinationId: string, group: PickGroup, itemId: string) {
-  const destinationItem = catalog.destinations[destinationId]?.[group]?.find((item) => item.id === itemId);
-  return destinationItem ?? wardrobe[group].find((item) => item.id === itemId);
+  const destinationItem = catalog.destinations[destinationId]?.[group]?.find((item) => item.id === itemId && item.enabled !== false);
+  return destinationItem ?? wardrobe[group].find((item) => item.id === itemId && item.enabled !== false);
 }
 
 function catalogImageFor(item: CatalogItem | undefined, selectedSwatch?: string) {
@@ -258,7 +256,7 @@ function ClassicDoll({ picks, character, garmentColors, onlyLayer, previewViewBo
   const isDress = picks.tops === 'dress';
   const isSweater = picks.tops === 'sweater' || picks.tops === 'adventure-shirt';
   const hairStyle = character.hairStyle ?? 'curls';
-  return <svg className={`little-aligned-doll ${onlyLayer ? 'little-garment-canvas' : ''}`} viewBox={previewViewBox} style={{ '--top-fill': top, '--bottom-fill': bottom, '--layer-fill': layer ?? 'transparent', '--shoe-fill': shoes } as React.CSSProperties} data-master-canvas="600x900" data-hidden-layers={hiddenLayers.join(' ')} data-only-layer={onlyLayer} data-layer-map={JSON.stringify(LAYERS)} role="img" aria-label={onlyLayer ? `${onlyLayer} garment preview` : `Doll in a base outfit wearing ${wardrobe.tops.find(item=>item.id===picks.tops)?.name}, ${wardrobe.bottoms.find(item=>item.id===picks.bottoms)?.name}, and ${wardrobe.shoes.find(item=>item.id===picks.shoes)?.name}`}>
+  return <svg className={`little-aligned-doll ${onlyLayer ? 'little-garment-canvas' : ''}`} viewBox={previewViewBox} style={{ '--top-fill': top, '--bottom-fill': bottom, '--layer-fill': layer ?? 'transparent', '--shoe-fill': shoes } as React.CSSProperties} data-master-canvas="600x900" data-hidden-layers={hiddenLayers.join(' ')} data-only-layer={onlyLayer} data-layer-map={JSON.stringify(LAYERS)} role="img" aria-label={onlyLayer ? `${onlyLayer} garment preview` : 'Your dressed-up doll'}>
     <defs><radialGradient id="skinGlow" cx="34%" cy="20%" r="82%"><stop stopColor="#fff" stopOpacity=".48"/><stop offset=".42" stopColor={skin}/><stop offset=".82" stopColor={skin}/><stop offset="1" stopColor="#70432f" stopOpacity=".3"/></radialGradient><linearGradient id="skinBody" x1=".18" y1="0" x2=".82" y2="1"><stop stopColor="#fff" stopOpacity=".3"/><stop offset=".3" stopColor={skin}/><stop offset="1" stopColor="#70432f" stopOpacity=".23"/></linearGradient><linearGradient id="underTop" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#fffdf6"/><stop offset=".55" stopColor="#fff3d8"/><stop offset="1" stopColor="#dfc397"/></linearGradient><linearGradient id="underBottom" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#8eabc2"/><stop offset=".55" stopColor="#607f9d"/><stop offset="1" stopColor="#405f7c"/></linearGradient><linearGradient id="hairShade" x1=".2" y1="0" x2=".8" y2="1"><stop stopColor="#fff" stopOpacity=".24"/><stop offset=".28" stopColor={hair}/><stop offset="1" stopColor="#211a19" stopOpacity=".46"/></linearGradient><linearGradient id="topShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".45" stopColor={top}/><stop offset="1" stopColor="#173a47" stopOpacity=".2"/></linearGradient><linearGradient id="bottomShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".26"/><stop offset=".42" stopColor={bottom}/><stop offset="1" stopColor="#173a47" stopOpacity=".25"/></linearGradient><linearGradient id="layerShade" x1=".1" y1="0" x2=".9" y2="1"><stop stopColor="#fff" stopOpacity=".4"/><stop offset=".48" stopColor={layer}/><stop offset="1" stopColor="#173a47" stopOpacity=".22"/></linearGradient><linearGradient id="shoeShade" x1=".15" y1="0" x2=".85" y2="1"><stop stopColor="#fff" stopOpacity=".3"/><stop offset=".44" stopColor={shoes}/><stop offset="1" stopColor="#173a47" stopOpacity=".28"/></linearGradient><filter id="softShadow"><feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#173a47" floodOpacity=".18"/></filter><filter id="neckBlend" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.2"/></filter></defs>
     <g transform="scale(1.5)"><ellipse cx="200" cy="520" rx="82" ry="13" fill="#173a47" opacity=".16" filter="url(#softShadow)"/>
     <g data-layer="base"><path d="M172 226q-17 34-20 74q-2 30 6 55" fill="none" stroke={skin} strokeWidth="22" strokeLinecap="round"/><path d="M228 226q17 34 20 74q2 30-6 55" fill="none" stroke={skin} strokeWidth="22" strokeLinecap="round"/><path d="M174 329l-15 145-8 31q-4 17 12 22 16 4 23-14l14-54 14 54q7 18 23 14 16-5 12-22l-8-31-15-145z" fill="url(#skinBody)"/><path d="M184 194h32l6 32h-44z" fill="url(#skinBody)"/><ellipse cx="200" cy="196" rx="19" ry="7" fill="#70432f" opacity=".14" filter="url(#neckBlend)"/><ellipse cx="200" cy="223" rx="27" ry="9" fill="#70432f" opacity=".22" filter="url(#neckBlend)"/></g>
@@ -271,815 +269,16 @@ function ClassicDoll({ picks, character, garmentColors, onlyLayer, previewViewBo
       {hairStyle === 'curls' && <><path d="M139 147q-5-81 61-81 68 0 62 84-17-47-62-47-43 0-61 44z" fill={hair} stroke="#173a47" strokeWidth="5"/>{[146,164,182,218,236,254].map((x,index)=><circle key={x} cx={x} cy={index%2?95:110} r="14" fill={hair} stroke="#173a47" strokeWidth="3"/>)}<path d="M156 116q44-39 88 0" fill="none" stroke="white" strokeOpacity=".13" strokeWidth="7" strokeLinecap="round"/></>}
     </g>
     <g data-layer="base-outfit"><path d="M172 213q28-14 56 0l9 116q-37 14-74 0z" fill="url(#underTop)" filter="url(#neckBlend)"/><path d="M154 320h92l5 83-43 5-8-49-8 49-43-5z" fill="url(#underBottom)"/><path d="M183 217q17 14 34 0" fill="none" stroke="#e7cda4" strokeOpacity=".8" strokeWidth="4"/><path d="M162 316q38 12 76 0" fill="none" stroke="#fff" strokeOpacity=".45" strokeWidth="4"/><circle cx="200" cy="286" r="6" fill="#e85849"/></g>
-    <g key={picks.shoes} data-layer="shoes" filter="url(#softShadow)"><ellipse cx="160" cy="509" rx="45" ry="9" fill="#173a47" opacity=".18"/><ellipse cx="240" cy="509" rx="45" ry="9" fill="#173a47" opacity=".18"/><path d={picks.shoes==='boots'?'M136 440q29 7 58 0l1 65q-42 18-76-2zm70 0q29 7 58 0l17 63q-34 20-76 2z':'M139 461q27 8 55 0l1 42q-43 20-76-1zm67 0q27 8 55 0l20 41q-33 21-76 1z'} fill="url(#shoeShade)" stroke="#173a47" strokeWidth="5"/><path d="M139 484q24 7 48 0m26 0q24 7 48 0" stroke="white" strokeWidth="5"/>{(picks.shoes==='sneakers'||picks.shoes==='high-tops')&&<><path d="M151 466l25 28m-9-30 19 22m63-20-25 28m9-30-19 22" stroke="white" strokeWidth="4"/></>}</g>
-    <g key={picks.bottoms} data-layer="bottom" filter="url(#softShadow)">{isSkirt?<><path d="M155 319q45 10 90 0l23 130q-68 29-136 0z" fill={bottom} stroke="#173a47" strokeWidth="4"/><path d="M158 330q42 9 84 0" fill="none" stroke="white" strokeOpacity=".38" strokeWidth="6"/><path d="M177 343l-16 91m62-91 16 91" stroke="white" strokeOpacity=".2" strokeWidth="4"/></>:<><path d={isShorts?'M153 319q47 10 94 0l7 80q-22 9-45 3l-9-43-9 43q-23 6-45-3z':'M155 319q45 10 90 0l10 149q-22 8-43 0l-12-108-12 108q-21 8-43 0z'} fill="url(#bottomShade)" stroke="#173a47" strokeWidth="4"/><path d="M159 331q41 9 82 0" fill="none" stroke="white" strokeOpacity=".38" strokeWidth="6"/>{picks.bottoms==='travel-jeans'&&<><path d="M166 350q8 58 2 101m66-101q-8 58-2 101" stroke="#d9eef5" strokeOpacity=".42" strokeWidth="3" strokeDasharray="5 5"/><path d="M200 329v34" stroke="#173a47" strokeWidth="3"/><path d="M176 337q8 14 19 9m29-9q-8 14-19 9" fill="none" stroke="#d9eef5" strokeOpacity=".38" strokeWidth="3"/></>}</>}</g>
-    <g key={picks.tops} data-layer="top" filter="url(#softShadow)"><path d={isDress?'M149 225q22-17 43-13l8 17 8-17q21-4 43 13l13 88 34 104q-98 42-196 0l34-104z':'M150 225q22-17 42-13l8 17 8-17q20-4 42 13l18 88q-68 34-136 0z'} fill="url(#topShade)" stroke="#173a47" strokeWidth="4"/><path d={isSweater?'M151 231q-17 16-45 53l25 24 34-48m84-29q17 16 45 53l-25 24-34-48':'M151 233q-15 13-37 40l24 20 27-39m84-21q15 13 37 40l-24 20-27-39'} fill={top} stroke="#173a47" strokeWidth="4"/><path d="M183 217q17 19 34 0" fill="none" stroke="#fff8e8" strokeOpacity=".9" strokeWidth="5"/><path d="M144 311q56 17 112 0" fill="none" stroke="#173a47" strokeOpacity=".2" strokeWidth="3"/>{picks.tops==='stripe'&&[251,274,297].map(y=><path key={y} d={`M139 ${y}q61 14 122 0`} stroke="#fff8e8" strokeWidth="10"/>)}{picks.tops==='adventure-shirt'&&<><path d="M178 219l22 25 22-25" fill="#fff8e8" stroke="#173a47" strokeWidth="3"/><rect x="217" y="264" width="27" height="24" rx="3" fill="#fff8e8" stroke="#173a47" strokeWidth="3"/><path d="M200 244v68" stroke="#fff8e8" strokeOpacity=".65" strokeWidth="3"/></>}{picks.tops==='sweater'&&<><path d="M169 244q31 27 62 0M165 278q35 25 70 0" fill="none" stroke="white" strokeOpacity=".25" strokeWidth="5"/><path d="M137 298l2 14m122-14-2 14" stroke="#fff" strokeOpacity=".45" strokeWidth="5"/></>}</g>
-    {layer&&<g key={picks.layers} data-layer="outerwear" filter="url(#softShadow)"><path d="M139 222q23-14 51-14l-12 52-12 110-52-8 10-82z" fill="url(#layerShade)" stroke="#173a47" strokeWidth="5"/><path d="M261 222q-23-14-51-14l12 52 12 110 52-8-10-82z" fill="url(#layerShade)" stroke="#173a47" strokeWidth="5"/><path d="M190 208l10 38 10-38 20 31-10 25-20-18-20 18-10-25z" fill="#fff8e8" fillOpacity=".94" stroke="#173a47" strokeWidth="4"/><path d="M142 327q16 6 32 0m52 0q16 6 32 0" stroke="#fff8e8" strokeOpacity=".76" strokeWidth="5"/><path d="M162 224q-9 68-7 129m83-129q9 68 7 129" fill="none" stroke="white" strokeOpacity=".28" strokeWidth="4"/><circle cx="181" cy="277" r="5" fill="#173a47"/><circle cx="219" cy="277" r="5" fill="#173a47"/></g>}
-    <g key={picks.accessories} data-layer="accessory" filter="url(#softShadow)">{picks.accessories==='sun-glasses'?<g transform="translate(200,194) scale(.78) translate(-200,-194)"><circle cx="178" cy="155" r="22" fill="#90d1dc" fillOpacity=".45" stroke="#173a47" strokeWidth="7"/><circle cx="222" cy="155" r="22" fill="#90d1dc" fillOpacity=".45" stroke="#173a47" strokeWidth="7"/><path d="M200 155h1" stroke="#173a47" strokeWidth="7"/></g>:picks.accessories==='crossbody'||picks.accessories==='mini-camera'?<><path d="M255 292l42 15-13 92-58-15z" fill={picks.accessories==='mini-camera'?'#345c68':'#9b6448'} stroke="#173a47" strokeWidth="5"/><path d="M238 294q13-50 45 3" fill="none" stroke="#173a47" strokeWidth="6"/><circle cx="263" cy="343" r="17" fill="#bfe3e6" stroke="#173a47" strokeWidth="5"/></>:<g transform="translate(200,194) scale(.78) translate(-200,-194)"><path d={picks.accessories==='bucket-hat'?'M142 122q58-55 116 0l-9 31h-98z':'M151 109q49-47 98 0l8 43H143z'} fill={picks.accessories==='bucket-hat'?'#39a29a':'#e67b43'} stroke="#173a47" strokeWidth="5"/><path d="M140 145q69-18 126 8" fill="none" stroke="#173a47" strokeWidth="9"/><circle cx="180" cy="111" r="9" fill="#f1bd42"/></g>}</g></g>
+    <g key={`shoes-${picks.shoes}`} data-layer="shoes" filter="url(#softShadow)"><ellipse cx="160" cy="509" rx="45" ry="9" fill="#173a47" opacity=".18"/><ellipse cx="240" cy="509" rx="45" ry="9" fill="#173a47" opacity=".18"/><path d={picks.shoes==='boots'?'M136 440q29 7 58 0l1 65q-42 18-76-2zm70 0q29 7 58 0l17 63q-34 20-76 2z':'M139 461q27 8 55 0l1 42q-43 20-76-1zm67 0q27 8 55 0l20 41q-33 21-76 1z'} fill="url(#shoeShade)" stroke="#173a47" strokeWidth="5"/><path d="M139 484q24 7 48 0m26 0q24 7 48 0" stroke="white" strokeWidth="5"/>{(picks.shoes==='sneakers'||picks.shoes==='high-tops')&&<><path d="M151 466l25 28m-9-30 19 22m63-20-25 28m9-30-19 22" stroke="white" strokeWidth="4"/></>}</g>
+    <g key={`bottoms-${picks.bottoms}`} data-layer="bottom" filter="url(#softShadow)">{isSkirt?<><path d="M155 319q45 10 90 0l23 130q-68 29-136 0z" fill={bottom} stroke="#173a47" strokeWidth="4"/><path d="M158 330q42 9 84 0" fill="none" stroke="white" strokeOpacity=".38" strokeWidth="6"/><path d="M177 343l-16 91m62-91 16 91" stroke="white" strokeOpacity=".2" strokeWidth="4"/></>:<><path d={isShorts?'M153 319q47 10 94 0l7 80q-22 9-45 3l-9-43-9 43q-23 6-45-3z':'M155 319q45 10 90 0l10 149q-22 8-43 0l-12-108-12 108q-21 8-43 0z'} fill="url(#bottomShade)" stroke="#173a47" strokeWidth="4"/><path d="M159 331q41 9 82 0" fill="none" stroke="white" strokeOpacity=".38" strokeWidth="6"/>{picks.bottoms==='travel-jeans'&&<><path d="M166 350q8 58 2 101m66-101q-8 58-2 101" stroke="#d9eef5" strokeOpacity=".42" strokeWidth="3" strokeDasharray="5 5"/><path d="M200 329v34" stroke="#173a47" strokeWidth="3"/><path d="M176 337q8 14 19 9m29-9q-8 14-19 9" fill="none" stroke="#d9eef5" strokeOpacity=".38" strokeWidth="3"/></>}</>}</g>
+    <g key={`tops-${picks.tops}`} data-layer="top" filter="url(#softShadow)"><path d={isDress?'M149 225q22-17 43-13l8 17 8-17q21-4 43 13l13 88 34 104q-98 42-196 0l34-104z':'M150 225q22-17 42-13l8 17 8-17q20-4 42 13l18 88q-68 34-136 0z'} fill="url(#topShade)" stroke="#173a47" strokeWidth="4"/><path d={isSweater?'M151 231q-17 16-45 53l25 24 34-48m84-29q17 16 45 53l-25 24-34-48':'M151 233q-15 13-37 40l24 20 27-39m84-21q15 13 37 40l-24 20-27-39'} fill={top} stroke="#173a47" strokeWidth="4"/><path d="M183 217q17 19 34 0" fill="none" stroke="#fff8e8" strokeOpacity=".9" strokeWidth="5"/><path d="M144 311q56 17 112 0" fill="none" stroke="#173a47" strokeOpacity=".2" strokeWidth="3"/>{picks.tops==='stripe'&&[251,274,297].map(y=><path key={y} d={`M139 ${y}q61 14 122 0`} stroke="#fff8e8" strokeWidth="10"/>)}{picks.tops==='adventure-shirt'&&<><path d="M178 219l22 25 22-25" fill="#fff8e8" stroke="#173a47" strokeWidth="3"/><rect x="217" y="264" width="27" height="24" rx="3" fill="#fff8e8" stroke="#173a47" strokeWidth="3"/><path d="M200 244v68" stroke="#fff8e8" strokeOpacity=".65" strokeWidth="3"/></>}{picks.tops==='sweater'&&<><path d="M169 244q31 27 62 0M165 278q35 25 70 0" fill="none" stroke="white" strokeOpacity=".25" strokeWidth="5"/><path d="M137 298l2 14m122-14-2 14" stroke="#fff" strokeOpacity=".45" strokeWidth="5"/></>}</g>
+    {layer&&<g key={`layers-${picks.layers}`} data-layer="outerwear" filter="url(#softShadow)"><path d="M139 222q23-14 51-14l-12 52-12 110-52-8 10-82z" fill="url(#layerShade)" stroke="#173a47" strokeWidth="5"/><path d="M261 222q-23-14-51-14l12 52 12 110 52-8-10-82z" fill="url(#layerShade)" stroke="#173a47" strokeWidth="5"/><path d="M190 208l10 38 10-38 20 31-10 25-20-18-20 18-10-25z" fill="#fff8e8" fillOpacity=".94" stroke="#173a47" strokeWidth="4"/><path d="M142 327q16 6 32 0m52 0q16 6 32 0" stroke="#fff8e8" strokeOpacity=".76" strokeWidth="5"/><path d="M162 224q-9 68-7 129m83-129q9 68 7 129" fill="none" stroke="white" strokeOpacity=".28" strokeWidth="4"/><circle cx="181" cy="277" r="5" fill="#173a47"/><circle cx="219" cy="277" r="5" fill="#173a47"/></g>}
+    <g key={`accessories-${picks.accessories}`} data-layer="accessory" filter="url(#softShadow)">{picks.accessories==='sun-glasses'?<g transform="translate(200,194) scale(.78) translate(-200,-194)"><circle cx="178" cy="155" r="22" fill="#90d1dc" fillOpacity=".45" stroke="#173a47" strokeWidth="7"/><circle cx="222" cy="155" r="22" fill="#90d1dc" fillOpacity=".45" stroke="#173a47" strokeWidth="7"/><path d="M200 155h1" stroke="#173a47" strokeWidth="7"/></g>:picks.accessories==='crossbody'||picks.accessories==='mini-camera'?<><path d="M255 292l42 15-13 92-58-15z" fill={picks.accessories==='mini-camera'?'#345c68':'#9b6448'} stroke="#173a47" strokeWidth="5"/><path d="M238 294q13-50 45 3" fill="none" stroke="#173a47" strokeWidth="6"/><circle cx="263" cy="343" r="17" fill="#bfe3e6" stroke="#173a47" strokeWidth="5"/></>:<g transform="translate(200,194) scale(.78) translate(-200,-194)"><path d={picks.accessories==='bucket-hat'?'M142 122q58-55 116 0l-9 31h-98z':'M151 109q49-47 98 0l8 43H143z'} fill={picks.accessories==='bucket-hat'?'#39a29a':'#e67b43'} stroke="#173a47" strokeWidth="5"/><path d="M140 145q69-18 126 8" fill="none" stroke="#173a47" strokeWidth="9"/><circle cx="180" cy="111" r="9" fill="#f1bd42"/></g>}</g></g>
   </svg>;
 }
 
-// Painterly head/face+hair overlays, generated to match the Tokyo clothing art's
-// style but containing no destination-specific motifs — so they're used as the
-// shared avatar art for every destination, not just Tokyo.
-// [hairStyle][skin][hairColor] -> asset url. Every (hairStyle, skin) pair now
-// has a locally-recolored bake for every hair-color option (scripts/recolor-
-// hair-color.mjs), not just the hand-generated golden skin, so the
-// hair-color picker actually changes the doll for every skin tone.
-const PAINTERLY_HEAD_ASSETS: Record<string, Record<string, Record<string, string>>> = {
-  curls: {
-    porcelain: {
-      brown: '/little-jetter/catalog/tokyo/head/curls-porcelain.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/curls-porcelain-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/curls-porcelain-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/curls-porcelain-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/curls-porcelain-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/curls-porcelain-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/curls-porcelain-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/curls-porcelain-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/curls-porcelain-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/curls-porcelain-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/curls-porcelain-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/curls-porcelain-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/curls-porcelain-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/curls-porcelain-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/curls-porcelain-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/curls-porcelain-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/curls-porcelain-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/curls-porcelain-purple.png',
-    },
-    peach: {
-      brown: '/little-jetter/catalog/tokyo/head/curls-peach.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/curls-peach-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/curls-peach-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/curls-peach-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/curls-peach-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/curls-peach-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/curls-peach-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/curls-peach-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/curls-peach-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/curls-peach-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/curls-peach-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/curls-peach-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/curls-peach-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/curls-peach-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/curls-peach-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/curls-peach-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/curls-peach-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/curls-peach-purple.png',
-    },
-    golden: {
-      brown: '/little-jetter/catalog/tokyo/head/curls-golden.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/curls-golden-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/curls-golden-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/curls-golden-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/curls-golden-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/curls-golden-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/curls-golden-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/curls-golden-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/curls-golden-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/curls-golden-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/curls-golden-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/curls-golden-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/curls-golden-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/curls-golden-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/curls-golden-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/curls-golden-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/curls-golden-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/curls-golden-purple.png',
-    },
-    caramel: {
-      brown: '/little-jetter/catalog/tokyo/head/curls-caramel.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/curls-caramel-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/curls-caramel-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/curls-caramel-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/curls-caramel-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/curls-caramel-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/curls-caramel-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/curls-caramel-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/curls-caramel-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/curls-caramel-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/curls-caramel-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/curls-caramel-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/curls-caramel-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/curls-caramel-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/curls-caramel-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/curls-caramel-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/curls-caramel-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/curls-caramel-purple.png',
-    },
-    brown: {
-      brown: '/little-jetter/catalog/tokyo/head/curls-brown.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/curls-brown-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/curls-brown-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/curls-brown-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/curls-brown-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/curls-brown-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/curls-brown-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/curls-brown-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/curls-brown-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/curls-brown-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/curls-brown-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/curls-brown-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/curls-brown-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/curls-brown-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/curls-brown-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/curls-brown-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/curls-brown-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/curls-brown-purple.png',
-    },
-    deep: {
-      brown: '/little-jetter/catalog/tokyo/head/curls-deep.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/curls-deep-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/curls-deep-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/curls-deep-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/curls-deep-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/curls-deep-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/curls-deep-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/curls-deep-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/curls-deep-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/curls-deep-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/curls-deep-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/curls-deep-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/curls-deep-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/curls-deep-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/curls-deep-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/curls-deep-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/curls-deep-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/curls-deep-purple.png',
-    },
-  },
-  short: {
-    porcelain: {
-      brown: '/little-jetter/catalog/tokyo/head/short-porcelain.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/short-porcelain-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/short-porcelain-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/short-porcelain-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/short-porcelain-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/short-porcelain-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/short-porcelain-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/short-porcelain-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/short-porcelain-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/short-porcelain-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/short-porcelain-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/short-porcelain-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/short-porcelain-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/short-porcelain-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/short-porcelain-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/short-porcelain-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/short-porcelain-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/short-porcelain-purple.png',
-    },
-    peach: {
-      brown: '/little-jetter/catalog/tokyo/head/short-peach.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/short-peach-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/short-peach-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/short-peach-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/short-peach-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/short-peach-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/short-peach-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/short-peach-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/short-peach-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/short-peach-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/short-peach-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/short-peach-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/short-peach-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/short-peach-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/short-peach-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/short-peach-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/short-peach-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/short-peach-purple.png',
-    },
-    golden: {
-      brown: '/little-jetter/catalog/tokyo/head/short-golden.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/short-golden-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/short-golden-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/short-golden-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/short-golden-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/short-golden-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/short-golden-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/short-golden-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/short-golden-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/short-golden-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/short-golden-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/short-golden-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/short-golden-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/short-golden-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/short-golden-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/short-golden-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/short-golden-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/short-golden-purple.png',
-    },
-    caramel: {
-      brown: '/little-jetter/catalog/tokyo/head/short-caramel.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/short-caramel-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/short-caramel-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/short-caramel-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/short-caramel-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/short-caramel-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/short-caramel-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/short-caramel-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/short-caramel-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/short-caramel-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/short-caramel-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/short-caramel-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/short-caramel-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/short-caramel-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/short-caramel-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/short-caramel-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/short-caramel-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/short-caramel-purple.png',
-    },
-    brown: {
-      brown: '/little-jetter/catalog/tokyo/head/short-brown.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/short-brown-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/short-brown-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/short-brown-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/short-brown-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/short-brown-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/short-brown-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/short-brown-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/short-brown-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/short-brown-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/short-brown-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/short-brown-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/short-brown-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/short-brown-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/short-brown-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/short-brown-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/short-brown-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/short-brown-purple.png',
-    },
-    deep: {
-      brown: '/little-jetter/catalog/tokyo/head/short-deep.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/short-deep-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/short-deep-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/short-deep-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/short-deep-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/short-deep-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/short-deep-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/short-deep-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/short-deep-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/short-deep-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/short-deep-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/short-deep-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/short-deep-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/short-deep-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/short-deep-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/short-deep-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/short-deep-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/short-deep-purple.png',
-    },
-  },
-  bob: {
-    porcelain: {
-      brown: '/little-jetter/catalog/tokyo/head/bob-porcelain.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/bob-porcelain-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/bob-porcelain-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/bob-porcelain-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/bob-porcelain-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/bob-porcelain-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/bob-porcelain-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/bob-porcelain-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/bob-porcelain-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/bob-porcelain-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/bob-porcelain-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/bob-porcelain-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/bob-porcelain-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/bob-porcelain-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/bob-porcelain-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/bob-porcelain-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/bob-porcelain-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/bob-porcelain-purple.png',
-    },
-    peach: {
-      brown: '/little-jetter/catalog/tokyo/head/bob-peach.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/bob-peach-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/bob-peach-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/bob-peach-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/bob-peach-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/bob-peach-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/bob-peach-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/bob-peach-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/bob-peach-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/bob-peach-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/bob-peach-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/bob-peach-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/bob-peach-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/bob-peach-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/bob-peach-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/bob-peach-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/bob-peach-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/bob-peach-purple.png',
-    },
-    golden: {
-      brown: '/little-jetter/catalog/tokyo/head/bob-golden.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/bob-golden-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/bob-golden-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/bob-golden-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/bob-golden-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/bob-golden-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/bob-golden-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/bob-golden-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/bob-golden-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/bob-golden-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/bob-golden-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/bob-golden-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/bob-golden-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/bob-golden-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/bob-golden-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/bob-golden-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/bob-golden-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/bob-golden-purple.png',
-    },
-    caramel: {
-      brown: '/little-jetter/catalog/tokyo/head/bob-caramel.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/bob-caramel-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/bob-caramel-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/bob-caramel-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/bob-caramel-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/bob-caramel-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/bob-caramel-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/bob-caramel-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/bob-caramel-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/bob-caramel-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/bob-caramel-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/bob-caramel-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/bob-caramel-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/bob-caramel-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/bob-caramel-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/bob-caramel-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/bob-caramel-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/bob-caramel-purple.png',
-    },
-    brown: {
-      brown: '/little-jetter/catalog/tokyo/head/bob-brown.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/bob-brown-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/bob-brown-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/bob-brown-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/bob-brown-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/bob-brown-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/bob-brown-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/bob-brown-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/bob-brown-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/bob-brown-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/bob-brown-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/bob-brown-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/bob-brown-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/bob-brown-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/bob-brown-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/bob-brown-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/bob-brown-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/bob-brown-purple.png',
-    },
-    deep: {
-      brown: '/little-jetter/catalog/tokyo/head/bob-deep.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/bob-deep-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/bob-deep-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/bob-deep-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/bob-deep-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/bob-deep-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/bob-deep-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/bob-deep-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/bob-deep-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/bob-deep-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/bob-deep-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/bob-deep-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/bob-deep-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/bob-deep-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/bob-deep-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/bob-deep-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/bob-deep-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/bob-deep-purple.png',
-    },
-  },
-  coils: {
-    porcelain: {
-      brown: '/little-jetter/catalog/tokyo/head/coils-porcelain.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/coils-porcelain-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/coils-porcelain-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/coils-porcelain-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/coils-porcelain-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/coils-porcelain-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/coils-porcelain-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/coils-porcelain-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/coils-porcelain-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/coils-porcelain-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/coils-porcelain-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/coils-porcelain-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/coils-porcelain-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/coils-porcelain-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/coils-porcelain-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/coils-porcelain-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/coils-porcelain-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/coils-porcelain-purple.png',
-    },
-    peach: {
-      brown: '/little-jetter/catalog/tokyo/head/coils-peach.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/coils-peach-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/coils-peach-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/coils-peach-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/coils-peach-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/coils-peach-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/coils-peach-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/coils-peach-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/coils-peach-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/coils-peach-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/coils-peach-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/coils-peach-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/coils-peach-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/coils-peach-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/coils-peach-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/coils-peach-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/coils-peach-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/coils-peach-purple.png',
-    },
-    golden: {
-      brown: '/little-jetter/catalog/tokyo/head/coils-golden.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/coils-golden-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/coils-golden-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/coils-golden-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/coils-golden-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/coils-golden-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/coils-golden-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/coils-golden-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/coils-golden-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/coils-golden-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/coils-golden-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/coils-golden-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/coils-golden-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/coils-golden-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/coils-golden-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/coils-golden-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/coils-golden-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/coils-golden-purple.png',
-    },
-    caramel: {
-      brown: '/little-jetter/catalog/tokyo/head/coils-caramel.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/coils-caramel-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/coils-caramel-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/coils-caramel-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/coils-caramel-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/coils-caramel-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/coils-caramel-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/coils-caramel-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/coils-caramel-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/coils-caramel-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/coils-caramel-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/coils-caramel-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/coils-caramel-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/coils-caramel-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/coils-caramel-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/coils-caramel-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/coils-caramel-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/coils-caramel-purple.png',
-    },
-    brown: {
-      brown: '/little-jetter/catalog/tokyo/head/coils-brown.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/coils-brown-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/coils-brown-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/coils-brown-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/coils-brown-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/coils-brown-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/coils-brown-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/coils-brown-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/coils-brown-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/coils-brown-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/coils-brown-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/coils-brown-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/coils-brown-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/coils-brown-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/coils-brown-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/coils-brown-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/coils-brown-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/coils-brown-purple.png',
-    },
-    deep: {
-      brown: '/little-jetter/catalog/tokyo/head/coils-deep.png',
-      "platinum-blonde": '/little-jetter/catalog/tokyo/head/coils-deep-platinum-blonde.png',
-      "light-blonde": '/little-jetter/catalog/tokyo/head/coils-deep-light-blonde.png',
-      "honey-blonde": '/little-jetter/catalog/tokyo/head/coils-deep-honey-blonde.png',
-      "strawberry-blonde": '/little-jetter/catalog/tokyo/head/coils-deep-strawberry-blonde.png',
-      "red": '/little-jetter/catalog/tokyo/head/coils-deep-red.png',
-      "auburn": '/little-jetter/catalog/tokyo/head/coils-deep-auburn.png',
-      "light-brown": '/little-jetter/catalog/tokyo/head/coils-deep-light-brown.png',
-      "dark-brown": '/little-jetter/catalog/tokyo/head/coils-deep-dark-brown.png',
-      "black": '/little-jetter/catalog/tokyo/head/coils-deep-black.png',
-      "warm-black": '/little-jetter/catalog/tokyo/head/coils-deep-warm-black.png',
-      "chocolate": '/little-jetter/catalog/tokyo/head/coils-deep-chocolate.png',
-      "caramel": '/little-jetter/catalog/tokyo/head/coils-deep-caramel.png',
-      "ash-brown": '/little-jetter/catalog/tokyo/head/coils-deep-ash-brown.png',
-      "gray": '/little-jetter/catalog/tokyo/head/coils-deep-gray.png',
-      "blue": '/little-jetter/catalog/tokyo/head/coils-deep-blue.png',
-      "pink": '/little-jetter/catalog/tokyo/head/coils-deep-pink.png',
-      "purple": '/little-jetter/catalog/tokyo/head/coils-deep-purple.png',
-    },
-  },
-  'bun-blonde-bow': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bun-blonde-bow.png' },
-  },
-  'cap-brown': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-cap-brown.png' },
-  },
-  'bandana-bun': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bandana-bun.png' },
-  },
-  'messy-bun': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-messy-bun.png' },
-  },
-  'wavy-daisy-auburn': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-daisy-auburn.png' },
-  },
-  'pigtail-buns': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-pigtail-buns.png' },
-  },
-  'bob-bangs': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bob-bangs.png' },
-  },
-  'braids-dark': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-braids-dark.png' },
-  },
-  'wavy-clip': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-clip.png' },
-  },
-  'blonde-wavy-daisy': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-blonde-wavy-daisy.png' },
-  },
-  'curly-fro': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro.png' },
-  },
-  'pigtails-bows': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-pigtails-bows.png' },
-  },
-  'curly-topknot': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-topknot.png' },
-  },
-  'braids-auburn': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-braids-auburn.png' },
-  },
-  'bucket-hat-pink': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bucket-hat-pink.png' },
-  },
-  'wavy-long-dark': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-long-dark.png' },
-  },
-  'bob-blonde-clip': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bob-blonde-clip.png' },
-  },
-  'headband-curly': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-headband-curly.png' },
-  },
-  'bow-curly': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bow-curly.png' },
-  },
-  'bun-auburn': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-bun-auburn.png' },
-  },
-  'curly-fro-boy': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-fro-boy.png' },
-  },
-  'curly-bow': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-bow.png' },
-  },
-  'wavy-blonde-boy': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy.png' },
-  },
-  'long-straight-dark': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-long-straight-dark.png' },
-  },
-  'wavy-brown-boy': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-brown-boy.png' },
-  },
-  'cap-green-boy': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-cap-green-boy.png' },
-  },
-  'wavy-blonde-boy2': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-wavy-blonde-boy2.png' },
-  },
-  'cap-tan-boy': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-cap-tan-boy.png' },
-  },
-  'short-dark-boy': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-short-dark-boy.png' },
-  },
-  'curly-auburn-boy': {
-    porcelain: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
-    peach: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
-    golden: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
-    caramel: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
-    brown: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
-    deep: { brown: '/little-jetter/catalog/tokyo/head/style-curly-auburn-boy.png' },
-  },
-};
-
-// Face-center point (in the shared 600x900 head-canvas pixel space) per
-// hairstyle, used only to crop the "choose your head" gallery thumbnails —
-// hair silhouettes differ enough in height between styles (short spikes
-// higher, coils/curls form a wider halo) that a single crop window would
-// clip eyes off some styles and show mostly hair on others.
-const HEAD_THUMB_FOCUS: Record<string, { x: number; y: number }> = {
-  curls: { x: 300, y: 252 },
-  bob: { x: 300, y: 259 },
-  short: { x: 300, y: 218 },
-  coils: { x: 300, y: 233 },
-  'bun-blonde-bow': { x: 300, y: 192 },
-  'cap-brown': { x: 300, y: 198 },
-  'bandana-bun': { x: 300, y: 239 },
-  'messy-bun': { x: 300, y: 186 },
-  'wavy-daisy-auburn': { x: 300, y: 223 },
-  'pigtail-buns': { x: 300, y: 224 },
-  'bob-bangs': { x: 300, y: 222 },
-  'braids-dark': { x: 300, y: 225 },
-  'wavy-clip': { x: 300, y: 224 },
-  'blonde-wavy-daisy': { x: 300, y: 227 },
-  'curly-fro': { x: 300, y: 233 },
-  'pigtails-bows': { x: 300, y: 242 },
-  'curly-topknot': { x: 300, y: 203 },
-  'braids-auburn': { x: 300, y: 230 },
-  'bucket-hat-pink': { x: 300, y: 217 },
-  'wavy-long-dark': { x: 300, y: 215 },
-  'bob-blonde-clip': { x: 300, y: 231 },
-  'headband-curly': { x: 300, y: 235 },
-  'bow-curly': { x: 300, y: 242 },
-  'bun-auburn': { x: 300, y: 204 },
-  'curly-fro-boy': { x: 300, y: 215 },
-  'curly-bow': { x: 300, y: 234 },
-  'wavy-blonde-boy': { x: 300, y: 212 },
-  'long-straight-dark': { x: 300, y: 225 },
-  'wavy-brown-boy': { x: 300, y: 228 },
-  'cap-green-boy': { x: 300, y: 222 },
-  'wavy-blonde-boy2': { x: 300, y: 223 },
-  'cap-tan-boy': { x: 300, y: 219 },
-  'short-dark-boy': { x: 300, y: 227 },
-  'curly-auburn-boy': { x: 300, y: 231 },
-};
-const HEAD_THUMB_ZOOM = 0.3;
-const APPROVED_HEAD_STYLES = new Set(['curls', 'bob', 'short', 'coils']);
-
-function painterlyHeadUrl(character: Character): string | undefined {
-  const requestedStyle = character.hairStyle ?? 'curls';
-  const safeStyle = APPROVED_HEAD_STYLES.has(requestedStyle) ? requestedStyle : 'curls';
-  const bySkin = PAINTERLY_HEAD_ASSETS[safeStyle]?.[character.skin];
-  if (!bySkin) return undefined;
-  return bySkin[character.hair] ?? bySkin.brown;
-}
-
-// Eye color is applied as a live CSS tint (see the iris-tint layer in
-// CatalogDoll) instead of a baked-in image per hair color — a full
-// hairstyle x skin x hairColor x eyeColor image cross-product would run
-// into the thousands of files and blew past Vercel's per-day upload-count
-// limit the one time it was tried, and it only ever covered the default
-// hair color anyway (eye color silently did nothing for any other hair
-// pick). One small iris-shaped mask per hairstyle (scripts/generate-iris-
-// masks.mjs) works for every skin/hairColor combination instead.
-function irisMaskUrl(hairStyle: string | undefined): string {
-  const safeStyle = hairStyle && APPROVED_HEAD_STYLES.has(hairStyle) ? hairStyle : 'curls';
-  return `/little-jetter/catalog/tokyo/head/${safeStyle}-iris-mask.png`;
+function completeHeadFor(character: Character) {
+  return COMPLETE_HEADS.find((head) => head.enabled && head.id === character.headId) ?? COMPLETE_HEADS.find((head) => head.enabled)!;
 }
 
 // Painterly bare-limbs body base (arms/torso/legs), one per skin tone, replacing
@@ -1094,19 +293,18 @@ const PAINTERLY_BODY_ASSETS: Record<string, string> = {
   deep: '/little-jetter/catalog/tokyo/body/deep.png',
 };
 
-const LAYER_BASE_Z: Record<string, number> = { shoes: 2, bottom: 3, top: 4, outerwear: 5, face: 6, accessory: 7 };
-
-function CatalogDoll({ destinationId, picks, character, garmentColors, garmentScale = {}, garmentOffset = {}, garmentZBoost = {}, garmentRotation = {}, activeItemId, hatPick = 'none' }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors; garmentScale?: GarmentScales; garmentOffset?: Record<string, { x: number; y: number }>; garmentZBoost?: Record<string, number>; garmentRotation?: Record<string, number>; activeItemId?: string | null; hatPick?: string }) {
-  function adjustStyle(id: string): React.CSSProperties | undefined {
-    const style: React.CSSProperties = {};
-    if (garmentScale[id]) (style as Record<string, unknown>)['--resize-scale'] = garmentScale[id];
-    if (garmentRotation[id]) (style as Record<string, unknown>)['--resize-rotate'] = `${garmentRotation[id]}deg`;
-    const offset = garmentOffset[id];
-    if (offset) { (style as Record<string, unknown>)['--resize-x'] = `${offset.x}px`; (style as Record<string, unknown>)['--resize-y'] = `${offset.y}px`; }
-    return Object.keys(style).length ? style : undefined;
+function CatalogDoll({ destinationId, picks, character, garmentColors, garmentScale = {}, garmentOffset = {}, garmentRotation = {}, activeItemId, hatPick = 'none' }: { destinationId: string; picks: Picks; character: Character; garmentColors: GarmentColors; garmentScale?: GarmentScales; garmentOffset?: GarmentOffsets; garmentRotation?: GarmentRotations; activeItemId?: string | null; hatPick?: string }) {
+  function adjustedStyle(id: string, zIndex: number, fitScale = 1): React.CSSProperties {
+    return {
+      zIndex,
+      '--resize-scale': (garmentScale[id] ?? 1) * fitScale,
+      '--resize-x': `${garmentOffset[id]?.x ?? 0}px`,
+      '--resize-y': `${garmentOffset[id]?.y ?? 0}px`,
+      '--resize-rotate': `${garmentRotation[id] ?? 0}deg`,
+    } as React.CSSProperties;
   }
   const topItem = catalogItemFor(destinationId, 'tops', picks.tops);
-  const coversBottom = topItem?.tags.includes('covers-bottom') ?? false;
+  const coversBottom = Boolean(topItem?.tags.some((tag) => tag === 'covers-bottom' || tag === 'style:dress' || tag === 'style:pajama' || tag === 'style:swim'));
   const layerItem = catalogItemFor(destinationId, 'layers', picks.layers);
   const layerCoversTop = layerItem?.tags.includes('covers-top') ?? false;
   const layerCoversBottom = layerItem?.tags.includes('covers-bottom') ?? false;
@@ -1115,7 +313,8 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
     .filter((group) => !(layerCoversTop && group === 'tops'))
     .map((group) => ({ group, item: catalogItemFor(destinationId, group, picks[group]) }))
     .filter(({ item }) => Boolean(catalogImageFor(item, item ? garmentColors[item.id] : undefined)));
-  const headUrl = painterlyHeadUrl(character);
+  const selectedHead = completeHeadFor(character);
+  const headUrl = selectedHead?.src;
   const bodyUrl = PAINTERLY_BODY_ASSETS[character.skin];
   const hatItem = hatPick !== 'none' ? catalogItemFor(destinationId, 'accessories', hatPick) : undefined;
   const hatImageUrl = catalogImageFor(hatItem, hatItem ? garmentColors[hatItem.id] : undefined);
@@ -1129,34 +328,21 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
     .concat(noneSlots);
   return <div className="little-catalog-doll" data-template={catalog.template.id}>
     <ClassicDoll picks={picks} character={character} garmentColors={garmentColors} hiddenLayers={hiddenLayers} />
-    {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" key={`body-${character.skin}`} />}
-    {headUrl && <img className="little-illustrated-layer layer-face" src={headUrl} alt="" aria-hidden="true" key={`head-${character.hairStyle}-${character.skin}-${character.hair}`} />}
-    {headUrl && character.eyes !== 'brown' && (
-      <div
-        className="little-illustrated-layer layer-iris-tint"
-        style={{
-          WebkitMaskImage: `url(${irisMaskUrl(character.hairStyle)})`,
-          maskImage: `url(${irisMaskUrl(character.hairStyle)})`,
-          backgroundColor: characterOptions.eyes.find((option) => option.id === character.eyes)?.color,
-        }}
-        aria-hidden="true"
-        key={`iris-${character.hairStyle}-${character.eyes}`}
-      />
-    )}
+    {bodyUrl && <img className="little-illustrated-layer layer-body" src={bodyUrl} alt="" aria-hidden="true" style={{ zIndex: DOLL_LAYER_ORDER.body }} key={`body-${character.skin}`} />}
+    {headUrl && <img className="little-illustrated-layer layer-face is-standalone-head" src={headUrl} alt="" aria-hidden="true" style={{ zIndex: DOLL_LAYER_ORDER.head, transform: `scale(${selectedHead.faceScale})`, transformOrigin: '50% 36.6667%' }} key={`head-${selectedHead.id}`} />}
     {illustrated.map(({ group, item }) => {
       if (!item) return null;
-      const zBoost = garmentZBoost[item.id];
-      const style = adjustStyle(item.id) ?? {};
-      if (zBoost) style.zIndex = (LAYER_BASE_Z[item.slot] ?? 1) + zBoost;
+      const imageUrl = catalogImageFor(item, garmentColors[item.id]);
+      const floorPreview = /(?:backpack|suitcase)$/.test(item.id) && imageUrl ? (wardrobeThumbnails as Record<string, string>)[imageUrl] : undefined;
       return (
         <img
-          className={`little-illustrated-layer layer-${item.slot}${item.id === 'blue-backpack' && layerCoversTop ? ' is-floor-backpack' : ''}${item.id === activeItemId ? ' is-selected-for-resize' : ''}`}
+          className={`little-illustrated-layer layer-${item.slot}${/(?:backpack|suitcase)$/.test(item.id) ? ' is-floor-accessory' : ''}${item.tags.includes('clipart') && item.tags.includes('style:dress') && /dress/.test(item.id) ? ' is-dress-fit' : ''}${item.id === activeItemId ? ' is-selected-for-resize' : ''}`}
           data-item-id={item.id}
           data-group={group}
-          src={catalogImageFor(item, garmentColors[item.id])}
+          src={floorPreview || imageUrl}
           alt=""
           aria-hidden="true"
-          style={Object.keys(style).length ? style : undefined}
+          style={adjustedStyle(item.id, DOLL_LAYER_ORDER[item.slot as keyof typeof DOLL_LAYER_ORDER] ?? 1, item.tags.includes('style:pajama') ? 1.15 : 1)}
           key={`${group}-${item.id}-${garmentColors[item.id] ?? 'default'}`}
         />
       );
@@ -1169,7 +355,7 @@ function CatalogDoll({ destinationId, picks, character, garmentColors, garmentSc
         src={hatImageUrl}
         alt=""
         aria-hidden="true"
-        style={adjustStyle(hatItem.id)}
+        style={adjustedStyle(hatItem.id, DOLL_LAYER_ORDER.hat)}
         key={`hat-${hatItem.id}-${garmentColors[hatItem.id] ?? 'default'}`}
       />
     )}
@@ -1181,14 +367,24 @@ function GarmentPreview({ destinationId, group, itemId, picks, character, garmen
   const viewBoxes: Record<ClothingGroup, string> = { tops: '120 285 360 260', bottoms: '150 455 300 285', layers: '105 280 390 310', shoes: '135 650 330 150', accessories: itemId === 'crossbody' || itemId === 'mini-camera' ? '300 390 190 270' : itemId === 'sun-glasses' ? '220 180 160 130' : '175 85 250 210' };
   const item = catalogItemFor(destinationId, group, itemId);
   const imageUrl = catalogImageFor(item, item ? garmentColors[item.id] : undefined);
-  const isHeadwear = group === 'accessories' && itemId !== 'crossbody' && itemId !== 'mini-camera' && itemId !== 'sun-glasses';
+  const isHeadwear = Boolean(item?.tags.includes('style:hat'));
   if (itemId === 'none') {
     return <span className="little-game-item little-garment-preview preview-none" aria-hidden="true"><svg className="little-none-glyph" viewBox="0 0 48 48" fill="none"><path d="M24 8v8" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/><circle cx="24" cy="6" r="2.5" fill="currentColor"/><path d="M24 16 6 28h36z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round"/></svg></span>;
   }
-  return <span className={`little-game-item little-garment-preview preview-${group}${isHeadwear ? ' preview-headwear' : ''}`} aria-hidden="true">{imageUrl ? <img className="little-catalog-preview" src={imageUrl} alt="" /> : <ClassicDoll picks={{ ...picks, [group]: itemId }} character={character} garmentColors={garmentColors} onlyLayer={layerByGroup[group]} previewViewBox={viewBoxes[group]} />}</span>;
+  const thumbnail = imageUrl && (wardrobeThumbnails as Record<string, string>)[imageUrl];
+  return <span className={`little-game-item little-garment-preview preview-${group}${isHeadwear ? ' preview-headwear' : ''}${thumbnail ? ' has-thumbnail' : ''}`} aria-hidden="true">{imageUrl ? <img className="little-catalog-preview" loading="lazy" decoding="async" src={thumbnail || imageUrl} alt="" /> : <ClassicDoll picks={{ ...picks, [group]: itemId }} character={character} garmentColors={garmentColors} onlyLayer={layerByGroup[group]} previewViewBox={viewBoxes[group]} />}</span>;
 }
 
 export function LittleJetterApp() {
+  const [welcomeOpen, setWelcomeOpen] = useState(() => !readLocal('little-jetter-welcome-v1', false));
+  const [assetFailed, setAssetFailed] = useState(false);
+  const [offline, setOffline] = useState(!navigator.onLine);
+  const [adjustMode, setAdjustMode] = useState(false);
+  const [parentPrivacy, setParentPrivacy] = useState(false);
+  const [parentPhotosAllowed, setParentPhotosAllowed] = useState(false);
+  const navigationRef = useRef<Array<{ step: 'destination' | 'style' | 'explore' | 'shop'; game: number }>>([]);
+  const [storageReady, setStorageReady] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
   const [currentStep, setCurrentStep] = useState<'destination' | 'style' | 'explore' | 'shop'>('destination');
   const [selectedId, setSelectedId] = useState('tokyo');
   const [regionFilter, setRegionFilter] = useState('All regions');
@@ -1198,9 +394,8 @@ export function LittleJetterApp() {
   const [picks, setPicks] = useState<Picks>({ tops: 'none', bottoms: 'none', layers: 'none', shoes: 'none', accessories: 'none', buddies: 'bunny' });
   const [garmentColors, setGarmentColors] = useState<GarmentColors>({});
   const [garmentScale, setGarmentScale] = useState<GarmentScales>({});
-  const [garmentOffset, setGarmentOffset] = useState<Record<string, { x: number; y: number }>>({});
-  const [garmentZBoost, setGarmentZBoost] = useState<Record<string, number>>({});
-  const [garmentRotation, setGarmentRotation] = useState<Record<string, number>>({});
+  const [garmentOffset, setGarmentOffset] = useState<GarmentOffsets>({});
+  const [garmentRotation, setGarmentRotation] = useState<GarmentRotations>({});
   const [resizeTarget, setResizeTarget] = useState<string | null>(null);
   const pinchStartRef = useRef<{ distance: number; angle: number; scale: number; rotation: number } | null>(null);
   const dragStartRef = useRef<{ x: number; y: number; offset: { x: number; y: number }; moved: boolean; target: string | null } | null>(null);
@@ -1209,18 +404,20 @@ export function LittleJetterApp() {
   const [transitioning, setTransitioning] = useState(false);
   const [travelConfirmation, setTravelConfirmation] = useState('');
   const [dropActive, setDropActive] = useState(false);
-  const [character, setCharacter] = useState<Character>({ style: 'girl', skin: 'golden', hair: 'brown', hairStyle: 'curls', eyes: 'brown' });
+  const [character, setCharacter] = useState<Character>({ style: 'girl', skin: 'golden', hair: 'brown', hairStyle: 'curls', eyes: 'brown', headId: COMPLETE_HEADS[0].id });
   const [packed, setPacked] = useState<string[]>([]);
   const [savedProducts, setSavedProducts] = useState<string[]>([]);
   const [openDrawer, setOpenDrawer] = useState('clothing');
   const [parentGateOpen, setParentGateOpen] = useState(false);
   const [parentAnswer, setParentAnswer] = useState('');
+  const [parentChallenge, setParentChallenge] = useState('');
+  const [parentError, setParentError] = useState(false);
   const [parentUnlocked, setParentUnlocked] = useState(false);
   const [parentSettings, setParentSettings] = useState<ParentSettings>(DEFAULT_PARENT_SETTINGS);
-  const [showMoreChoices, setShowMoreChoices] = useState(false);
+
   const [celebration, setCelebration] = useState(0);
   const [travelMode, setTravelMode] = useState(true);
-  const [openClosetDrawer, setOpenClosetDrawer] = useState<string>('tops');
+
   const [activeCategorySheet, setActiveCategorySheet] = useState<ClothingGroup | null>(null);
   const [styleFilter, setStyleFilter] = useState<'dress' | 'pajama' | 'swim' | 'hat' | null>(null);
   // Hats live in the accessories catalog list but equip independently of
@@ -1229,6 +426,7 @@ export function LittleJetterApp() {
   // the two competing for one slot.
   const [hatPick, setHatPick] = useState('none');
   const [activeAvatarSheet, setActiveAvatarSheet] = useState<AvatarFeature | null>(null);
+  const [headFilter, setHeadFilter] = useState<(typeof HEAD_FILTERS)[number]['id']>('all');
   const [exploreView, setExploreView] = useState<'journal' | 'gastronomy' | 'memory' | 'words' | 'sites'>('journal');
   const [kindnessPromptIndex, setKindnessPromptIndex] = useState(0);
   const [kindnessDraft, setKindnessDraft] = useState('');
@@ -1238,8 +436,10 @@ export function LittleJetterApp() {
   const selected = useMemo(() => destinations.find((item) => item.id === selectedId) ?? destinations[0], [selectedId]);
   const visibleDestinations = destinations.filter((item) => (regionFilter === 'All regions' || item.region === regionFilter) && (destinationTypeFilter === 'All types' || destinationTypes[item.id] === destinationTypeFilter));
   const availableWardrobe = (group: Exclude<PickGroup, 'buddies'>) => wardrobe[group]
+    .filter((item) => item.enabled !== false)
     .filter((item) => item.tags.includes('destination:all') || item.tags.includes(`destination:${selected.id}`))
     .filter((item) => {
+      if (item.id === 'none') return true;
       if (group === 'tops') {
         if (styleFilter === 'dress' || styleFilter === 'pajama' || styleFilter === 'swim') return item.tags.includes(`style:${styleFilter}`);
         return !item.tags.includes('style:dress') && !item.tags.includes('style:pajama') && !item.tags.includes('style:swim');
@@ -1251,33 +451,98 @@ export function LittleJetterApp() {
     .map((item) => catalogItemFor(selected.id, group, item.id) ?? item);
 
   useEffect(() => {
+    const update = () => setOffline(!navigator.onLine);
+    window.addEventListener('online', update); window.addEventListener('offline', update);
+    return () => { window.removeEventListener('online', update); window.removeEventListener('offline', update); };
+  }, []);
+
+  useEffect(() => {
     document.title = 'Little Jetter · The trip starts before you leave';
     document.documentElement.style.colorScheme = 'light';
-    const saved = window.localStorage.getItem(STORAGE_KEY);
+    let saved: string | null = null;
+    try { saved = window.localStorage.getItem(STORAGE_KEY); } catch { /* Play works without storage. */ }
     if (saved && destinations.some((item) => item.id === saved)) {
       setSelectedId(saved);
       setStarted(true);
     }
-    setSavedProducts(JSON.parse(window.localStorage.getItem('little-jetter-saved-picks') ?? '[]'));
-    setSavedLooks(JSON.parse(window.localStorage.getItem('little-jetter-saved-looks') ?? '[]'));
-    setPassportStamps(JSON.parse(window.localStorage.getItem(PASSPORT_KEY) ?? '[]'));
-    setKindnessEntries(JSON.parse(window.localStorage.getItem(KINDNESS_KEY) ?? '[]'));
-    const storedParentSettings = window.localStorage.getItem(PARENT_SETTINGS_KEY);
+    setSavedProducts(readLocal<string[]>('little-jetter-saved-picks', [], stringList).filter(id => realProductCatalog.some(product => product.id === id)));
+    setSavedLooks(readLocal<SavedLook[]>('little-jetter-saved-looks', [], value => Array.isArray(value) && value.every(isSavedLook)).slice(0, 6));
+    setPassportStamps([...new Set(readLocal<string[]>(PASSPORT_KEY, [], stringList))].filter(id => destinations.some(destination => destination.id === id)));
+    setKindnessEntries(readLocal(KINDNESS_KEY, [], value => Array.isArray(value) && value.every(item => isRecord(item) && ['prompt', 'text', 'date'].every(key => typeof item[key] === 'string'))));
+    const storedParentSettings = readLocal(PARENT_SETTINGS_KEY, DEFAULT_PARENT_SETTINGS, (v) => Boolean(v && typeof v === 'object'));
     if (storedParentSettings) {
-      try { setParentSettings({ ...DEFAULT_PARENT_SETTINGS, ...JSON.parse(storedParentSettings) }); } catch { /* Keep safe defaults. */ }
+      setParentSettings(Object.fromEntries(Object.entries(DEFAULT_PARENT_SETTINGS).map(([key, fallback]) => [key, typeof storedParentSettings[key as keyof ParentSettings] === 'boolean' ? storedParentSettings[key as keyof ParentSettings] : fallback])) as ParentSettings);
     }
-    const parentSession = Number(window.sessionStorage.getItem(PARENT_SESSION_KEY) ?? 0);
-    if (parentSession > Date.now()) setParentUnlocked(true);
+    const play = readLocal<Record<string, unknown>>(PLAY_KEY, {}, v => Boolean(v && typeof v === 'object' && !Array.isArray(v)));
+    if (play.character && typeof play.character === 'object') {
+      const value = play.character as Character;
+      const savedHead = COMPLETE_HEADS.some((head) => head.enabled && head.id === value.headId) ? value.headId : undefined;
+      setCharacter(current => ({ ...current, ...Object.fromEntries(Object.entries(characterOptions).flatMap(([key, options]) => options.some(option => option.id === value[key as keyof Character]) ? [[key, value[key as keyof Character]]] : [])), ...(savedHead ? { headId: savedHead } : {}) }));
+    }
+    if (play.picks && typeof play.picks === 'object') setPicks(current => ({ ...current, ...Object.fromEntries(Object.entries(play.picks as Picks).filter(([group, id]) => group in wardrobe && (id === 'none' || wardrobe[group as PickGroup].some(item => item.id === id)))) }));
+    if (typeof play.hatPick === 'string' && wardrobe.accessories.some(item => item.id === play.hatPick && item.tags.includes('style:hat'))) setHatPick(play.hatPick);
+    if (play.colors && typeof play.colors === 'object') setGarmentColors(Object.fromEntries(Object.entries(play.colors).filter(([, value]) => typeof value === 'string')));
+    if (isRecord(play.scales)) setGarmentScale(Object.fromEntries(Object.entries(play.scales).filter(([, value]) => typeof value === 'number')) as GarmentScales);
+    if (isRecord(play.offsets)) setGarmentOffset(Object.fromEntries(Object.entries(play.offsets).filter(([, value]) => isRecord(value) && typeof value.x === 'number' && typeof value.y === 'number')) as GarmentOffsets);
+    if (isRecord(play.rotations)) setGarmentRotation(Object.fromEntries(Object.entries(play.rotations).filter(([, value]) => typeof value === 'number')) as GarmentRotations);
+    if (stringList(play.packed)) setPacked([...new Set(play.packed)].filter(id => id === 'book' || id === 'toothbrush' || id === 'water' || Object.values(wardrobe).some(items => items.some(item => item.id === id && id !== 'none'))));
+    if (isRecord(play.madlibAnswers)) setMadlibAnswers(Object.fromEntries(Object.entries(play.madlibAnswers).filter(([id, answers]) => id in EXPLORE_CONTENT && stringList(answers))) as Record<string, string[]>);
+    if (isRecord(play.madlibDone)) setMadlibDone(Object.fromEntries(Object.entries(play.madlibDone).filter(([id, done]) => id in EXPLORE_CONTENT && typeof done === 'boolean')) as Record<string, boolean>);
+    if (isRecord(play.picks)) {
+      const oldHat = wardrobe.accessories.find(item => item.id === (play.picks as Record<string, unknown>).accessories && item.tags.includes('style:hat'));
+      if (oldHat) { if (!play.hatPick || play.hatPick === 'none') setHatPick(oldHat.id); setPicks(current => ({ ...current, accessories: 'none' })); }
+    }
+    setStorageReady(true);
     setKindnessPromptIndex(Math.floor(Math.random() * KINDNESS_PROMPTS.length));
     return () => { document.documentElement.style.colorScheme = ''; };
   }, []);
+
+  useEffect(() => {
+    if (!storageReady) return;
+    setSaveFailed(!writeLocal(PLAY_KEY, { character, picks, hatPick, colors: garmentColors, scales: garmentScale, offsets: garmentOffset, rotations: garmentRotation, packed, madlibAnswers, madlibDone }));
+  }, [storageReady, character, picks, hatPick, garmentColors, garmentScale, garmentOffset, garmentRotation, packed, madlibAnswers, madlibDone]);
+
+  useEffect(() => {
+    if (parentGateOpen) { setParentChallenge(String(Math.floor(1000 + Math.random() * 9000))); setParentError(false); }
+    if (!parentGateOpen) { setParentUnlocked(false); setParentPhotosAllowed(false); setParentAnswer(''); setParentPrivacy(false); }
+    const lock = () => { if (document.hidden) { setParentUnlocked(false); setParentPhotosAllowed(false); setParentAnswer(''); } };
+    document.addEventListener('visibilitychange', lock);
+    return () => document.removeEventListener('visibilitychange', lock);
+  }, [parentGateOpen]);
+
+  useEffect(() => {
+    if (!parentUnlocked) return;
+    const timeout = window.setTimeout(() => { setParentUnlocked(false); setParentPhotosAllowed(false); }, PARENT_SESSION_MS);
+    return () => window.clearTimeout(timeout);
+  }, [parentUnlocked]);
+
+  useEffect(() => {
+    if (!parentGateOpen && !activeAvatarSheet && !activeCategorySheet && !welcomeOpen) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const modal = document.querySelector<HTMLElement>('[aria-modal="true"]');
+    const oldOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const background = Array.from(document.querySelectorAll<HTMLElement>('.little-header, .little-bottom-nav, main > :not([aria-modal]), footer'));
+    background.forEach(el => { el.inert = true; });
+    const focusable = () => Array.from(modal?.querySelectorAll<HTMLElement>('button, input, textarea, select, summary, a[href], [tabindex="0"]') ?? []).filter(el => !el.hasAttribute('disabled') && el.getClientRects().length > 0);
+    focusable()[0]?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setParentGateOpen(false); setActiveAvatarSheet(null); setActiveCategorySheet(null); setStyleFilter(null); if (welcomeOpen) finishWelcome(); }
+      if (event.key !== 'Tab') return;
+      const controls = focusable(), first = controls[0], last = controls.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = oldOverflow; background.forEach(el => { el.inert = false; }); previous?.focus({ preventScroll: true }); };
+  }, [parentGateOpen, parentUnlocked, activeAvatarSheet, activeCategorySheet, welcomeOpen, parentPrivacy]);
 
   function saveKindnessEntry() {
     if (!kindnessDraft.trim()) return;
     const entry = { prompt: KINDNESS_PROMPTS[kindnessPromptIndex], text: kindnessDraft.trim(), date: new Date().toLocaleDateString() };
     setKindnessEntries((current) => {
       const next = [entry, ...current].slice(0, 20);
-      window.localStorage.setItem(KINDNESS_KEY, JSON.stringify(next));
+      setSaveFailed(!writeLocal(KINDNESS_KEY, next));
       return next;
     });
     setKindnessDraft('');
@@ -1313,7 +578,7 @@ export function LittleJetterApp() {
 
 
   function beginTrip() {
-    window.localStorage.setItem(STORAGE_KEY, selected.id);
+    try { window.localStorage.setItem(STORAGE_KEY, selected.id); } catch { setSaveFailed(true); }
     setStarted(true);
     showStep('style');
     triggerCelebration([25, 40, 25]);
@@ -1328,12 +593,22 @@ export function LittleJetterApp() {
   function scrollToStep(step: 'destination' | 'style' | 'explore' | 'shop', attempt = 0) {
     const target = document.querySelector(`[data-app-view="${step}"]`);
     if (!target) { if (attempt < 6) window.setTimeout(() => scrollToStep(step, attempt + 1), 80); return; }
-    target.scrollIntoView({ behavior: attempt === 0 ? 'smooth' : 'auto', block: 'start' });
+    target.scrollIntoView({ behavior: attempt === 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto', block: 'start' });
     if (attempt < 3) window.setTimeout(() => scrollToStep(step, attempt + 1), 150);
   }
 
+  function finishWelcome() { writeLocal('little-jetter-welcome-v1', true); setWelcomeOpen(false); }
+  function goHome() { navigationRef.current = []; setCurrentStep('destination'); setGameStep(1); setActiveAvatarSheet(null); setActiveCategorySheet(null); window.scrollTo({ top: 0, behavior: 'auto' }); }
+  function goBack() {
+    if (currentStep === 'explore' && gameStep > 2) { setGameStep(gameStep === 5 ? 4 : gameStep - 1); return; }
+    const previous = navigationRef.current.pop();
+    setCurrentStep(previous?.step ?? 'destination'); setGameStep(previous?.game ?? 1);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
   function showStep(step: 'destination' | 'style' | 'explore' | 'shop') {
+    if (step === 'shop') { setParentGateOpen(true); return; }
     if (step === currentStep || transitioning) return;
+    navigationRef.current.push({ step: currentStep, game: gameStep });
     setTransitioning(true);
     if (step !== 'destination') setStarted(true);
     playHaptic(12);
@@ -1343,16 +618,13 @@ export function LittleJetterApp() {
       if (step === 'explore') setGameStep(2);
       setTransitioning(false);
       scrollToStep(step);
-    }, 220);
+    }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220);
   }
 
-  useEffect(() => {
-    destinationAssetUrls(selected.id).forEach((url) => { const image = new Image(); image.src = url; });
-  }, [selected.id]);
+  // The browser loads only the currently equipped art; drawer previews are lazy thumbnails.
 
   function selectDestination(destination: Destination) {
     setSelectedId(destination.id);
-    setPicks((current) => ({ ...current, tops: 'none', bottoms: 'none', layers: 'none', shoes: 'none', accessories: 'none' }));
     setStarted(false);
     setGameStep(1);
     setPacked([]);
@@ -1366,9 +638,10 @@ export function LittleJetterApp() {
   }
 
   function stampPassport() {
+    if (!readyToStamp) return;
     setPassportStamps((current) => {
       const next = current.includes(selected.id) ? current : [...current, selected.id];
-      window.localStorage.setItem(PASSPORT_KEY, JSON.stringify(next));
+      setSaveFailed(!writeLocal(PASSPORT_KEY, next));
       return next;
     });
     setGameStep(5);
@@ -1377,8 +650,9 @@ export function LittleJetterApp() {
   }
 
   function choose(group: PickGroup, id: string) {
-    setPicks((current) => ({ ...current, [group]: id }));
-    setResizeTarget(id !== 'none' ? id : null);
+    if (group === 'accessories' && wardrobe.accessories.find(item => item.id === id)?.tags.includes('style:hat')) { setHatPick(id); setResizeTarget(id !== 'none' ? id : null); triggerCelebration(18); return; }
+    setPicks((current) => equipPiece(current, group, id, wardrobe));
+    setResizeTarget(adjustMode && id !== 'none' ? id : null);
     triggerCelebration(18);
   }
 
@@ -1392,167 +666,112 @@ export function LittleJetterApp() {
     return (Math.atan2(b.clientY - a.clientY, b.clientX - a.clientX) * 180) / Math.PI;
   }
 
-  // One finger drags the just-equipped piece into place; two fingers pinch
-  // it bigger/smaller. Both act on `resizeTarget` (whatever was equipped
-  // most recently) so a child can fine-tune fit and placement themselves,
-  // no separate UI needed.
-  // Alpha-aware hit test: samples the actual pixel under the tap on each
-  // rendered garment layer (topmost z-index first) so tapping the doll
-  // selects whichever piece is visually there, not just whatever has the
-  // biggest invisible bounding box.
   function sampleAlphaAtPoint(img: HTMLImageElement, clientX: number, clientY: number) {
     if (!img.complete || !img.naturalWidth) return 0;
     const rect = img.getBoundingClientRect();
-    const boxRatio = rect.width / rect.height;
-    const imgRatio = img.naturalWidth / img.naturalHeight;
-    let width: number, height: number, left: number, top: number;
-    if (imgRatio > boxRatio) { width = rect.width; height = rect.width / imgRatio; left = rect.left; top = rect.top + (rect.height - height) / 2; }
-    else { height = rect.height; width = rect.height * imgRatio; top = rect.top; left = rect.left + (rect.width - width) / 2; }
-    if (clientX < left || clientX > left + width || clientY < top || clientY > top + height) return 0;
-    const px = Math.floor(((clientX - left) / width) * img.naturalWidth);
-    const py = Math.floor(((clientY - top) / height) * img.naturalHeight);
+    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return 0;
+    const px = Math.max(0, Math.min(img.naturalWidth - 1, Math.floor(((clientX - rect.left) / rect.width) * img.naturalWidth)));
+    const py = Math.max(0, Math.min(img.naturalHeight - 1, Math.floor(((clientY - rect.top) / rect.height) * img.naturalHeight)));
     try {
       const canvas = document.createElement('canvas');
       canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return 255;
-      ctx.drawImage(img, 0, 0);
-      return ctx.getImageData(px, py, 1, 1).data[3];
+      const context = canvas.getContext('2d');
+      if (!context) return 255;
+      context.drawImage(img, 0, 0);
+      return context.getImageData(px, py, 1, 1).data[3];
     } catch { return 255; }
   }
 
   function hitTestDoll(container: HTMLDivElement, clientX: number, clientY: number) {
     const layers = Array.from(container.querySelectorAll<HTMLImageElement>('img.little-illustrated-layer[data-item-id]'));
     layers.sort((a, b) => (parseFloat(getComputedStyle(b).zIndex) || 0) - (parseFloat(getComputedStyle(a).zIndex) || 0));
-    for (const img of layers) {
-      if (sampleAlphaAtPoint(img, clientX, clientY) > 20) return { id: img.dataset.itemId!, group: img.dataset.group as ClothingGroup };
-    }
-    return null;
-  }
-
-  function selectFromTap(container: HTMLDivElement, clientX: number, clientY: number) {
-    const hit = hitTestDoll(container, clientX, clientY);
-    setResizeTarget(hit?.id ?? null);
+    return layers.find((image) => sampleAlphaAtPoint(image, clientX, clientY) > 20)?.dataset.itemId ?? null;
   }
 
   function handleTouchStart(event: React.TouchEvent<HTMLDivElement>) {
+    if (!adjustMode) return;
     if (event.touches.length === 2 && resizeTarget) {
       pinchStartRef.current = { distance: pinchDistance(event.touches), angle: pinchAngle(event.touches), scale: garmentScale[resizeTarget] ?? 1, rotation: garmentRotation[resizeTarget] ?? 0 };
       dragStartRef.current = null;
-    } else if (event.touches.length === 1) {
-      // Hit-test right away so the finger grabs whichever equipped piece is
-      // actually under it, not whatever was equipped or tapped last.
+      return;
+    }
+    if (event.touches.length === 1) {
       const hit = hitTestDoll(event.currentTarget, event.touches[0].clientX, event.touches[0].clientY);
-      const target = hit ? hit.id : resizeTarget;
-      if (hit && hit.id !== resizeTarget) setResizeTarget(hit.id);
+      const target = hit;
+      if (hit) setResizeTarget(hit);
       dragStartRef.current = { x: event.touches[0].clientX, y: event.touches[0].clientY, offset: target ? garmentOffset[target] ?? { x: 0, y: 0 } : { x: 0, y: 0 }, moved: false, target };
-      pinchStartRef.current = null;
     }
   }
 
   function handleTouchMove(event: React.TouchEvent<HTMLDivElement>) {
+    if (!adjustMode) return;
     if (event.touches.length === 2 && pinchStartRef.current && resizeTarget) {
-      if (event.cancelable) event.preventDefault();
-      const { distance: startDistance, angle: startAngle, scale: startScale, rotation: startRotation } = pinchStartRef.current;
-      const nextScale = clampGarmentScale(startScale * (pinchDistance(event.touches) / startDistance));
-      const nextRotation = startRotation + (pinchAngle(event.touches) - startAngle);
-      setGarmentScale((current) => ({ ...current, [resizeTarget]: nextScale }));
-      setGarmentRotation((current) => ({ ...current, [resizeTarget]: nextRotation }));
-    } else if (event.touches.length === 1 && dragStartRef.current) {
-      const { x: startX, y: startY, offset, target } = dragStartRef.current;
-      const dx = event.touches[0].clientX - startX;
-      const dy = event.touches[0].clientY - startY;
-      if (Math.hypot(dx, dy) > 5) dragStartRef.current.moved = true;
-      if (target && dragStartRef.current.moved) {
-        if (event.cancelable) event.preventDefault();
-        setGarmentOffset((current) => ({ ...current, [target]: { x: offset.x + dx, y: offset.y + dy } }));
-      }
+      event.preventDefault();
+      const start = pinchStartRef.current;
+      setGarmentScale((current) => ({ ...current, [resizeTarget]: clampGarmentScale(start.scale * (pinchDistance(event.touches) / start.distance)) }));
+      setGarmentRotation((current) => ({ ...current, [resizeTarget]: start.rotation + pinchAngle(event.touches) - start.angle }));
+    } else if (event.touches.length === 1 && dragStartRef.current?.target) {
+      const drag = dragStartRef.current;
+      const dx = event.touches[0].clientX - drag.x, dy = event.touches[0].clientY - drag.y;
+      if (Math.hypot(dx, dy) > 5) drag.moved = true;
+      if (drag.moved) { event.preventDefault(); setGarmentOffset((current) => ({ ...current, [drag.target!]: { x: drag.offset.x + dx, y: drag.offset.y + dy } })); }
     }
   }
 
   function handleTouchEnd(event: React.TouchEvent<HTMLDivElement>) {
-    const wasTap = dragStartRef.current && !dragStartRef.current.moved;
+    if (dragStartRef.current && !dragStartRef.current.moved && event.changedTouches.length === 1) {
+      setResizeTarget(hitTestDoll(event.currentTarget, event.changedTouches[0].clientX, event.changedTouches[0].clientY));
+    }
     pinchStartRef.current = null;
     dragStartRef.current = null;
-    if (wasTap && event.changedTouches.length === 1) {
-      selectFromTap(event.currentTarget, event.changedTouches[0].clientX, event.changedTouches[0].clientY);
-    }
-  }
-
-  function handleDollClick(event: React.MouseEvent<HTMLDivElement>) {
-    if (dragStartRef.current?.moved) return;
-    selectFromTap(event.currentTarget, event.clientX, event.clientY);
   }
 
   function handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
+    if (!adjustMode) return;
     if (event.button !== 0) return;
-    // Hit-test right away so a single click-and-drag grabs whichever
-    // equipped piece is actually under the cursor, not just the most
-    // recently equipped/selected one (resizeTarget only updates on a
-    // completed click otherwise, which is too late for the same gesture).
     const hit = hitTestDoll(event.currentTarget, event.clientX, event.clientY);
-    const target = hit ? hit.id : resizeTarget;
-    if (hit && hit.id !== resizeTarget) setResizeTarget(hit.id);
+    const target = hit;
+    if (hit) setResizeTarget(hit);
     dragStartRef.current = { x: event.clientX, y: event.clientY, offset: target ? garmentOffset[target] ?? { x: 0, y: 0 } : { x: 0, y: 0 }, moved: false, target };
   }
 
   function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
-    if (!dragStartRef.current) return;
-    const { x: startX, y: startY, offset, target } = dragStartRef.current;
-    const dx = event.clientX - startX;
-    const dy = event.clientY - startY;
-    if (Math.hypot(dx, dy) > 5) dragStartRef.current.moved = true;
-    if (target && dragStartRef.current.moved) {
-      setGarmentOffset((current) => ({ ...current, [target]: { x: offset.x + dx, y: offset.y + dy } }));
+    const drag = dragStartRef.current;
+    if (!drag?.target) return;
+    const dx = event.clientX - drag.x, dy = event.clientY - drag.y;
+    if (Math.hypot(dx, dy) > 5) drag.moved = true;
+    if (drag.moved) setGarmentOffset((current) => ({ ...current, [drag.target!]: { x: drag.offset.x + dx, y: drag.offset.y + dy } }));
+  }
+
+  function handleMouseUp() { requestAnimationFrame(() => { dragStartRef.current = null; }); }
+  function handleDollClick(event: React.MouseEvent<HTMLDivElement>) { if (!adjustMode) return; if (!dragStartRef.current?.moved) setResizeTarget(hitTestDoll(event.currentTarget, event.clientX, event.clientY)); }
+  function handleWheelResize(event: React.WheelEvent<HTMLDivElement>) { if (adjustMode && resizeTarget) { event.preventDefault(); resizeSelected(event.deltaY < 0 ? 0.05 : -0.05); } }
+  function resizeSelected(delta: number) { if (resizeTarget) setGarmentScale((current) => ({ ...current, [resizeTarget]: clampGarmentScale((current[resizeTarget] ?? 1) + delta) })); }
+  function rotateSelected(delta: number) { if (resizeTarget) setGarmentRotation((current) => ({ ...current, [resizeTarget]: (current[resizeTarget] ?? 0) + delta })); }
+  function toggleAdjusting() {
+    if (adjustMode) {
+      setAdjustMode(false);
+      setResizeTarget(null);
+      return;
     }
+    const firstWornPiece = [picks.layers, picks.tops, picks.bottoms, picks.shoes, hatPick, picks.accessories].find((id) => id !== 'none') ?? null;
+    setResizeTarget(firstWornPiece);
+    setAdjustMode(true);
   }
-
-  function handleMouseUp() {
-    // handleDollClick (fires after mouseup) reads dragStartRef.current.moved,
-    // so clear it a tick later rather than immediately.
-    requestAnimationFrame(() => { dragStartRef.current = null; });
-  }
-
-  function handleWheelResize(event: React.WheelEvent<HTMLDivElement>) {
-    if (!resizeTarget) return;
-    if (event.cancelable) event.preventDefault();
-    const delta = event.deltaY < 0 ? 0.05 : -0.05;
-    setGarmentScale((current) => ({ ...current, [resizeTarget]: clampGarmentScale((current[resizeTarget] ?? 1) + delta) }));
-  }
-
-  function resizeSelected(delta: number) {
-    if (!resizeTarget) return;
-    setGarmentScale((current) => ({ ...current, [resizeTarget]: clampGarmentScale((current[resizeTarget] ?? 1) + delta) }));
-    playHaptic(10);
-  }
-
-  function rotateSelected(delta: number) {
-    if (!resizeTarget) return;
-    setGarmentRotation((current) => ({ ...current, [resizeTarget]: (current[resizeTarget] ?? 0) + delta }));
-    playHaptic(10);
-  }
-
   function resetSelectedFit() {
     if (!resizeTarget) return;
     const target = resizeTarget;
     setGarmentScale((current) => { const next = { ...current }; delete next[target]; return next; });
     setGarmentOffset((current) => { const next = { ...current }; delete next[target]; return next; });
     setGarmentRotation((current) => { const next = { ...current }; delete next[target]; return next; });
-    setGarmentZBoost((current) => { const next = { ...current }; delete next[target]; return next; });
-    playHaptic(12);
   }
-
   function removeSelectedItem() {
-    if (!resizeTarget || resizeTarget === 'body' || resizeTarget === 'head') return;
+    if (!resizeTarget) return;
     const target = resizeTarget;
     if (hatPick === target) setHatPick('none');
-    else setPicks((current) => {
-      const group = CLOSET_GROUPS.find((candidate) => current[candidate] === target);
-      return group ? { ...current, [group]: 'none' } : current;
-    });
+    else setPicks((current) => { const group = CLOSET_GROUPS.find((candidate) => current[candidate] === target); return group ? { ...current, [group]: 'none' } : current; });
     resetSelectedFit();
     setResizeTarget(null);
-    playHaptic(16);
   }
 
   function recolor(group: ClothingGroup, color: string) {
@@ -1562,26 +781,27 @@ export function LittleJetterApp() {
   }
 
   function clearLook() {
+    setHatPick('none');
+    setPacked([]);
     setPicks((current) => ({ ...current, tops: 'none', bottoms: 'none', layers: 'none', shoes: 'none', accessories: 'none' }));
     setGarmentColors({});
     setGarmentScale({});
     setGarmentOffset({});
-    setGarmentZBoost({});
     setGarmentRotation({});
     setResizeTarget(null);
-    setOpenClosetDrawer('tops');
+
     triggerCelebration(12);
   }
 
   function saveLook() {
-    const look: SavedLook = { id: `${Date.now()}`, name: `${selected.city} look ${savedLooks.length + 1}`, picks: { ...picks }, character: { ...character }, colors: { ...garmentColors }, scales: { ...garmentScale }, offsets: { ...garmentOffset }, rotations: { ...garmentRotation } };
-    setSavedLooks((current) => { const next = [look, ...current].slice(0, 6); window.localStorage.setItem('little-jetter-saved-looks', JSON.stringify(next)); return next; });
-    showTravelConfirmation(`${look.name} stamped and saved`);
+    const look: SavedLook = { id: `${Date.now()}`, name: `${selected.city} look ${savedLooks.length + 1}`, picks: { ...picks }, character: { ...character }, colors: { ...garmentColors }, hatPick, scales: { ...garmentScale }, offsets: { ...garmentOffset }, rotations: { ...garmentRotation } };
+    setSavedLooks((current) => { const next = [look, ...current].slice(0, 6); setSaveFailed(!writeLocal('little-jetter-saved-looks', next)); return next; });
+    showTravelConfirmation('Your look is in My saved looks.');
     triggerCelebration([20, 30, 45]);
   }
 
   function restoreLook(look: SavedLook) {
-    setPicks(look.picks); setCharacter({ ...look.character, hairStyle: look.character.hairStyle ?? 'curls' }); setGarmentColors(look.colors); setGarmentScale(look.scales ?? {}); setGarmentOffset(look.offsets ?? {}); setGarmentRotation(look.rotations ?? {}); setResizeTarget(null); triggerCelebration([18, 25, 18]);
+    setHatPick(look.hatPick ?? 'none'); setPicks(look.picks); setCharacter({ ...look.character, hairStyle: look.character.hairStyle ?? 'curls', headId: COMPLETE_HEADS.some((head) => head.id === look.character.headId) ? look.character.headId : COMPLETE_HEADS[0].id }); setGarmentColors(look.colors); setGarmentScale(look.scales ?? {}); setGarmentOffset(look.offsets ?? {}); setGarmentRotation(look.rotations ?? {}); setResizeTarget(null); triggerCelebration([18, 25, 18]);
   }
 
   // Scrolls the doll into view before opening a picker sheet — the sheet
@@ -1589,11 +809,11 @@ export function LittleJetterApp() {
   // scrolled up above the fold when a kid taps a category, this is what
   // keeps it visible while they choose instead of leaving it off-screen.
   function openAvatarSheet(feature: AvatarFeature) {
-    document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     setActiveAvatarSheet(feature);
   }
   function openCategorySheet(group: ClothingGroup, filter: 'dress' | 'pajama' | 'swim' | 'hat' | null = null) {
-    document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('little-doll-stage-anchor')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     setActiveCategorySheet(group);
     setStyleFilter(filter);
   }
@@ -1605,6 +825,7 @@ export function LittleJetterApp() {
   }
 
   function togglePacked(id: string) {
+    if (id === 'none') return;
     setPacked((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
     playHaptic(16);
   }
@@ -1612,7 +833,7 @@ export function LittleJetterApp() {
   function toggleSavedProduct(id: string) {
     setSavedProducts((current) => {
       const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
-      window.localStorage.setItem('little-jetter-saved-picks', JSON.stringify(next));
+      writeLocal('little-jetter-saved-picks', next);
       return next;
     });
     triggerCelebration([15, 25, 15]);
@@ -1621,19 +842,20 @@ export function LittleJetterApp() {
   function updateParentSetting(key: keyof ParentSettings, value: boolean) {
     setParentSettings((current) => {
       const next = { ...current, [key]: value };
-      window.localStorage.setItem(PARENT_SETTINGS_KEY, JSON.stringify(next));
+      writeLocal(PARENT_SETTINGS_KEY, next);
       return next;
     });
   }
 
   function unlockParentReview() {
-    if (parentAnswer.trim() !== '12') return;
+    if (!parentChallenge || parentAnswer.trim() !== [...parentChallenge].reverse().join('')) { setParentError(true); setParentAnswer(''); return; }
     setParentUnlocked(true);
-    window.sessionStorage.setItem(PARENT_SESSION_KEY, String(Date.now() + PARENT_SESSION_MS));
+    setParentError(false);
+    setParentAnswer('');
   }
 
   function playHaptic(pattern: number | number[]) {
-    if (parentSettings.soundEnabled && 'vibrate' in navigator) navigator.vibrate(pattern);
+    if (parentSettings.soundEnabled && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'vibrate' in navigator) navigator.vibrate(pattern);
   }
 
   function triggerCelebration(pattern: number | number[] = [20, 35, 20]) {
@@ -1643,19 +865,23 @@ export function LittleJetterApp() {
 
   function surpriseMe() {
     const random = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)];
-    setPicks((current) => ({ ...current, tops: random(availableWardrobe('tops')).id, bottoms: random(availableWardrobe('bottoms')).id, layers: random(availableWardrobe('layers')).id, shoes: random(availableWardrobe('shoes')).id, accessories: random(availableWardrobe('accessories')).id }));
+    const pool = (group: ClothingGroup) => wardrobe[group].filter(item => item.enabled !== false && item.id !== 'none' && !item.tags.some(tag => ['style:hat', 'style:dress', 'style:pajama', 'style:swim', 'covers-bottom'].includes(tag)));
+    setPicks(current => ({ ...current, ...Object.fromEntries(CLOSET_GROUPS.map(group => [group, random(pool(group))?.id ?? 'none'])) }));
+    setGarmentScale({}); setGarmentOffset({}); setGarmentRotation({}); setResizeTarget(null);
     triggerCelebration([30, 40, 30, 40, 60]);
   }
 
   const chosen = (group: PickGroup) => {
+    if (picks[group] === 'none') return { id: 'none', name: 'Nothing yet', description: 'Choose a piece', note: 'Choose a piece', imageUrl: '', slot: 'top' as const, tags: [] };
     const item = catalogItemFor(selected.id, group, picks[group]) ?? wardrobe[group][0];
     return { ...item, note: item.description };
   };
   const colorVariants = (group: ClothingGroup) => catalogItemFor(selected.id, group, picks[group])?.variants ?? [];
+  const adjustTargetName = resizeTarget
+    ? Object.values(wardrobe).flat().find((item) => item.id === resizeTarget)?.name ?? 'clothes'
+    : null;
   const readyToStamp = packed.length >= 4;
   const ltkCollectionUrl = import.meta.env.VITE_LTK_COLLECTION_URL as string | undefined;
-  const matchedRealLook = realProductCatalog.filter((product) => [picks.tops, picks.layers, picks.shoes].includes(product.playItemId));
-  const realLook = (matchedRealLook.length ? matchedRealLook : realProductCatalog.filter((product) => product.imageUrl)).slice(0, 6);
   // "Rate my look" — scored mainly on the outer-layer/shoe choice against
   // the destination's weather, since that's the pick most likely to leave a
   // kid cold, sweaty, or otherwise uncomfortable if it's skipped or wrong.
@@ -1665,7 +891,7 @@ export function LittleJetterApp() {
       ? { mood: 'brrr', stars: 2, title: 'A breeze is coming!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Add a jacket you can carry.` }
       : selected.sandalsFriendly && picks.shoes === 'boots'
         ? { mood: 'warm', stars: 3, title: 'Those boots may feel warm!', message: `${selected.city} feels ${selected.weather.toLowerCase()}. Sandals or sneakers could be comfier.` }
-        : { mood: 'ready', stars: 5, title: `✦ ${selected.city} Ready!`, message: `${selected.needsLayer ? 'Perfect layer' : 'Perfect gear'} for ${adventureTemperatures[selected.id]} adventure walks. ${chosen('shoes').name} and ${chosen('layers').name.toLowerCase()} make a clever team.` };
+        : { mood: 'ready', stars: 5, title: `✦ ${selected.city} Ready!`, message: 'Your travel look is ready. Try another color if you like.' };
   const shopDrawers = [
     { id: 'top', number: '01', name: 'Tops & shirts', note: 'Tees, blouses and everyday layers' },
     { id: 'bottom', number: '02', name: 'Pants & skirts', note: 'Jeans, shorts and skirts for every day' },
@@ -1680,162 +906,106 @@ export function LittleJetterApp() {
   ];
 
   return (
-    <div className={`little-jetter-shell ${travelMode ? 'is-travel-mode' : ''}`}>
+    <div className={`little-jetter-shell ${travelMode ? 'is-travel-mode' : ''} ${currentStep === 'destination' ? 'little-home-view' : ''}`} onErrorCapture={(event) => { if (event.target instanceof HTMLImageElement) { event.target.style.visibility = 'hidden'; setAssetFailed(true); } }}>
+      {assetFailed && <div className="little-health-note" role="alert">A picture did not load. <button type="button" onClick={() => { document.querySelectorAll<HTMLImageElement>('img').forEach(img => { if (!img.naturalWidth) { img.style.visibility = ''; const src = img.src; img.src = ''; img.src = src; } }); setAssetFailed(false); }}>Try again</button></div>}
+      {offline && <div className="little-health-note" role="status">You are offline. Keep playing with pictures already on your device.</div>}
       {transitioning && <div className="little-travel-transition" role="status" aria-live="polite"><div className="little-compass" aria-hidden="true"><span>N</span><span>E</span><span>S</span><span>W</span><i>➤</i><strong>Explore!</strong></div><p>Stamping your boarding pass…</p></div>}
       {travelConfirmation && <div className="little-travel-confirmation" role="status"><span aria-hidden="true">LJ</span><strong>{travelConfirmation}</strong></div>}
       <div className="little-confetti" key={celebration} aria-hidden="true">{celebration > 0 && Array.from({length:18},(_,index) => <i key={index} style={{'--i':index} as React.CSSProperties}>✦</i>)}</div>
       <a className="little-skip" href="#little-main">Skip to the adventure</a>
       <header className="little-header">
-        <a className="little-wordmark" href="/" aria-label="Little Jetter home">
+        <button type="button" className="little-wordmark" onClick={goHome} aria-label="Little Jetter home">
           <span className="little-star" aria-hidden="true">✦</span>
           <span>Little Jetter</span>
-        </a>
+        </button>
         <div className="little-passport-pill" aria-label="Passport progress">
-          <span aria-hidden="true">◎</span> My passport <strong>{passportStamps.length}/{destinations.length}</strong>
+          <span aria-hidden="true">◎</span> My passport <strong>{passportStamps.length > 0 ? `${passportStamps.length} stamped` : 'Ready'}</strong>
         </div>
-        <button type="button" className="little-travel-toggle" aria-pressed={travelMode} onClick={() => { setTravelMode((value) => !value); triggerCelebration([25,35,25]); }}><span aria-hidden="true">🧭</span>{travelMode ? 'Travel mode on' : 'Start travel mode'}</button>
+        <button type="button" className="little-travel-toggle" aria-pressed={travelMode} onClick={() => { setTravelMode((value) => !value); triggerCelebration([25, 35, 25]); }}><span aria-hidden="true">🧭</span>{travelMode ? 'Travel mode on' : 'Start travel mode'}</button>
       </header>
 
-      <main id="little-main">
-        <section className="little-hero" aria-labelledby="little-title">
+      <nav className="little-bottom-nav" aria-label="Adventure views">{([
+          ['destination', '🏠', 'Places'], ['style', '👕', 'Dress up'], ['explore', '🧭', 'Explore'], ['shop', '🔒', 'Grown-ups'],
+        ] as const).map(([step, icon, label]) => <button type="button" key={step} aria-current={currentStep === step ? 'page' : undefined} onClick={() => showStep(step)}><span aria-hidden="true">{icon}</span>{label}</button>)}</nav>
+      <main id="little-main" tabIndex={-1}>{saveFailed && <p className="little-health-note" role="status">This device cannot save right now. You can keep playing, but changes may disappear when you leave.</p>}
+        {welcomeOpen && <div className="little-parent-modal little-welcome" role="dialog" aria-modal="true" aria-labelledby="welcome-title"><div><button type="button" className="little-welcome-skip" onClick={finishWelcome}>Skip</button><h2 id="welcome-title">Let’s play!</h2><p>Make a little travel adventure.</p><ol><li><span aria-hidden="true">🌎</span> Pick a place.</li><li><span aria-hidden="true">👕</span> Dress your doll.</li><li><span aria-hidden="true">🧳</span> Explore and pack!</li></ol><button type="button" className="little-next" onClick={finishWelcome}>Let’s go →</button></div></div>}
+        {currentStep !== 'destination' && <div className="little-screen-actions"><button type="button" onClick={goBack}>← Back</button><strong>{selected.city}</strong></div>}
+        <section className="little-hero" hidden={currentStep !== 'destination'} aria-labelledby="little-title">
           <img src="/little-jetter/travel-desk.png" alt="An open suitcase with a hat, raincoat, striped shirt, red sneakers, camera, map, and illustrated travel stamps." />
           <div className="little-hero-copy">
             <p className="little-kicker">A new adventure is waiting</p>
-            <h1 id="little-title">Where are you<br /><em>jetting off to?</em></h1>
-            <p>Pick a place. We’ll discover it, choose what to wear, and pack everything you need.</p>
+            <h1 id="little-title">Where shall<br /><em>we go?</em></h1>
+            <p>Pick a picture. Dress up. Let’s explore!</p>
           </div>
-          <nav className="little-route" aria-label="Adventure views">
-            {(['destination', 'style', 'explore', 'shop'] as const).map((step, index) => (
-              <button type="button" aria-current={currentStep === step ? 'step' : undefined} className={currentStep === step ? 'is-current' : ''} onClick={() => showStep(step)} key={step}>
-                <span>{index + 1}</span>{step}
-              </button>
-            ))}
-          </nav>
           {travelMode && <div className="little-travel-sky" aria-hidden="true"><span className="little-flying-plane">✈</span><span className="little-moving-train">🚆</span><span className="little-cloud cloud-one">☁</span><span className="little-cloud cloud-two">☁</span></div>}
         </section>
 
-        {travelMode && <section className="little-travel-console" aria-label="Travel mode">
-          <div className="little-compass"><span>N</span><span>E</span><span>S</span><span>W</span><i>➤</i><strong>Explore!</strong></div>
-          <div className="little-departure-board"><p className="little-kicker">Now boarding</p><h2>{selected.city} adventure</h2><div><span>✈ Fly</span><span>🚆 Ride</span><span>🧭 Explore</span></div><small>{destinationTypes[selected.id]} · {selected.region} · {selected.country}</small></div>
-          <nav className="little-route-adventure" aria-label="Choose an adventure view">{(['destination','style','explore','shop'] as const).map((step,index)=><button type="button" aria-current={currentStep===step?'step':undefined} className={currentStep===step?'is-current':''} onClick={()=>showStep(step)} key={step}><span>0{index+1}</span><strong>{step}</strong></button>)}</nav>
-        </section>}
+        {travelMode && currentStep === 'destination' && (
+          <section className="little-travel-console" aria-label="Travel mode">
+            <div className="little-compass" aria-hidden="true"><span>N</span><span>E</span><span>S</span><span>W</span><i>➤</i><strong>Explore!</strong></div>
+            <div className="little-departure-board">
+              <p className="little-kicker">Now boarding</p>
+              <h2>{selected.city} adventure</h2>
+              <div><span>✈ Fly</span><span>🚆 Ride</span><span>🧭 Explore</span></div>
+              <small>{destinationTypes[selected.id]} · {selected.region} · {selected.country}</small>
+            </div>
+          </section>
+        )}
 
         <section className="little-chooser little-tab-view" data-app-view="destination" hidden={currentStep !== 'destination'} aria-labelledby="choose-title">
           <div className="little-section-heading">
-            <div><p className="little-kicker">First stop</p><h2 id="choose-title">Choose your destination</h2></div>
-            <p>{destinations.length} places. A new way to get ready for each one.</p>
+            <div><p className="little-kicker">First stop</p><h2 id="choose-title">Pick a place</h2></div>
+            <p>Tap a picture to choose. <button type="button" className="little-help-link" onClick={() => setWelcomeOpen(true)}>How to play?</button></p>
           </div>
 
-          <div className="little-geography" aria-label="Browse destinations by geography">
-            <div className="little-type-filter" aria-label="Choose a destination type">
-              <div className="little-ticker-label"><small>Departure board</small><strong>Destination type</strong></div>
-              <div className="little-ticker-track">{allDestinationTypes.map((type, index) => <button type="button" className={destinationTypeFilter === type ? 'is-active' : ''} aria-pressed={destinationTypeFilter === type} onClick={() => setDestinationTypeFilter(type)} key={type}><span>{String(index).padStart(2, '0')}</span>{type}</button>)}</div>
-            </div>
-            <div className="little-region-filter" aria-label="Choose a region">
-              {regions.map((region) => <button type="button" className={regionFilter === region ? 'is-active' : ''} aria-pressed={regionFilter === region} onClick={() => setRegionFilter(region)} key={region}>{region}</button>)}
-            </div>
-            <div className="little-place-path" aria-label={`${selected.city} location hierarchy`}>
-              <div><small>Destination type</small><strong>{destinationTypes[selected.id]}</strong></div><span aria-hidden="true">→</span>
-              <div><small>Region</small><strong>{selected.region}</strong></div><span aria-hidden="true">→</span>
-              <div><small>Country</small><strong>{selected.country}</strong></div><span aria-hidden="true">→</span>
-              <div><small>{selected.areaType}</small><strong>{selected.area}</strong></div><span aria-hidden="true">→</span>
-              <div><small>City</small><strong>{selected.city}</strong></div>
-            </div>
-          </div>
-
-          <div className="little-destination-library">
-            {regions.slice(1).filter((region) => visibleDestinations.some((item) => item.region === region)).map((region, regionIndex) => {
-              const regionPlaces = visibleDestinations.filter((item) => item.region === region);
-              const countries = Array.from(new Set(regionPlaces.map((item) => item.country)));
-              return <details className="little-region-drawer" open={selected.region === region} key={region}>
-                <summary><span>{String(regionIndex + 1).padStart(2,'0')}</span><strong>{region}</strong><small>{regionPlaces.length} destinations</small><b>Open / close</b></summary>
-                <div>{countries.map((country, countryIndex) => <details className="little-country-drawer" open={selected.country === country} key={country}>
-                  <summary><span>{String(countryIndex + 1).padStart(2,'0')}</span><strong>{country}</strong><small>{regionPlaces.filter((item) => item.country === country).length} cities</small></summary>
-                  <div className="little-country-cities">{regionPlaces.filter((item) => item.country === country).map((destination) => {
-                    const isSelected = destination.id === selected.id; const index = destinations.findIndex((item) => item.id === destination.id);
-                    return <>
-                      <button type="button" className={`little-destination ${isSelected ? 'is-selected' : ''}`} style={{ '--stamp-color': destination.color } as React.CSSProperties} aria-pressed={isSelected} onClick={() => selectDestination(destination)} key={destination.id}>
-                        <span className="little-destination-number">{String(index + 1).padStart(3, '0')}</span>{DESTINATIONS_WITH_BACKDROP.has(destination.id) ? <span className="little-destination-icon little-destination-photo" aria-hidden="true"><img src={`/little-jetter/${destination.id}-doll-backdrop.png`} alt="" /></span> : <span className="little-destination-icon little-destination-art" aria-hidden="true" />}<span className="little-destination-city">{destination.city}</span><span className="little-destination-country">{destination.area}</span><span className="little-destination-note">{destinationTypes[destination.id]} · {destination.note}</span><span className="little-stamp-edge" aria-hidden="true" />
-                      </button>
-                      {isSelected && (
-                        <aside className="little-adventure-ticker" aria-live="polite" key={`ticker-${destination.id}`}>
-                          <div className="little-adventure-ticker-track" aria-hidden="true">
-                            <div className="little-adventure-ticker-row">
-                              <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
-                              <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
-                            </div>
-                          </div>
-                          <nav className="little-adventure-ticker-stops" aria-label="Jump to an adventure step">
-                            {(['style', 'explore', 'shop'] as const).map((step) => (
-                              <button
-                                type="button"
-                                key={step}
-                                aria-current={currentStep === step ? 'step' : undefined}
-                                disabled={step !== 'style' && !started}
-                                onClick={() => (!started ? beginTrip() : showStep(step))}
-                              >
-                                {step === 'style' ? (started ? 'CONTINUE' : 'GO') : step.slice(0, 4).toUpperCase()}
-                              </button>
-                            ))}
-                          </nav>
-                        </aside>
-                      )}
-                    </>})}</div>
-                </details>)}</div>
-              </details>;
-            })}
-          </div>
-          {started && <p className="little-saved-note" role="status">✓ Your {selected.city} adventure is saved on this device. Next up: explore the destination.</p>}
-        </section>
-
-        <section className="little-shop little-tab-view" data-app-view="shop" hidden={currentStep !== 'shop'} aria-labelledby="shop-title">
-          <div className="little-shop-heading">
-            <div><p className="little-kicker">Real picks, just for looking</p><h2 id="shop-title">The Jetter Shop</h2></div>
-            <p>Window-shop the travel pieces saved in our LTK closet. Kids can heart favorites—prices, carts, and checkout stay out of the game.</p>
-          </div>
-          <div className="little-shop-toolbar">
-            <p>Open one drawer at a time. Close it when you’re finished.</p>
-            <span>{savedProducts.length} saved for a grown-up</span><button type="button" className="little-more-choices" onClick={() => { setShowMoreChoices(true); triggerCelebration(); }}>More choices</button>
-          </div>
-          <div className="little-drawer-cabinet">
-            {shopDrawers.map((drawer) => {
-              const products = realProductCatalog.filter((item) => item.category === drawer.id);
-              const isOpen = openDrawer === drawer.id;
-              return <section className={`little-shop-drawer ${isOpen ? 'is-open' : ''}`} key={drawer.id}>
-                <button type="button" aria-expanded={isOpen} aria-controls={`drawer-${drawer.id}`} onClick={() => setOpenDrawer(isOpen ? '' : drawer.id)}>
-                  <span className="little-drawer-number">{drawer.number}</span><span><strong>{drawer.name}</strong><small>{drawer.note} · {products.length} picks</small></span><b>{isOpen ? 'Close −' : 'Open +'}</b>
-                </button>
-                {isOpen && <div id={`drawer-${drawer.id}`} className="little-product-grid">
-                  {products.length ? products.map((product) => <article key={product.id} style={{ background: PRODUCT_CATEGORY_BG[product.category] }}>
-                    <div>{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}<span>LTK pick</span></div>
-                    <small>{product.brand}</small><h3>{product.name}</h3>
-                    <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}>{savedProducts.includes(product.id) ? 'Saved' : 'Save this pick'}</button>
-                  </article>) : <p className="little-empty-drawer">New finds will land here soon.</p>}
-                </div>}
-              </section>;
-            })}
-          </div>
-          <aside className="little-adult-handoff">
-            <div><p className="little-kicker">Grown-up handoff</p><h3>{savedProducts.length ? `${savedProducts.length} picks are waiting` : 'Heart a few favorites together'}</h3><p>Parents can review the saved look and continue to verified retailer sites. Little Jetter never shows prices or checkout controls to kids.</p></div>
-            <button type="button" className="little-parent-button" onClick={() => setParentGateOpen(true)}>Parent review <span>→</span></button>
-          </aside>
+          {regions.slice(1).filter(region => visibleDestinations.some(item => item.region === region)).map(region => {
+            const regionPlaces = visibleDestinations.filter(item => item.region === region);
+            return <details className="little-place-region" key={region} open={selected.region === region}>
+              <summary className="little-place-region-heading"><span>{region}</span><small>{regionPlaces.length} {regionPlaces.length === 1 ? 'place' : 'places'}</small></summary>
+              <div className="little-place-grid">{regionPlaces.map(destination => <Fragment key={destination.id}>
+                <button type="button" className="little-place-card" aria-pressed={selected.id === destination.id} onClick={() => selectDestination(destination)}><img src={`/little-jetter/place-thumbnails/${destination.id}.webp`} alt="" loading="lazy" decoding="async" width="320" height="240" /><strong>{destination.city}</strong><small>{destination.country}</small>{selected.id === destination.id && <span className="little-place-check" aria-label="Selected">✓</span>}</button>
+                {selected.id === destination.id && (
+                  <aside className="little-adventure-ticker" aria-live="polite">
+                    <div className="little-adventure-ticker-track" aria-hidden="true">
+                      <div className="little-adventure-ticker-row">
+                        <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
+                        <span>{selected.city.toUpperCase()} · {selected.weather.toUpperCase()} · {selected.prompt.toUpperCase()}</span>
+                      </div>
+                    </div>
+                    <nav className="little-adventure-ticker-stops" aria-label="Jump to an adventure step">
+                      {(['style', 'explore', 'shop'] as const).map(step => (
+                        <button type="button" key={step} aria-current={currentStep === step ? 'step' : undefined} disabled={step !== 'style' && !started} onClick={() => (!started ? beginTrip() : showStep(step))}>
+                          {step === 'style' ? (started ? 'CONTINUE' : 'GO') : step.slice(0, 4).toUpperCase()}
+                        </button>
+                      ))}
+                    </nav>
+                  </aside>
+                )}
+              </Fragment>)}</div>
+            </details>;
+          })}
+          {visibleDestinations.length === 0 && <div className="little-empty-state"><p>No places here yet. Try another choice.</p><button type="button" onClick={() => { setRegionFilter('All regions'); setDestinationTypeFilter('All types'); }}>Show all places</button></div>}
+          <button type="button" className="little-next little-start-trip" onClick={beginTrip}>Dress up for {selected.city} →</button>
+          {started && <p className="little-saved-note" role="status">✓ You picked {selected.city}. Ready to dress up?</p>}
         </section>
 
         {parentGateOpen && <div className="little-parent-modal" role="dialog" aria-modal="true" aria-labelledby="parent-title">
           <div>
             <button type="button" className="little-modal-close" aria-label="Close grown-up review" onClick={() => setParentGateOpen(false)}>×</button>
-            <p className="little-kicker">Grown-ups only</p><h2 id="parent-title">Review the saved real-life look</h2>
-            {!parentUnlocked ? <><p>Please answer this quick check before leaving Little Jetter: what is 7 + 5?</p><form onSubmit={(event) => { event.preventDefault(); unlockParentReview(); }}><label htmlFor="parent-check">Answer</label><input id="parent-check" inputMode="numeric" value={parentAnswer} onChange={(event) => setParentAnswer(event.target.value)} /><button type="submit">Continue</button></form></> : <div className="little-parent-review">
+            <p className="little-kicker">Grown-ups only</p><h2 id="parent-title">Grown-ups</h2>
+            {!parentUnlocked ? <><p>Grown-ups: enter these digits in reverse order: <strong>{parentChallenge}</strong></p><form onSubmit={(event) => { event.preventDefault(); unlockParentReview(); }}><label htmlFor="parent-check">Digits in reverse order</label><input id="parent-check" inputMode="numeric" autoComplete="off" maxLength={4} value={parentAnswer} aria-invalid={parentError} onChange={(event) => setParentAnswer(event.target.value)} /><button type="submit">Continue</button>{parentError && <p role="alert">Please try again, starting with the last digit.</p>}</form></> : <div className="little-parent-review">
               <p>{savedProducts.length} saved picks are ready for you to review. Product pages open only for a grown-up.</p>
-              <fieldset><legend>Parent settings</legend>
+              <p>The dress-up game is free to play here. There are no in-app purchases, subscriptions, or purchases to restore in this build. Retailer purchases happen on their own websites.</p><fieldset><legend>Parent settings</legend><label><input type="checkbox" checked={parentPhotosAllowed} onChange={event => setParentPhotosAllowed(event.target.checked)} /> Load retailer photos for this visit. This shares connection information, such as your IP address, with their image hosts.</label>
                 <label><input type="checkbox" checked={parentSettings.shoppingEnabled} onChange={(event) => updateParentSetting('shoppingEnabled', event.target.checked)} /> Enable shopping handoff</label>
                 <label><input type="checkbox" checked={parentSettings.externalLinksEnabled} onChange={(event) => updateParentSetting('externalLinksEnabled', event.target.checked)} /> Allow external retailer links</label>
-                <label><input type="checkbox" checked={parentSettings.soundEnabled} onChange={(event) => updateParentSetting('soundEnabled', event.target.checked)} /> Enable tactile feedback</label>
+                <label><input type="checkbox" checked={travelMode} onChange={event => setTravelMode(event.target.checked)} /> Show travel animations</label><label><input type="checkbox" checked={parentSettings.soundEnabled} onChange={(event) => updateParentSetting('soundEnabled', event.target.checked)} /> Enable tactile feedback</label>
               </fieldset>
-              {parentSettings.shoppingEnabled && <div className="little-parent-picks">{realProductCatalog.filter((product) => savedProducts.includes(product.id)).map((product) => <div key={product.id}><img src={product.imageUrl} alt="" /><span><small>{product.brand}</small><strong>{product.name}</strong></span>{parentSettings.externalLinksEnabled && product.sourceUrl && <a href={product.sourceUrl} target="_blank" rel="noreferrer sponsored">View product ↗</a>}</div>)}</div>}
-              {parentSettings.shoppingEnabled && parentSettings.externalLinksEnabled && ltkCollectionUrl ? <a href={ltkCollectionUrl} target="_blank" rel="noreferrer sponsored">View the Little Jetter collection ↗</a> : !parentSettings.shoppingEnabled || !parentSettings.externalLinksEnabled ? <p className="little-link-needed">Shopping links are off in parent settings.</p> : <p className="little-link-needed">Verified product links appear beside saved picks. A collection link can be added when the Little Jetter LTK collection URL is available.</p>}
-              <p className="little-parent-disclosure">Little Jetter stores choices only on this device. External shopping links may be affiliate links, which can earn Little Jetter a commission at no extra cost to you.</p>
-              <button type="button" className="little-parent-reset" onClick={() => { if (!window.confirm('Clear saved looks, products, passport stamps, and journal entries from this device?')) return; ['little-jetter-saved-picks', 'little-jetter-saved-looks', PASSPORT_KEY, KINDNESS_KEY].forEach((key) => window.localStorage.removeItem(key)); setSavedProducts([]); setSavedLooks([]); setPassportStamps([]); setKindnessEntries([]); }}>Clear child data from this device</button>
+              {parentSettings.shoppingEnabled && <div className="little-parent-catalog"><h3>Shopping ideas</h3><p>Choose a category. Save a favorite to review below. Photos load from retailers only in this grown-up area.</p>{shopDrawers.filter(drawer => realProductCatalog.some(product => product.category === drawer.id)).map(drawer => <section key={drawer.id}><button type="button" className="little-parent-category" aria-expanded={openDrawer === drawer.id} onClick={() => setOpenDrawer(openDrawer === drawer.id ? '' : drawer.id)}>{drawer.name} {openDrawer === drawer.id ? '−' : '+'}</button>{openDrawer === drawer.id && <div className="little-parent-products">{realProductCatalog.filter(product => product.category === drawer.id).map(product => <button type="button" key={product.id} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}>{parentPhotosAllowed && product.imageUrl ? <img src={product.imageUrl} alt="" loading="lazy" referrerPolicy="no-referrer" /> : <span aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</span>}<strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? '✓ Saved' : 'Save'}</small></button>)}</div>}</section>)}</div>}
+              {parentSettings.shoppingEnabled && savedProducts.length === 0 && <p>No shopping ideas saved. The game never needs a purchase.</p>}
+              {parentSettings.shoppingEnabled && <div className="little-parent-picks">{realProductCatalog.filter((product) => savedProducts.includes(product.id)).map((product) => <div key={product.id}>{parentUnlocked && parentPhotosAllowed && product.imageUrl ? <img src={product.imageUrl} alt="" loading="lazy" referrerPolicy="no-referrer" /> : <span className="little-parent-photo-placeholder" aria-label="Photo available in Parent Review">♡</span>}<span><small>{product.brand}</small><strong>{product.name}</strong></span>{parentSettings.externalLinksEnabled && product.sourceUrl?.startsWith('https://') && <a href={product.sourceUrl} target="_blank" rel="noreferrer sponsored">View product ↗</a>}</div>)}</div>}
+              {parentSettings.shoppingEnabled && parentSettings.externalLinksEnabled && ltkCollectionUrl?.startsWith('https://') ? <a href={ltkCollectionUrl} target="_blank" rel="noreferrer sponsored">View the Little Jetter collection ↗</a> : !parentSettings.shoppingEnabled || !parentSettings.externalLinksEnabled ? <p className="little-link-needed">Shopping links are off in parent settings.</p> : <p className="little-link-needed">Retailer links appear beside your saved picks.</p>}
+              {OTA_ENABLED && <ParentUpdates />}<button type="button" aria-expanded={parentPrivacy} onClick={() => setParentPrivacy(value => !value)}>Privacy details</button>{parentPrivacy && <section className="little-privacy-details"><h3>Your family’s privacy</h3><p>Looks, journals, stories, stamps and parent settings stay in this browser or app on this device. No account, child messaging, advertising SDK, or analytics SDK is used in the game.</p><p>Loading the website sends normal connection information, such as IP address and requested files, to our host, Vercel. Retailer photos load only in this unlocked area and send connection information to their image hosts. External shops have their own privacy policies and may use cookies or affiliate tracking.</p><p>The installed game bundles its play assets. {OTA_ENABLED ? 'A grown-up can request Capgo updates from this area after agreeing to the connection notice. Background checks and update statistics are off.' : 'New play content and fixes arrive through App Store updates.'} We do not request an advertising identifier or permission to track.</p><p>Use the button below to clear child play data. Device backups may be managed by your operating system.</p></section>}<p className="little-parent-disclosure">Little Jetter stores choices only on this device. External shopping links may be affiliate links, which can earn Little Jetter a commission at no extra cost to you.</p>
+              <button type="button" className="little-parent-reset" onClick={() => { if (!window.confirm('Clear saved looks, products, passport stamps, and journal entries from this device?')) return; ['little-jetter-saved-picks', 'little-jetter-saved-looks', PASSPORT_KEY, KINDNESS_KEY, PLAY_KEY, STORAGE_KEY].forEach((key) => { try { window.localStorage.removeItem(key); } catch { /* Storage unavailable. */ } }); clearLook(); setPacked([]); setCharacter({ style: 'girl', skin: 'golden', hair: 'brown', hairStyle: 'curls', eyes: 'brown', headId: COMPLETE_HEADS[0].id }); setSavedProducts([]); setSavedLooks([]); setPassportStamps([]); setKindnessEntries([]); setKindnessDraft(''); setStarted(false); setSelectedId('tokyo'); setMadlibAnswers({}); setMadlibDone({}); }}>Clear child data from this device</button>
             </div>}
           </div>
         </div>}
@@ -1847,35 +1017,13 @@ export function LittleJetterApp() {
               <div className="little-category-sheet-handle" aria-hidden="true" />
               <div className="little-category-sheet-head"><strong id="avatar-sheet-title">{AVATAR_BUTTON[feature].icon} {AVATAR_BUTTON[feature].label}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => setActiveAvatarSheet(null)}>×</button></div>
               {feature === 'hairStyle' && (() => {
-                const thumbStyleFor = (styleId: string) => {
-                  const focus = HEAD_THUMB_FOCUS[styleId] ?? { x: 300, y: 220 };
-                  const faceCenterY = focus.y + 20;
-                  return {
-                    width: 600 * HEAD_THUMB_ZOOM,
-                    height: 900 * HEAD_THUMB_ZOOM,
-                    transform: `translate(${26 - focus.x * HEAD_THUMB_ZOOM}px, ${26 - faceCenterY * HEAD_THUMB_ZOOM}px)`,
-                  };
-                };
-                const classicStyles = characterOptions.hairStyle.filter((styleOption) => {
-                  const urls = new Set(characterOptions.skin.map((s) => PAINTERLY_HEAD_ASSETS[styleOption.id]?.[s.id]?.brown).filter(Boolean));
-                  return urls.size > 1;
-                });
-                return <div className="little-head-gallery">
-                  <p className="little-head-gallery-note">Choose a hairstyle and skin tone.</p>
-                  {classicStyles.map((styleOption) => <div className="little-head-gallery-group" key={styleOption.id}>
-                    <small>{styleOption.label}</small>
-                    <div className="little-character-options little-hairstyle-options">
-                      {characterOptions.skin.map((skinOption) => {
-                        const headUrl = PAINTERLY_HEAD_ASSETS[styleOption.id]?.[skinOption.id]?.brown;
-                        if (!headUrl) return null;
-                        const isChosen = character.hairStyle === styleOption.id && character.skin === skinOption.id;
-                        return <button type="button" aria-pressed={isChosen} onClick={() => { setCharacter((current) => ({ ...current, hairStyle: styleOption.id, skin: skinOption.id })); setResizeTarget(null); triggerCelebration(12); }} key={skinOption.id}>
-                          <span className="little-head-thumb"><img src={headUrl} alt="" aria-hidden="true" style={thumbStyleFor(styleOption.id)} /></span>
-                          <strong>{`Tone ${characterOptions.skin.findIndex((option) => option.id === skinOption.id) + 1}`}</strong>
-                        </button>;
-                      })}
-                    </div>
-                  </div>)}
+                const visibleHeads = COMPLETE_HEADS.filter((head) => head.enabled && (headFilter === 'all' || head.collection === headFilter));
+                return <div className="little-head-library">
+                  <p className="little-head-gallery-note"><strong>Pick a face.</strong> Tap your favorite!</p>
+                  <div className="little-head-filter" aria-label="Filter heads">{HEAD_FILTERS.map((filter) => <button type="button" aria-pressed={headFilter === filter.id} onClick={() => setHeadFilter(filter.id)} key={filter.id}>{filter.label}</button>)}</div>
+                  <div className="little-complete-head-grid" aria-live="polite">{visibleHeads.map((head) => <button type="button" aria-label={head.name} aria-pressed={character.headId === head.id} onClick={() => { const skin = head.skinTone === 'light' ? 'porcelain' : head.skinTone === 'deep' ? 'deep' : 'golden'; setCharacter((current) => ({ ...current, headId: head.id, skin })); triggerCelebration(12); }} key={head.id}>
+                    <span><img src={head.thumbnailSrc} loading="lazy" decoding="async" alt="" aria-hidden="true" style={{ transform: `scale(${head.faceScale})` }} /></span><strong>{head.name}</strong>
+                  </button>)}</div><button type="button" className="little-picker-done" onClick={() => setActiveAvatarSheet(null)}>Done ✓</button>
                 </div>;
               })()}
             </div>
@@ -1898,23 +1046,20 @@ export function LittleJetterApp() {
               <div className="little-category-sheet-handle" aria-hidden="true" />
               <div className="little-category-sheet-head"><strong id="category-sheet-title">{sheetTitle}</strong><button type="button" className="little-modal-close" aria-label="Close picker" onClick={() => { setActiveCategorySheet(null); setStyleFilter(null); }}>×</button></div>
               <div className="little-item-row">
-                {sheetItems.map(({ group: itemGroup, item }) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} aria-pressed={styleFilter === 'hat' ? hatPick === item.id : picks[itemGroup] === item.id} onClick={() => { if (styleFilter === 'hat') { setHatPick((current) => current === item.id ? 'none' : item.id); triggerCelebration(18); } else choose(itemGroup, item.id); }} key={`${itemGroup}-${item.id}`}><GarmentPreview destinationId={selected.id} group={itemGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} />{!item.tags.includes('illustrated') && <em className="little-sketch-badge">Sketch</em>}<strong>{item.name}</strong><small>{item.description}</small></button>)}
+                {sheetItems.map(({ group: itemGroup, item }) => <button type="button" className={item.tags.includes('illustrated') ? 'is-illustrated' : 'is-sketch'} aria-pressed={styleFilter === 'hat' ? hatPick === item.id : picks[itemGroup] === item.id} onClick={() => { if (styleFilter === 'hat') { setHatPick((current) => current === item.id ? 'none' : item.id); triggerCelebration(18); } else choose(itemGroup, item.id); }} key={`${itemGroup}-${item.id}`}><GarmentPreview destinationId={selected.id} group={itemGroup} itemId={item.id} picks={picks} character={character} garmentColors={garmentColors} /><strong>{item.name}</strong></button>)}
               </div>
+              <button type="button" className="little-picker-done" onClick={() => { setActiveCategorySheet(null); setStyleFilter(null); }}>Done ✓</button>
               {variants.length > 1 && <div className="little-color-swatches" data-color-slot={group} aria-label={`Colors for ${chosen(group).name}`}><small>Try another color</small>{variants.map((variant) => <button type="button" aria-label={`Use ${variant.id} for ${chosen(group).name}`} aria-pressed={(garmentColors[picks[group]] ?? variants[0].swatch) === variant.swatch} style={{ '--swatch': variant.swatch } as React.CSSProperties} onClick={() => recolor(group, variant.swatch)} key={variant.id} />)}</div>}
             </div>
           </div>;
         })()}
-
-        {showMoreChoices && <div className="little-choice-modal" role="dialog" aria-modal="true" aria-labelledby="choice-title">
-          <div><button type="button" className="little-modal-close" aria-label="Close more choices" onClick={() => setShowMoreChoices(false)}>×</button><p className="little-kicker">The parent closet · {realProductCatalog.length} finds</p><h2 id="choice-title">Real pieces for later</h2><p>A grown-up can save products inspired by the child’s finished game look.</p><div className="little-popup-products">{realProductCatalog.map((product,index) => <button type="button" style={{'--delay':`${Math.min(index * 45, 540)}ms`} as React.CSSProperties} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><span className="little-popup-thumb" style={{ background: PRODUCT_CATEGORY_BG[product.category] }}>{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}</span><span><small>{product.brand}</small><strong>{product.name}</strong></span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>)}</div><button type="button" className="little-done-choosing" onClick={() => setShowMoreChoices(false)}>Done choosing</button></div>
-        </div>}
 
         {started && (
           <section id="adventure-studio" className="little-studio little-tab-view" data-app-view={currentStep} hidden={currentStep === 'destination' || currentStep === 'shop'} aria-labelledby="studio-title">
             <div className="little-studio-heading">
               <div>
                 <p className="little-kicker">Today in {selected.city}</p>
-                <h2 id="studio-title">Dress for the adventure</h2>
+                <h2 id="studio-title">{gameStep === 1 ? 'Dress for the adventure' : gameStep === 2 ? 'My travel journal' : gameStep === 3 ? 'Pick a buddy' : gameStep === 4 ? 'Pack my suitcase' : 'Adventure complete'}</h2>
                 <p>{selected.adventure}</p>
               </div>
               <div className="little-day-card"><span className="little-day-art" aria-hidden="true" /><small>Adventure forecast</small><strong>{selected.weather}</strong></div>
@@ -1927,18 +1072,21 @@ export function LittleJetterApp() {
               const sites = content.sites ?? [];
               const madlib = content.madlib ?? null;
               const madlibAnswerList = madlibAnswers[selected.id] ?? (madlib ? Array.from({ length: madlib.blanks.length }, () => '') : []);
-              const madlibComplete = Boolean(madlib) && madlibAnswerList.every((value) => value.trim().length > 0);
+              const madlibComplete = Boolean(madlib) && madlibAnswerList.length === madlib!.blanks.length && madlibAnswerList.every((value) => value.trim().length > 0);
               const madlibIsDone = Boolean(madlibDone[selected.id]);
               const EXPLORE_TABS: { id: typeof exploreView; icon: string; label: string }[] = [
-                { id: 'journal', icon: '💛', label: 'Kindness journal' },
-                { id: 'gastronomy', icon: '🍡', label: 'Gastronomy' },
-                { id: 'memory', icon: '📖', label: 'Silly memory' },
+                { id: 'journal', icon: '💛', label: 'Kindness' },
+                { id: 'gastronomy', icon: '🍡', label: 'Food' },
+                { id: 'memory', icon: '📖', label: 'Silly story' },
                 { id: 'words', icon: '🗣️', label: 'Words' },
-                { id: 'sites', icon: '📍', label: 'Sites to see' },
+                { id: 'sites', icon: '📍', label: 'Sights' },
               ];
               return (
               <div className="little-explore-panel little-game-panel">
-                <div className="little-section-art little-explore-art" aria-hidden="true"><img src="/little-jetter/explore-postcard.png" alt="" /><span>My travel journal · {selected.city}</span></div>
+                <div className="little-section-art little-explore-art" aria-hidden="true">
+                  <img src={DESTINATIONS_WITH_BACKDROP.has(selected.id) ? `/little-jetter/${selected.id}-doll-backdrop.png` : '/little-jetter/explore-postcard.png'} alt="" />
+                  <span>My travel journal · {selected.city}</span>
+                </div>
                 <nav className="little-explore-tabs" aria-label="Travel journal sections">
                   {EXPLORE_TABS.map((tab) => <button type="button" key={tab.id} aria-pressed={exploreView === tab.id} onClick={() => setExploreView(tab.id)}><span aria-hidden="true">{tab.icon}</span>{tab.label}</button>)}
                 </nav>
@@ -1948,8 +1096,8 @@ export function LittleJetterApp() {
                     <div className="little-kindness-journal">
                       <p className="little-kicker">Gratitude &amp; kindness</p>
                       <div className="little-kindness-prompt"><strong>{KINDNESS_PROMPTS[kindnessPromptIndex]}</strong><button type="button" onClick={shuffleKindnessPrompt} aria-label="Get a different prompt">🔀 New idea</button></div>
-                      <textarea className="little-kindness-input" value={kindnessDraft} onChange={(event) => setKindnessDraft(event.target.value)} placeholder="Tell your journal what happened... (words or even just emoji!)" rows={3} />
-                      <button type="button" className="little-kindness-save" disabled={!kindnessDraft.trim()} onClick={saveKindnessEntry}>💾 Save to my journal</button>
+                      <div className="little-feelings" aria-label="Choose a feeling">{['😊', '💛', '🌈', '🤗'].map((emoji, index) => <button type="button" key={emoji} aria-label={['Happy', 'Kind', 'Hopeful', 'A hug'][index]} onClick={() => setKindnessDraft(value => value + emoji)}>{emoji}</button>)}</div><textarea aria-label="My kind thought" maxLength={500} className="little-kindness-input" value={kindnessDraft} onChange={(event) => setKindnessDraft(event.target.value)} placeholder="Tap a feeling or write a little." rows={3} />
+                      <button type="button" className="little-kindness-save" disabled={!kindnessDraft.trim()} onClick={saveKindnessEntry}>Save my thought</button>
                       {kindnessEntries.length > 0 && <div className="little-kindness-log"><small>Your last entries</small>{kindnessEntries.slice(0, 5).map((entry, index) => <div key={`${entry.date}-${index}`}><b>{entry.date}</b><em>{entry.prompt}</em><p>{entry.text}</p></div>)}</div>}
                     </div>
                   )}
@@ -1972,8 +1120,8 @@ export function LittleJetterApp() {
                           <button type="button" onClick={() => { setMadlibDone((current) => ({ ...current, [selected.id]: false })); setMadlibAnswers((current) => ({ ...current, [selected.id]: Array.from({ length: madlib.blanks.length }, () => '') })); }}>Write another one</button>
                         </div>
                       ) : (
-                        <div className="little-madlib-form">
-                          {madlib.blanks.map((blank, index) => <label key={blank.label}><small>{blank.label}</small><input type="text" value={madlibAnswerList[index] ?? ''} placeholder={blank.placeholder} onChange={(event) => setMadlibBlank(selected.id, index, event.target.value, madlib.blanks.length)} /></label>)}
+                        <div className="little-madlib-form"><button type="button" onClick={() => setMadlibAnswers(current => ({ ...current, [selected.id]: madlib.blanks.map(blank => blank.placeholder) }))}>✨ Pick words for me</button>
+                          {madlib.blanks.map((blank, index) => <label key={blank.label}><small>{blank.label.replace(/adjective/i, 'describing word')}</small><input type="text" maxLength={80} value={madlibAnswerList[index] ?? ''} placeholder={blank.placeholder} onChange={(event) => setMadlibBlank(selected.id, index, event.target.value, madlib.blanks.length)} /></label>)}
                           <button type="button" disabled={!madlibComplete} onClick={() => submitMadlib(selected.id)}>Read my silly story</button>
                         </div>
                       )) : <p className="little-explore-empty">A silly {selected.city} story is coming soon!</p>}
@@ -1999,8 +1147,7 @@ export function LittleJetterApp() {
                   )}
                 </div>
 
-                <details className="little-task-drawer"><summary><span>★</span><strong>Real-life look for a parent</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realLook.map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><img src={product.imageUrl} alt="" /><strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : `Inspired by ${chosen('tops').name}`}</small></button>)}</div></details>
-                <button type="button" className="little-next" onClick={() => showStep('shop')}>Visit the Jetter Shop <span>→</span></button>
+                <button type="button" className="little-next" onClick={() => { setGameStep(3); scrollToStep('explore'); }}>Pick a buddy <span>→</span></button>
               </div>
               );
             })()}
@@ -2008,19 +1155,13 @@ export function LittleJetterApp() {
             {gameStep === 1 && (
               <div className="little-dress-layout little-game-panel">
                 <aside className="little-look-preview">
-                  <div className="little-closet-heading"><strong>Make your Little Jetter.</strong></div>
+                  <div className="little-closet-heading"><strong>Tap a picture to dress your doll.</strong></div><div className="little-fit-actions"><button type="button" aria-pressed={adjustMode} onClick={toggleAdjusting}><span aria-hidden="true">✋</span>{adjustMode ? 'Done adjusting' : 'Adjust clothes'}</button><button type="button" onClick={() => { setGarmentScale({}); setGarmentOffset({}); setGarmentRotation({}); setResizeTarget(null); }}><span aria-hidden="true">↺</span>Reset outfit</button></div>
+                  {saveFailed && <p role="status">Your device could not save this look. You can keep playing.</p>}
                   <div className="little-doll-rail-wrap" id="little-doll-stage-anchor">
-                    <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''}`} onDragStart={(event) => event.preventDefault()} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onClick={handleDollClick} onWheel={handleWheelResize} style={{ '--eye-color': characterOptions.eyes.find((option) => option.id === character.eyes)?.color, '--hair-color': characterOptions.hair.find((option) => option.id === character.hair)?.color } as React.CSSProperties} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}. Tap a piece to move, resize, or delete it.`}>
+                    <div className={`little-avatar little-doll-stage character-${character.style} ${dropActive ? 'is-drop-active' : ''} ${adjustMode ? 'is-adjusting' : ''}`} onDragStart={(event) => event.preventDefault()} onDragEnter={() => setDropActive(true)} onDragLeave={() => setDropActive(false)} onDragOver={(event) => event.preventDefault()} onDrop={dropOnDoll} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp} onTouchCancel={() => { dragStartRef.current = null; pinchStartRef.current = null; }} onClick={handleDollClick} onWheel={handleWheelResize} aria-label={`Outfit: ${chosen('tops').name}, ${chosen('bottoms').name}, ${chosen('layers').name}, ${chosen('shoes').name}, and ${chosen('accessories').name}. Choose Adjust clothes to change the fit.`}>
                       <div className={`little-doll-destination scene-${selected.id}`} style={{ '--scene-color': selected.color } as React.CSSProperties} aria-hidden="true">{DESTINATIONS_WITH_BACKDROP.has(selected.id) && <img src={`/little-jetter/${selected.id}-doll-backdrop.png`} alt="" />}<i /><b /></div>
                       {travelMode && <div className="little-doll-sky" aria-hidden="true"><span className="little-doll-plane">✈</span><span className="little-doll-cloud cloud-one">☁</span><span className="little-doll-cloud cloud-two">☁</span></div>}
-                      <CatalogDoll key={`${character.hairStyle}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${hatPick}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} garmentScale={garmentScale} garmentOffset={garmentOffset} garmentZBoost={garmentZBoost} garmentRotation={garmentRotation} activeItemId={resizeTarget} hatPick={hatPick} />
-                      {resizeTarget && <div className="little-item-toolbar" aria-label="Adjust selected doll item" onMouseDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()} onTouchStart={(event) => event.stopPropagation()}>
-                        <button type="button" aria-label="Make selected item smaller" onClick={() => resizeSelected(-0.05)}><span>−</span><small>Smaller</small></button>
-                        <button type="button" aria-label="Make selected item bigger" onClick={() => resizeSelected(0.05)}><span>+</span><small>Bigger</small></button>
-                        <button type="button" aria-label="Rotate selected item left" onClick={() => rotateSelected(-3)}><span>↶</span><small>Turn</small></button>
-                        <button type="button" aria-label="Reset selected item fit" onClick={resetSelectedFit}><span>↺</span><small>Reset</small></button>
-                        {resizeTarget !== 'body' && resizeTarget !== 'head' && <button type="button" className="is-delete" aria-label="Remove selected item" onClick={removeSelectedItem}><span>×</span><small>Remove</small></button>}
-                      </div>}
+                      <CatalogDoll key={`${character.headId}-${picks.tops}-${picks.bottoms}-${picks.layers}-${picks.shoes}-${picks.accessories}-${hatPick}-${JSON.stringify(garmentColors)}`} destinationId={selected.id} picks={picks} character={character} garmentColors={garmentColors} garmentScale={garmentScale} garmentOffset={garmentOffset} garmentRotation={garmentRotation} activeItemId={resizeTarget} hatPick={hatPick} />
                       <div className="little-dress-sparkles" key={`sparkles-${celebration}`} aria-hidden="true">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--spark': index } as React.CSSProperties}>✦</i>)}</div>
                       {dropActive && <div className="little-drop-message">Drop to dress</div>}
                     </div>
@@ -2029,37 +1170,45 @@ export function LittleJetterApp() {
                         {(['hairStyle'] as AvatarFeature[]).map((feature) => <button type="button" className={`little-category-rail-btn ${activeAvatarSheet === feature ? 'is-active' : ''}`} aria-pressed={activeAvatarSheet === feature} onClick={() => openAvatarSheet(feature)} key={feature}><span aria-hidden="true">{AVATAR_BUTTON[feature].icon}</span><small>{AVATAR_BUTTON[feature].label}</small></button>)}
                       </div>
                       <div className="little-rail-divider" aria-hidden="true" />
-                      <div className="little-category-rail" aria-label="Clothing categories">
-                        {CLOSET_GROUPS.map((group) => <button type="button" className={`little-category-rail-btn ${activeCategorySheet === group && !styleFilter ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group && !styleFilter} onClick={() => openCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small></button>)}
-                        <button type="button" className={`little-category-rail-btn ${styleFilter === 'dress' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'dress'} onClick={() => openCategorySheet('tops', 'dress')}><span aria-hidden="true">👗</span><small>Dress</small></button>
-                        <button type="button" className={`little-category-rail-btn ${styleFilter === 'pajama' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'pajama'} onClick={() => openCategorySheet('tops', 'pajama')}><span aria-hidden="true">🌙</span><small>Pajamas</small></button>
-                        <button type="button" className={`little-category-rail-btn ${styleFilter === 'swim' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'swim'} onClick={() => openCategorySheet('tops', 'swim')}><span aria-hidden="true">🩱</span><small>Swim</small></button>
-                        <button type="button" className={`little-category-rail-btn ${styleFilter === 'hat' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'hat'} onClick={() => openCategorySheet('accessories', 'hat')}><span aria-hidden="true">🧢</span><small>Hat</small></button>
+                      <div className="little-category-rail little-core-clothes-rail" aria-label="Everyday clothing categories">
+                        {(['tops', 'bottoms', 'layers', 'shoes'] as ClothingGroup[]).map((group) => <button type="button" className={`little-category-rail-btn little-${group}-button ${activeCategorySheet === group && !styleFilter ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === group && !styleFilter} onClick={() => openCategorySheet(group)} key={group}><span aria-hidden="true">{CATEGORY_BUTTON[group].icon}</span><small>{CATEGORY_BUTTON[group].label}</small></button>)}
                       </div>
                     </div>
                   </div>
+                  <div className="little-category-bottom-rail" aria-label="More clothing categories">
+                    <button type="button" className={`little-category-rail-btn ${activeCategorySheet === 'accessories' && !styleFilter ? 'is-active' : ''}`} aria-pressed={activeCategorySheet === 'accessories' && !styleFilter} onClick={() => openCategorySheet('accessories')}><span aria-hidden="true">{CATEGORY_BUTTON.accessories.icon}</span><small>{CATEGORY_BUTTON.accessories.label}</small></button>
+                    <button type="button" className={`little-category-rail-btn ${styleFilter === 'dress' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'dress'} onClick={() => openCategorySheet('tops', 'dress')}><span aria-hidden="true">👗</span><small>Dress</small></button>
+                    <button type="button" className={`little-category-rail-btn ${styleFilter === 'pajama' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'pajama'} onClick={() => openCategorySheet('tops', 'pajama')}><span aria-hidden="true">🌙</span><small>Pajamas</small></button>
+                    <button type="button" className={`little-category-rail-btn ${styleFilter === 'swim' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'swim'} onClick={() => openCategorySheet('tops', 'swim')}><span aria-hidden="true">🩱</span><small>Swim</small></button>
+                    <button type="button" className={`little-category-rail-btn ${styleFilter === 'hat' ? 'is-active' : ''}`} aria-pressed={styleFilter === 'hat'} onClick={() => openCategorySheet('accessories', 'hat')}><span aria-hidden="true">🧢</span><small>Hat</small></button>
+                  </div>
+                  {adjustMode && <div className="little-adjuster-slot" role="group" aria-label="Clothing adjuster">
+                    <div className="little-adjuster-help"><strong>{adjustTargetName ? `Moving ${adjustTargetName}` : 'Tap clothes on the doll'}</strong><small>Drag it, or use these buttons.</small></div>
+                    {resizeTarget && <div className="little-item-toolbar" aria-label={`Adjust ${adjustTargetName ?? 'selected clothing'}`}>
+                      <button type="button" aria-label="Make selected item smaller" onClick={() => resizeSelected(-0.05)}><span>−</span><small>Smaller</small></button>
+                      <button type="button" aria-label="Make selected item bigger" onClick={() => resizeSelected(0.05)}><span>+</span><small>Bigger</small></button>
+                      <button type="button" aria-label="Rotate selected item left" onClick={() => rotateSelected(-3)}><span>↶</span><small>Turn</small></button>
+                      <button type="button" aria-label="Reset selected item fit" onClick={resetSelectedFit}><span>↺</span><small>Reset</small></button>
+                      <button type="button" className="is-delete" aria-label="Remove selected item" onClick={removeSelectedItem}><span>×</span><small>Remove</small></button>
+                    </div>}
+                  </div>}
                   <h3>{selected.city} explorer</h3>
                   <div key={`${picks.layers}-${picks.shoes}`} className={`little-outfit-reaction is-${outfitFeedback.mood}`} role="status"><span aria-hidden="true" /><div><div className="little-rate-look"><strong>Rate my look</strong><span className="little-star-rating" aria-label={`${outfitFeedback.stars} out of 5 stars`}>{'★'.repeat(outfitFeedback.stars)}{'☆'.repeat(5 - outfitFeedback.stars)}</span></div><strong className="little-rate-title">{outfitFeedback.title}</strong><p>{outfitFeedback.message}</p></div></div>
                 </aside>
                 <div className="little-closet">
                   <div className="little-surprise-bar"><div><small>My paper-doll closet</small><strong>Tap a piece to dress your doll.</strong></div><div className="little-look-actions"><button type="button" onClick={surpriseMe}>Surprise me</button><button type="button" onClick={clearLook}>Clear look</button><button type="button" onClick={saveLook}>Save my look</button></div></div>
                   <details className="little-task-drawer little-my-looks"><summary><strong>My saved looks</strong><b>Open</b></summary><div>{savedLooks.length ? savedLooks.map((look) => <button type="button" onClick={() => restoreLook(look)} key={look.id}><strong>{look.name}</strong><small>Tap to wear again</small></button>) : <p>Save a look and it will wait here on this device.</p>}</div></details>
-                  <details className="little-task-drawer" open={openClosetDrawer === 'parent'} onToggle={(event) => { if (event.currentTarget.open) setOpenClosetDrawer('parent'); }}><summary><strong>Parent product matches</strong><b>{openClosetDrawer === 'parent' ? 'Close' : 'Open'}</b></summary><div className="little-real-look">
-                    <div><small>Your Little Jetter picks</small><strong>Real pieces inspired by this look</strong></div>
-                    <div>{realLook.length ? realLook.map((product) => { const inspiredItem = (Object.keys(wardrobe) as PickGroup[]).flatMap((group) => wardrobe[group]).find((item) => item.id === product.playItemId); return <button type="button" key={product.id} aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)}><img src={product.imageUrl} alt="" /><span><small>{inspiredItem ? `Inspired by ${inspiredItem.name}` : 'Inspired by this look'}</small>{product.name}</span><b>{savedProducts.includes(product.id) ? 'Saved' : 'Save'}</b></button>; }) : <p>Choose another piece to discover a real-life match.</p>}</div>
-                    <small>Kids save the look. A parent decides whether to shop it.</small>
-                  </div></details>
-                  <button type="button" className="little-next" onClick={() => showStep('explore')}>Explore my travel journal <span>→</span></button>
+                  <button type="button" className="little-next" onClick={() => showStep('explore')}>Let’s explore <span>→</span></button>
                 </div>
               </div>
             )}
 
+            {gameStep >= 3 && <button type="button" className="little-back-play" onClick={() => setGameStep(gameStep === 5 ? 2 : gameStep - 1)}>← {gameStep === 3 || gameStep === 5 ? 'Travel journal' : 'Travel buddy'}</button>}
             {gameStep === 3 && (
               <div className="little-buddy-panel little-game-panel">
-                <div className="little-section-art little-buddy-art" aria-hidden="true"><img src="/little-jetter/packing-buddies.png" alt="" /><span>Pick a tiny copilot</span></div>
+                <div className="little-section-art little-buddy-art" aria-hidden="true"><img src="/little-jetter/packing-buddies.png" alt="" /><span>Pick a buddy</span></div>
                 <div><p className="little-kicker">Toys can travel too</p><h3>Who gets the window seat?</h3><p>Pick one small buddy to bring along. A good traveler makes room for what matters.</p></div>
-                <details className="little-task-drawer" open><summary><span>01</span><strong>Choose a travel buddy</strong><b>Open / close</b></summary><div className="little-buddy-grid">{wardrobe.buddies.map((item) => <button type="button" aria-pressed={picks.buddies === item.id} onClick={() => choose('buddies', item.id)} key={item.id}><span className="little-game-item" style={gameItemStyle('buddies', item.id)} aria-hidden="true" /><strong>{item.name}</strong><small>{item.description}</small></button>)}</div></details>
-                <details className="little-task-drawer"><summary><span>02</span><strong>Parent toy preview</strong><b>Open / close</b></summary><div className="little-buddy-grid little-real-buddies">{realProductCatalog.filter((product) => product.category === 'toy').map((product) => <button type="button" aria-pressed={savedProducts.includes(product.id)} onClick={() => toggleSavedProduct(product.id)} key={product.id}><span className="little-buddy-thumb" style={{ background: PRODUCT_CATEGORY_BG[product.category] }}>{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <i className="little-product-fallback" aria-hidden="true">{PRODUCT_CATEGORY_ICON[product.category]}</i>}</span><strong>{product.name}</strong><small>{savedProducts.includes(product.id) ? 'Saved for a parent' : 'Save this real pick'}</small></button>)}</div></details>
+                <details className="little-task-drawer" open><summary><span>01</span><strong>Choose a travel buddy</strong><b>Open / close</b></summary><div className="little-buddy-grid">{wardrobe.buddies.map((item) => <button type="button" aria-pressed={picks.buddies === item.id} onClick={() => choose('buddies', item.id)} key={item.id}><span className="little-game-item little-buddy-picture"><BuddyPicture id={item.id} /></span><strong>{item.name}</strong><small>{item.description}</small></button>)}</div></details>
                 <button type="button" className="little-next" onClick={() => setGameStep(4)}>Pack my suitcase <span>→</span></button>
               </div>
             )}
@@ -2067,9 +1216,10 @@ export function LittleJetterApp() {
             {gameStep === 4 && (
               <div className="little-pack-layout little-game-panel">
                 <div className="little-section-art little-pack-art" aria-hidden="true"><img src="/little-jetter/packing-buddies.png" alt="" /><span>Ready, set, pack!</span></div>
-                <details className="little-task-drawer" open><summary><span>01</span><strong>Your suitcase</strong><b>Open / close</b></summary><div className="little-suitcase"><p>Packed <strong>{packed.length}/6</strong></p><div>{packed.map((id) => { const group = (Object.keys(wardrobe) as PickGroup[]).find((key) => wardrobe[key].some((entry) => entry.id === id)); const item = group ? wardrobe[group].find((entry) => entry.id === id) : undefined; return item && group ? <span className="little-packed-art" style={gameItemStyle(group, item.id)} key={id} title={item.name} /> : <span className="little-packed-essential" key={id}>{id === 'book' ? 'BOOK' : 'KIT'}</span>; })}</div><small>{packed.length < 4 ? 'Choose at least four things for the adventure.' : 'Everything fits. Nicely packed!'}</small></div></details>
+                <p className="little-packing-tip"><strong>{selected.city} packing idea:</strong> {selected.prompt}</p>
+                <details className="little-task-drawer" open><summary><span>01</span><strong>Your suitcase</strong><b>Open / close</b></summary><div className="little-suitcase"><p>Packed <strong>{packed.length} items</strong></p><div>{packed.map((id) => { const group = (Object.keys(wardrobe) as PickGroup[]).find((key) => wardrobe[key].some((entry) => entry.id === id)); const item = group ? wardrobe[group].find((entry) => entry.id === id) : undefined; return item && group ? <span className="little-packed-art" style={group === 'buddies' ? undefined : gameItemStyle(group, item.id)} key={id} title={item.name}>{group === 'buddies' && <BuddyPicture id={id} />}</span> : <span className="little-packed-essential" key={id}>{id === 'book' ? 'BOOK' : id === 'water' ? 'WATER' : 'KIT'}</span>; })}</div><small>{packed.length < 4 ? 'Choose at least four things for the adventure.' : 'Everything fits. Nicely packed!'}</small></div></details>
                 <details className="little-task-drawer" open><summary><span>02</span><strong>Pack each piece</strong><b>Open / close</b></summary><div className="little-pack-list">
-                  {([chosen('tops'), chosen('bottoms'), chosen('layers'), chosen('shoes'), chosen('accessories'), chosen('buddies'), { id:'toothbrush',icon:'',name:'Travel kit',note:'A getting-ready essential' }, { id:'book',icon:'',name:'Travel book',note:'For quiet moments' }] as Array<{id:string;name:string;note:string}>).map((item, index) => { const group = (Object.keys(wardrobe) as PickGroup[]).find((key) => wardrobe[key].some((entry) => entry.id === item.id)); return <button type="button" aria-pressed={packed.includes(item.id)} onClick={() => togglePacked(item.id)} key={`${index}-${item.id}`}><span className={group ? 'little-pack-art' : 'little-pack-essential'} style={group ? gameItemStyle(group, item.id) : undefined}>{group ? '' : item.id === 'book' ? 'BOOK' : 'KIT'}</span><div><strong>{item.name}</strong><small>{item.note}</small></div><b>{packed.includes(item.id) ? 'Packed' : 'Add'}</b></button>; })}
+                  {([chosen('tops'), chosen('bottoms'), chosen('layers'), chosen('shoes'), chosen('accessories'), ...(hatPick !== 'none' ? [{ id: hatPick, name: wardrobe.accessories.find(item => item.id === hatPick)?.name ?? 'My hat', note: 'My hat' }] : []), chosen('buddies'), { id:'toothbrush',icon:'',name:'Travel kit',note:'A getting-ready essential' }, { id:'book',icon:'',name:'Travel book',note:'For quiet moments' }, { id:'water',icon:'',name:'Water bottle',note:'A sip for the journey' }] as Array<{id:string;name:string;note:string}>).filter((item, index, items) => item.id !== 'none' && items.findIndex(other => other.id === item.id) === index).map((item, index) => { const group = (Object.keys(wardrobe) as PickGroup[]).find((key) => wardrobe[key].some((entry) => entry.id === item.id)); return <button type="button" aria-pressed={packed.includes(item.id)} onClick={() => togglePacked(item.id)} key={`${index}-${item.id}`}><span className={group ? 'little-pack-art' : 'little-pack-essential'} style={group && group !== 'buddies' ? gameItemStyle(group, item.id) : undefined}>{group === 'buddies' ? <BuddyPicture id={item.id} /> : group ? '' : item.id === 'book' ? '📚' : item.id === 'water' ? '💧' : '🪥'}</span><div><strong>{item.name}</strong><small>{item.note}</small></div><b>{packed.includes(item.id) ? 'Packed' : 'Add'}</b></button>; })}
                   <button type="button" className="little-next" disabled={!readyToStamp} onClick={stampPassport}>Stamp my passport <span>→</span></button>
                 </div></details>
               </div>
@@ -2079,17 +1229,14 @@ export function LittleJetterApp() {
               <div className="little-finish little-game-panel">
                 <div className="little-section-art little-stamp-art" aria-hidden="true"><img src="/little-jetter/passport-library.png" alt="" /><span>Passport complete</span></div>
                 <div className="little-earned-stamp"><span className="little-stamp-art-mark" aria-hidden="true" /><strong>{selected.city}</strong><small>{selected.passportPhrase}</small></div>
-                <div><p className="little-kicker">Adventure ready</p><h3>You did it your way.</h3><p>You explored the plan, made a look, chose {chosen('buddies').name}, and packed what you need.</p><button type="button" className="little-grownup" onClick={() => setParentGateOpen(true)}>Grown-ups: review this real-life look <span>→</span></button><small className="little-commerce-note">Real product shopping uses LTK and opens only after the grown-up step.</small></div>
+                <div><p className="little-kicker">Adventure ready</p><h3>You did it your way.</h3><p>You explored the plan, made a look, chose {chosen('buddies').name}, and packed what you need.</p><button type="button" className="little-next" onClick={goHome}>Pick another place →</button></div>
               </div>
             )}
           </section>
         )}
       </main>
-
-      <footer className="little-footer">
-        <span>Made for curious travelers, ages 6–11.</span>
-        <span>No account. No ads. Just adventure.</span>
-      </footer>
     </div>
   );
 }
+
+import './child-polish.css';
