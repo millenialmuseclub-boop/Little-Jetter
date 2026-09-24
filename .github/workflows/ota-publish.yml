@@ -1,0 +1,62 @@
+name: Publish Little Jetter OTA (zero-server)
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Channel to publish to
+        required: true
+        default: staging
+        type: choice
+        options: [staging, production]
+
+jobs:
+  publish-ota:
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Verify
+        run: npm run lint && npm test && npm run audit:release && npm run audit:mobile && npm run audit:wardrobe && npm run audit:assets
+      - name: Build channel bundle
+        run: npm run build
+        env:
+          VITE_OTA_CHANNEL: ${{ inputs.channel }}
+          VITE_R2_PUBLIC_BASE_URL: ${{ vars.R2_PUBLIC_BASE_URL }}
+      - name: Sign, encrypt, and publish static update
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CAPGO_PRIVATE_KEY_B64: ${{ secrets.CAPGO_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "${{ vars.R2_PUBLIC_BASE_URL }}"
+          test -n "${{ secrets.R2_BUCKET_NAME }}"
+          printf '%s' "$CAPGO_PRIVATE_KEY_B64" | base64 -d > capgo_key_v2
+          npx @capgo/cli@8 bundle zip com.littlejetter.app --path ./dist --json > zip.json
+          ZIP=$(jq -r '.filename' zip.json)
+          ZIP_CHECKSUM=$(jq -r '.checksum' zip.json)
+          npx @capgo/cli@8 bundle encrypt "$ZIP" "$ZIP_CHECKSUM" --key ./capgo_key_v2 --json > enc.json
+          rm -f capgo_key_v2
+          ENC_ZIP=$(jq -r '.filename' enc.json)
+          ENC_CHECKSUM=$(jq -r '.checksum' enc.json)
+          SESSION_KEY=$(jq -r '.ivSessionKey' enc.json)
+          COMMIT_TS=$(git log -1 --format=%ct)
+          jq -n \
+            --arg v "$COMMIT_TS" \
+            --arg sha "${{ github.sha }}" \
+            --arg url "${{ vars.R2_PUBLIC_BASE_URL }}/updates/little-jetter/${{ inputs.channel }}/bundles/${{ github.sha }}.zip" \
+            --arg ck "$ENC_CHECKSUM" \
+            --arg sk "$SESSION_KEY" \
+            '{version:$v, sha:$sha, url:$url, checksum:$ck, sessionKey:$sk}' > manifest.json
+          npx wrangler@4 r2 object put \
+            "${{ secrets.R2_BUCKET_NAME }}/updates/little-jetter/${{ inputs.channel }}/bundles/${{ github.sha }}.zip" \
+            --remote --file="$ENC_ZIP" --cache-control "public, max-age=31536000, immutable"
+          npx wrangler@4 r2 object put \
+            "${{ secrets.R2_BUCKET_NAME }}/updates/little-jetter/${{ inputs.channel }}/manifest.json" \
+            --remote --file=./manifest.json --cache-control "no-cache, max-age=0"

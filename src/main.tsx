@@ -14,6 +14,6 @@ createRoot(document.getElementById('root')!).render(
 
 if (Capacitor.isNativePlatform()) {
   void CapacitorUpdater.notifyAppReady().catch((error: unknown) => {
-    console.warn('Capgo app-ready notification failed.', error);
+    console.warn('App-ready notification failed.', error);
   });
 }

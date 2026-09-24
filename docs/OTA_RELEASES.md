@@ -1,33 +1,32 @@
-# Little Jetter OTA releases
+# Little Jetter zero-server OTA
 
-The Capacitor shell includes `@capawesome/capacitor-live-update`. OTA fetching is
-disabled until both configuration values are present when the native app is built:
+Little Jetter uses the same subscription-free pattern as Let Them Eat Cake. The app checks a static Cloudflare R2 manifest only after a grown-up requests an update. The Capacitor updater plugin downloads, verifies, decrypts, and activates the bundle; it does not use Capgo's hosted service.
 
-- `CAPAWESOME_APP_ID`: the Capawesome Cloud app UUID (not the bundle identifier)
-- `CAPAWESOME_PUBLIC_KEY`: the PEM RSA public key used to verify signed bundles
+## Release shape
 
-With both values present, the shell follows the `production` channel, downloads
-updates in the background, deletes unused bundles, and automatically rolls back
-and blocks a bundle that cannot render and call `LiveUpdate.ready()` within 10 seconds.
+- Bundles: `updates/little-jetter/<channel>/bundles/<git-sha>.zip`
+- Manifest: `updates/little-jetter/<channel>/manifest.json`
+- Channels: `staging` and `production`
+- Version: publishing commit timestamp, compared numerically with the native build timestamp
+- Activation: a grown-up downloads and explicitly restarts; `notifyAppReady()` preserves rollback protection
 
-## Release boundary
+## GitHub configuration
 
-Use OTA only for binary-compatible web changes already within the reviewed app:
-HTML, CSS, JavaScript, content, destinations, and aligned doll/wardrobe assets.
+Reuse the existing Cake R2 infrastructure and matching signing key:
 
-Submit a new App Store / Play Store binary for native plugin or permission changes,
-native configuration, privacy/commerce behavior changes, or materially new features.
-Keep channels compatible with the native app version; do not send one universal
-bundle to incompatible native releases.
+- Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `R2_BUCKET_NAME`, `CAPGO_PRIVATE_KEY`
+- Variable: `R2_PUBLIC_BASE_URL`
 
-## Activation and release
+The private key must match the public key embedded in `capacitor.config.ts`. Never commit it. The shared R2 bucket is safe because Little Jetter uses its own `updates/little-jetter/` namespace.
 
-1. Create the Little Jetter app in Capawesome Cloud and generate an RSA signing key.
-2. Build the store binary with the two variables above, then run `npm run mobile:sync`.
-3. Create a version-compatible production channel in the OTA console.
-4. Build the web bundle with `npm run build`, upload `dist`, sign it, and stage it.
-5. Test the staged update on both installed native apps, including a forced bad-bundle
-   rollback test, before promoting it to production.
+## Required native transition
 
-Never commit a private signing key. The public verification key may be embedded in
-the app; the private key belongs only in the release service's protected secrets.
+Existing Little Jetter installations still know only the former Capgo-hosted lookup. The new public key, static manifest URL, and numeric native version must ship in one new App Store/Play Store binary. Build that binary with:
+
+- `APP_BUILD_VERSION=<git commit timestamp>`
+- `VITE_R2_PUBLIC_BASE_URL=<public R2 base URL>`
+- `VITE_OTA_CHANNEL=production`
+
+After that binary is installed, future compatible HTML/CSS/JS/content/asset changes can use **Publish Little Jetter OTA (zero-server)**. Native plugins, permissions, entitlements, native configuration, signing-key rotation, and materially reviewable native behavior still require a store update.
+
+Always publish to staging and verify on an installed staging build before production. A failed startup rolls back automatically. To correct a content defect, publish a new, later commit; an older manifest cannot downgrade devices already updated.

@@ -24,7 +24,7 @@ const expect = (condition, message) => { checks += 1; if (!condition) failures.p
 expect(config.includes("appId: 'com.littlejetter.app'"), 'Capacitor app ID is missing or changed');
 expect(!JSON.stringify(packageJson).includes('capacitor-live-update'), 'Old Capawesome updater is still packaged');
 expect(Boolean(packageJson.dependencies?.['@capgo/capacitor-updater']), 'Capgo Capacitor updater is not installed');
-expect(config.includes("autoUpdate: 'off'"), 'Automatic background update checks must remain off for child play');
+expect(config.includes('autoUpdate: false'), 'Automatic background update checks must remain off for child play');
 if (androidPresent) {
   expect(androidManifest.includes('android:allowBackup="false"'), 'Android backup must remain disabled');
   expect(androidManifest.includes('android:usesCleartextTraffic="false"'), 'Android cleartext traffic must remain disabled');
