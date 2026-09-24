@@ -870,6 +870,51 @@
     }
   },
   {
+    "group": "tops",
+    "id": "ramen-tee",
+    "url": "/little-jetter/catalog/tokyo/ramen-tee/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 64777,
+    "bounds": {
+      "left": 219,
+      "top": 315,
+      "right": 380,
+      "bottom": 489
+    }
+  },
+  {
+    "group": "tops",
+    "id": "purple-floral-sweater",
+    "url": "/little-jetter/catalog/tokyo/purple-floral-sweater/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 81158,
+    "bounds": {
+      "left": 221,
+      "top": 315,
+      "right": 378,
+      "bottom": 489
+    }
+  },
+  {
+    "group": "tops",
+    "id": "teal-shiba-sweater",
+    "url": "/little-jetter/catalog/tokyo/teal-shiba-sweater/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 83095,
+    "bounds": {
+      "left": 208,
+      "top": 315,
+      "right": 391,
+      "bottom": 489
+    }
+  },
+  {
     "group": "bottoms",
     "id": "travel-jeans",
     "url": "/little-jetter/catalog/tokyo/travel-jeans/default.png",
@@ -1242,6 +1287,51 @@
       "top": 468,
       "right": 378,
       "bottom": 576
+    }
+  },
+  {
+    "group": "bottoms",
+    "id": "black-flower-shorts",
+    "url": "/little-jetter/catalog/tokyo/black-flower-shorts/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 116927,
+    "bounds": {
+      "left": 170,
+      "top": 465,
+      "right": 428,
+      "bottom": 672
+    }
+  },
+  {
+    "group": "bottoms",
+    "id": "pink-bow-skirt",
+    "url": "/little-jetter/catalog/tokyo/pink-bow-skirt/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 127341,
+    "bounds": {
+      "left": 193,
+      "top": 465,
+      "right": 406,
+      "bottom": 768
+    }
+  },
+  {
+    "group": "bottoms",
+    "id": "yellow-plaid-skirt",
+    "url": "/little-jetter/catalog/tokyo/yellow-plaid-skirt/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 142152,
+    "bounds": {
+      "left": 170,
+      "top": 465,
+      "right": 429,
+      "bottom": 676
     }
   },
   {
@@ -1740,6 +1830,21 @@
     }
   },
   {
+    "group": "layers",
+    "id": "cherry-cardigan",
+    "url": "/little-jetter/catalog/tokyo/cherry-cardigan/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 84251,
+    "bounds": {
+      "left": 212,
+      "top": 315,
+      "right": 388,
+      "bottom": 489
+    }
+  },
+  {
     "group": "shoes",
     "id": "sneakers",
     "url": "/little-jetter/catalog/tokyo/sneakers/default.png",
@@ -2127,6 +2232,51 @@
       "top": 727,
       "right": 354,
       "bottom": 804
+    }
+  },
+  {
+    "group": "shoes",
+    "id": "black-combat-boots",
+    "url": "/little-jetter/catalog/tokyo/black-combat-boots/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 73492,
+    "bounds": {
+      "left": 232,
+      "top": 596,
+      "right": 356,
+      "bottom": 809
+    }
+  },
+  {
+    "group": "shoes",
+    "id": "purple-converse",
+    "url": "/little-jetter/catalog/tokyo/purple-converse/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 55473,
+    "bounds": {
+      "left": 244,
+      "top": 661,
+      "right": 356,
+      "bottom": 809
+    }
+  },
+  {
+    "group": "shoes",
+    "id": "red-converse",
+    "url": "/little-jetter/catalog/tokyo/red-converse/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 76136,
+    "bounds": {
+      "left": 244,
+      "top": 599,
+      "right": 356,
+      "bottom": 809
     }
   },
   {
@@ -2682,6 +2832,66 @@
       "top": 345,
       "right": 438,
       "bottom": 564
+    }
+  },
+  {
+    "group": "accessories",
+    "id": "purple-fanny-pack",
+    "url": "/little-jetter/catalog/tokyo/purple-fanny-pack/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 59763,
+    "bounds": {
+      "left": 275,
+      "top": 406,
+      "right": 464,
+      "bottom": 524
+    }
+  },
+  {
+    "group": "accessories",
+    "id": "red-flat-cap",
+    "url": "/little-jetter/catalog/tokyo/red-flat-cap/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 82314,
+    "bounds": {
+      "left": 190,
+      "top": 120,
+      "right": 409,
+      "bottom": 265
+    }
+  },
+  {
+    "group": "accessories",
+    "id": "tokyo-bucket-hat",
+    "url": "/little-jetter/catalog/tokyo/tokyo-bucket-hat/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 76818,
+    "bounds": {
+      "left": 190,
+      "top": 114,
+      "right": 409,
+      "bottom": 271
+    }
+  },
+  {
+    "group": "accessories",
+    "id": "tokyo-tote-bag",
+    "url": "/little-jetter/catalog/tokyo/tokyo-tote-bag/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 99620,
+    "bounds": {
+      "left": 291,
+      "top": 330,
+      "right": 448,
+      "bottom": 599
     }
   }
 ]

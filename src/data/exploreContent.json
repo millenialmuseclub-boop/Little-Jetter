@@ -2838,5 +2838,350 @@
         }
       ]
     }
+  },
+  "accra": {
+    "gastronomy": [
+      {
+        "name": "Waakye",
+        "blurb": "Rice and beans cooked together and served with colorful sides."
+      },
+      {
+        "name": "Kelewele",
+        "blurb": "Warm, spiced plantain pieces with crisp edges."
+      },
+      {
+        "name": "Bofrot",
+        "blurb": "Soft, round Ghanaian doughnuts enjoyed as a treat."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Akwaaba",
+        "meaning": "Welcome"
+      },
+      {
+        "term": "Medaase",
+        "meaning": "Thank you in Twi"
+      },
+      {
+        "term": "Ɛte sɛn?",
+        "meaning": "How are you? in Twi"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Independence Square",
+        "blurb": "A landmark square with a giant arch and star."
+      },
+      {
+        "name": "Jamestown Lighthouse",
+        "blurb": "A red-and-white lighthouse beside a historic coastal neighborhood."
+      },
+      {
+        "name": "Arts Centre",
+        "blurb": "A place to discover Ghanaian weaving, carving, and art."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Accra, I spotted a {0} treasure beside a {1} street. I tried a {2} treat that tasted {3}, then heard a {4} sound leading me toward the next adventure.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "golden"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "breezy"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "plantain-swirled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "spicy-sweet"
+        },
+        {
+          "label": "A sound",
+          "placeholder": "drumbeat"
+        }
+      ]
+    }
+  },
+  "mumbai": {
+    "gastronomy": [
+      {
+        "name": "Vada pav",
+        "blurb": "A spiced potato fritter tucked into a soft bread roll."
+      },
+      {
+        "name": "Bhel puri",
+        "blurb": "A crunchy, tangy snack mixed with puffed rice and chutneys."
+      },
+      {
+        "name": "Mango lassi",
+        "blurb": "A cool yogurt drink blended with sweet mango."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Namaste",
+        "meaning": "A respectful hello"
+      },
+      {
+        "term": "Dhanyavaad",
+        "meaning": "Thank you in Hindi"
+      },
+      {
+        "term": "Chalo",
+        "meaning": "Let’s go"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Gateway of India",
+        "blurb": "A huge stone arch facing Mumbai Harbour."
+      },
+      {
+        "name": "Marine Drive",
+        "blurb": "A curving seaside promenade that sparkles at night."
+      },
+      {
+        "name": "Chhatrapati Shivaji Maharaj Terminus",
+        "blurb": "A grand historic railway station full of carved details."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Mumbai, I spotted a {0} treasure beside a {1} street. I tried a {2} treat that tasted {3}, then heard a {4} sound leading me toward the next adventure.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "marigold"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "rain-shiny"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "mango-crunch"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "tangy-bright"
+        },
+        {
+          "label": "A sound",
+          "placeholder": "taxi-honk"
+        }
+      ]
+    }
+  },
+  "copenhagen": {
+    "gastronomy": [
+      {
+        "name": "Smørrebrød",
+        "blurb": "An open-faced sandwich arranged with colorful toppings."
+      },
+      {
+        "name": "Kanelsnegl",
+        "blurb": "A spiraled cinnamon pastry from a Danish bakery."
+      },
+      {
+        "name": "Æbleskiver",
+        "blurb": "Small round pancake puffs dusted with sugar."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Hej",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Tak",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Hygge",
+        "meaning": "A warm, cozy feeling of togetherness"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Nyhavn",
+        "blurb": "A canal lined with brightly colored townhouses and boats."
+      },
+      {
+        "name": "Tivoli Gardens",
+        "blurb": "A historic garden filled with lights and playful rides."
+      },
+      {
+        "name": "The Round Tower",
+        "blurb": "A tower with a spiral walkway instead of stairs."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Copenhagen, I spotted a {0} treasure beside a {1} street. I tried a {2} treat that tasted {3}, then heard a {4} sound leading me toward the next adventure.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "sky-blue"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "cozy"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "cinnamon-curled"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "warm-and-sweet"
+        },
+        {
+          "label": "A sound",
+          "placeholder": "bicycle-bell"
+        }
+      ]
+    }
+  },
+  "salvador": {
+    "gastronomy": [
+      {
+        "name": "Acarajé",
+        "blurb": "A crisp black-eyed-pea fritter filled with bright, flavorful toppings."
+      },
+      {
+        "name": "Cocada",
+        "blurb": "A chewy coconut sweet found in many colors and flavors."
+      },
+      {
+        "name": "Tapioca crepe",
+        "blurb": "A soft white crepe made from cassava and folded around a filling."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Olá",
+        "meaning": "Hello"
+      },
+      {
+        "term": "Obrigado",
+        "meaning": "Thank you"
+      },
+      {
+        "term": "Axé",
+        "meaning": "A word for positive energy and spirit"
+      }
+    ],
+    "sites": [
+      {
+        "name": "Pelourinho",
+        "blurb": "A historic neighborhood of colorful buildings and stone streets."
+      },
+      {
+        "name": "Elevador Lacerda",
+        "blurb": "A tall city elevator connecting the upper and lower city."
+      },
+      {
+        "name": "Bonfim Church",
+        "blurb": "A church known for thousands of colorful wish ribbons."
+      }
+    ],
+    "madlib": {
+      "template": "Today in Salvador, I spotted a {0} treasure beside a {1} street. I tried a {2} treat that tasted {3}, then heard a {4} sound leading me toward the next adventure.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "ribbon-red"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "sunny"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "coconut-crisp"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "tropical-sweet"
+        },
+        {
+          "label": "A sound",
+          "placeholder": "drum-rhythm"
+        }
+      ]
+    }
+  },
+  "new-orleans": {
+    "gastronomy": [
+      {
+        "name": "Beignet",
+        "blurb": "A warm square of fried dough covered with powdered sugar."
+      },
+      {
+        "name": "Red beans and rice",
+        "blurb": "A comforting bowl traditionally enjoyed on Mondays."
+      },
+      {
+        "name": "Praline",
+        "blurb": "A creamy candy made with pecans and brown sugar."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "Lagniappe",
+        "meaning": "A little something extra"
+      },
+      {
+        "term": "Second line",
+        "meaning": "A joyful parade that follows the band"
+      },
+      {
+        "term": "Where y’at?",
+        "meaning": "A friendly local way to ask how someone is doing"
+      }
+    ],
+    "sites": [
+      {
+        "name": "French Quarter",
+        "blurb": "A historic neighborhood with iron balconies and lively streets."
+      },
+      {
+        "name": "St. Charles Streetcar",
+        "blurb": "A green streetcar that rolls beneath oak trees."
+      },
+      {
+        "name": "City Park",
+        "blurb": "A huge green park with ancient live oaks and family attractions."
+      }
+    ],
+    "madlib": {
+      "template": "Today in New Orleans, I spotted a {0} treasure beside a {1} street. I tried a {2} treat that tasted {3}, then heard a {4} sound leading me toward the next adventure.",
+      "blanks": [
+        {
+          "label": "A color",
+          "placeholder": "magnolia-white"
+        },
+        {
+          "label": "An adjective",
+          "placeholder": "music-filled"
+        },
+        {
+          "label": "A silly food",
+          "placeholder": "sugar-cloud"
+        },
+        {
+          "label": "A funny taste word",
+          "placeholder": "powdery-sweet"
+        },
+        {
+          "label": "A sound",
+          "placeholder": "trumpet-toot"
+        }
+      ]
+    }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-24T20:25:05.619Z",
+  "generatedAt": "2026-09-24T21:11:12.861Z",
   "template": {
     "id": "little-jetter-neutral-v1",
     "width": 600,
@@ -14,13 +14,13 @@
     }
   },
   "summary": {
-    "total": 277,
-    "accepted": 252,
+    "total": 291,
+    "accepted": 266,
     "rejected": 25,
     "heads": 30,
-    "enabledOuterwear": 13,
+    "enabledOuterwear": 14,
     "disabledOuterwear": 25,
-    "duplicateContentGroups": 56,
+    "duplicateContentGroups": 68,
     "duplicateIds": 0
   },
   "duplicateIds": [],
@@ -98,6 +98,18 @@
       "tokyo:bottoms:navy-overalls:default"
     ],
     [
+      "all:tops:ramen-tee:default",
+      "tokyo:tops:ramen-tee:default"
+    ],
+    [
+      "all:tops:purple-floral-sweater:default",
+      "tokyo:tops:purple-floral-sweater:default"
+    ],
+    [
+      "all:tops:teal-shiba-sweater:default",
+      "tokyo:tops:teal-shiba-sweater:default"
+    ],
+    [
       "all:bottoms:travel-jeans:default",
       "tokyo:bottoms:travel-jeans:default"
     ],
@@ -126,6 +138,18 @@
       "tokyo:bottoms:denim-overalls:default"
     ],
     [
+      "all:bottoms:black-flower-shorts:default",
+      "tokyo:bottoms:black-flower-shorts:default"
+    ],
+    [
+      "all:bottoms:pink-bow-skirt:default",
+      "tokyo:bottoms:pink-bow-skirt:default"
+    ],
+    [
+      "all:bottoms:yellow-plaid-skirt:default",
+      "tokyo:bottoms:yellow-plaid-skirt:default"
+    ],
+    [
       "all:layers:rain:default",
       "tokyo:layers:rain:default"
     ],
@@ -144,6 +168,10 @@
     [
       "all:layers:pink-hoodie:default",
       "tokyo:layers:pink-hoodie:default"
+    ],
+    [
+      "all:layers:cherry-cardigan:default",
+      "tokyo:tops:cherry-cardigan:default"
     ],
     [
       "all:shoes:sneakers:default",
@@ -198,6 +226,18 @@
       "tokyo:shoes:pink-flats:default"
     ],
     [
+      "all:shoes:black-combat-boots:default",
+      "tokyo:shoes:black-combat-boots:default"
+    ],
+    [
+      "all:shoes:purple-converse:default",
+      "tokyo:shoes:purple-converse:default"
+    ],
+    [
+      "all:shoes:red-converse:default",
+      "tokyo:shoes:red-converse:default"
+    ],
+    [
       "all:accessories:travel-cap:default",
       "tokyo:accessories:travel-cap:default"
     ],
@@ -248,6 +288,14 @@
     [
       "all:accessories:blue-backpack:default",
       "tokyo:accessories:blue-backpack:default"
+    ],
+    [
+      "all:accessories:purple-fanny-pack:default",
+      "tokyo:accessories:purple-fanny-pack:default"
+    ],
+    [
+      "all:accessories:red-flat-cap:default",
+      "tokyo:accessories:red-flat-cap:default"
     ]
   ],
   "rejected": [
@@ -2215,6 +2263,69 @@
     },
     {
       "kind": "garment",
+      "id": "all:tops:ramen-tee:default",
+      "destinationId": "all",
+      "group": "tops",
+      "itemId": "ramen-tee",
+      "variantId": "default",
+      "slot": "top",
+      "imageUrl": "/little-jetter/catalog/tokyo/ramen-tee/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0366,
+      "alphaComponents": [
+        791
+      ],
+      "sha256": "62615041ee9d1f76997174347e17d172ce6af0ebfb0470538cc5013998f0c8cd"
+    },
+    {
+      "kind": "garment",
+      "id": "all:tops:purple-floral-sweater:default",
+      "destinationId": "all",
+      "group": "tops",
+      "itemId": "purple-floral-sweater",
+      "variantId": "default",
+      "slot": "top",
+      "imageUrl": "/little-jetter/catalog/tokyo/purple-floral-sweater/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0438,
+      "alphaComponents": [
+        947
+      ],
+      "sha256": "917385285bc130075d50470775e36347c8239a5f45c66016fcf69f1c1c11e664"
+    },
+    {
+      "kind": "garment",
+      "id": "all:tops:teal-shiba-sweater:default",
+      "destinationId": "all",
+      "group": "tops",
+      "itemId": "teal-shiba-sweater",
+      "variantId": "default",
+      "slot": "top",
+      "imageUrl": "/little-jetter/catalog/tokyo/teal-shiba-sweater/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0491,
+      "alphaComponents": [
+        1060
+      ],
+      "sha256": "193acb017e7fa0c37766f54d51958154e045dde97d3cd83f1b82c148acc409fb"
+    },
+    {
+      "kind": "garment",
       "id": "all:bottoms:travel-jeans:default",
       "destinationId": "all",
       "group": "bottoms",
@@ -2737,6 +2848,69 @@
         424
       ],
       "sha256": "ae89b3a33d61c8d0e3db5a321b7b1f79422589f1250c85fefc205b990530575a"
+    },
+    {
+      "kind": "garment",
+      "id": "all:bottoms:black-flower-shorts:default",
+      "destinationId": "all",
+      "group": "bottoms",
+      "itemId": "black-flower-shorts",
+      "variantId": "default",
+      "slot": "bottom",
+      "imageUrl": "/little-jetter/catalog/tokyo/black-flower-shorts/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0763,
+      "alphaComponents": [
+        1649
+      ],
+      "sha256": "1663e01f335928f1a4963bfe904c055eddf463994d1240006b26cedc2b79d96f"
+    },
+    {
+      "kind": "garment",
+      "id": "all:bottoms:pink-bow-skirt:default",
+      "destinationId": "all",
+      "group": "bottoms",
+      "itemId": "pink-bow-skirt",
+      "variantId": "default",
+      "slot": "bottom",
+      "imageUrl": "/little-jetter/catalog/tokyo/pink-bow-skirt/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0736,
+      "alphaComponents": [
+        1590
+      ],
+      "sha256": "bd356325b45f254549d767aa494838271851466f860937bf7f094ee4fda8f7a5"
+    },
+    {
+      "kind": "garment",
+      "id": "all:bottoms:yellow-plaid-skirt:default",
+      "destinationId": "all",
+      "group": "bottoms",
+      "itemId": "yellow-plaid-skirt",
+      "variantId": "default",
+      "slot": "bottom",
+      "imageUrl": "/little-jetter/catalog/tokyo/yellow-plaid-skirt/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0782,
+      "alphaComponents": [
+        1690
+      ],
+      "sha256": "8c5a2526ed0dcf71067657368a7f725aad9a0c31dafce2b85b66916e69d9bfaa"
     },
     {
       "kind": "garment",
@@ -3483,6 +3657,27 @@
     },
     {
       "kind": "garment",
+      "id": "all:layers:cherry-cardigan:default",
+      "destinationId": "all",
+      "group": "layers",
+      "itemId": "cherry-cardigan",
+      "variantId": "default",
+      "slot": "outerwear",
+      "imageUrl": "/little-jetter/catalog/tokyo/cherry-cardigan/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0477,
+      "alphaComponents": [
+        1030
+      ],
+      "sha256": "31262e821fd3533ba52cb0b2f39fb66363227c10c05f4c8a1a0e6ed2d47c3401"
+    },
+    {
+      "kind": "garment",
       "id": "all:shoes:sneakers:default",
       "destinationId": "all",
       "group": "shoes",
@@ -4026,6 +4221,69 @@
         254
       ],
       "sha256": "7740bdb638f6afb38a3e25a63e0ecf2a0dba92ecaf212ebc5ae6ad34f294f1c4"
+    },
+    {
+      "kind": "garment",
+      "id": "all:shoes:black-combat-boots:default",
+      "destinationId": "all",
+      "group": "shoes",
+      "itemId": "black-combat-boots",
+      "variantId": "default",
+      "slot": "shoes",
+      "imageUrl": "/little-jetter/catalog/tokyo/black-combat-boots/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0402,
+      "alphaComponents": [
+        869
+      ],
+      "sha256": "94c4f34fa704282636c1e21e7585afc97cdb3e77c818896cc6b1a85a81d06a07"
+    },
+    {
+      "kind": "garment",
+      "id": "all:shoes:purple-converse:default",
+      "destinationId": "all",
+      "group": "shoes",
+      "itemId": "purple-converse",
+      "variantId": "default",
+      "slot": "shoes",
+      "imageUrl": "/little-jetter/catalog/tokyo/purple-converse/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0272,
+      "alphaComponents": [
+        587
+      ],
+      "sha256": "550dbf96783dfddbd526f2ce3fa501ccd26b05517e00d9d8870f094425ca8f8b"
+    },
+    {
+      "kind": "garment",
+      "id": "all:shoes:red-converse:default",
+      "destinationId": "all",
+      "group": "shoes",
+      "itemId": "red-converse",
+      "variantId": "default",
+      "slot": "shoes",
+      "imageUrl": "/little-jetter/catalog/tokyo/red-converse/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.039,
+      "alphaComponents": [
+        842
+      ],
+      "sha256": "9791990b6ee2d05bb94e08a1e1d40db915d0602cbfa9de07866824e2f242fc29"
     },
     {
       "kind": "garment",
@@ -4803,6 +5061,90 @@
         1155
       ],
       "sha256": "d4ac862ce93e3e876eea2ea24ff69236b469ad527bf093fe401bf8816ead9d90"
+    },
+    {
+      "kind": "garment",
+      "id": "all:accessories:purple-fanny-pack:default",
+      "destinationId": "all",
+      "group": "accessories",
+      "itemId": "purple-fanny-pack",
+      "variantId": "default",
+      "slot": "accessory",
+      "imageUrl": "/little-jetter/catalog/tokyo/purple-fanny-pack/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0316,
+      "alphaComponents": [
+        683
+      ],
+      "sha256": "199f262fb86015acfcd45779cc56b465f084becacce1decdfb959d972785cbe5"
+    },
+    {
+      "kind": "garment",
+      "id": "all:accessories:red-flat-cap:default",
+      "destinationId": "all",
+      "group": "accessories",
+      "itemId": "red-flat-cap",
+      "variantId": "default",
+      "slot": "accessory",
+      "imageUrl": "/little-jetter/catalog/tokyo/red-flat-cap/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0456,
+      "alphaComponents": [
+        985
+      ],
+      "sha256": "f9f27cf378f0be6ed99418fbe858ed1882f24c7ea27c320ab10b23c0d90b5baa"
+    },
+    {
+      "kind": "garment",
+      "id": "all:accessories:tokyo-bucket-hat:default",
+      "destinationId": "all",
+      "group": "accessories",
+      "itemId": "tokyo-bucket-hat",
+      "variantId": "default",
+      "slot": "accessory",
+      "imageUrl": "/little-jetter/catalog/tokyo/tokyo-bucket-hat/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0462,
+      "alphaComponents": [
+        998
+      ],
+      "sha256": "659714707895d69a12f8c59bc34c89a9bb542125e2726c58e5ad168b7cdc41e3"
+    },
+    {
+      "kind": "garment",
+      "id": "all:accessories:tokyo-tote-bag:default",
+      "destinationId": "all",
+      "group": "accessories",
+      "itemId": "tokyo-tote-bag",
+      "variantId": "default",
+      "slot": "accessory",
+      "imageUrl": "/little-jetter/catalog/tokyo/tokyo-tote-bag/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0593,
+      "alphaComponents": [
+        1280
+      ],
+      "sha256": "a17f40d05d8bf4b99c0f27dd27ba7258c1115c34ac0527b52bfd6417d8fccdda"
     },
     {
       "kind": "garment",

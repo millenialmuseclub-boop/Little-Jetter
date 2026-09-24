@@ -755,6 +755,47 @@
             "clipart",
             "style:swim"
           ]
+        },
+        {
+          "id": "ramen-tee",
+          "name": "Ramen adventure tee",
+          "description": "Ramen adventure tee, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/ramen-tee/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "destination:seoul",
+            "illustrated",
+            "painterly"
+          ]
+        },
+        {
+          "id": "purple-floral-sweater",
+          "name": "Purple garden sweater",
+          "description": "Purple garden sweater, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-floral-sweater/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "destination:paris",
+            "destination:copenhagen",
+            "illustrated",
+            "painterly"
+          ]
+        },
+        {
+          "id": "teal-shiba-sweater",
+          "name": "Teal puppy sweater",
+          "description": "Teal puppy sweater, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/teal-shiba-sweater/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:tokyo",
+            "destination:seoul",
+            "destination:copenhagen",
+            "illustrated",
+            "painterly"
+          ]
         }
       ],
       "bottoms": [
@@ -1097,6 +1138,49 @@
             "illustrated",
             "clipart",
             "style:swim"
+          ]
+        },
+        {
+          "id": "black-flower-shorts",
+          "name": "Flower play shorts",
+          "description": "Flower play shorts, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-flower-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "destination:honolulu",
+            "destination:accra",
+            "destination:salvador",
+            "illustrated",
+            "painterly"
+          ]
+        },
+        {
+          "id": "pink-bow-skirt",
+          "name": "Pink bow skirt",
+          "description": "Pink bow skirt, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/pink-bow-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "destination:paris",
+            "destination:copenhagen",
+            "illustrated",
+            "painterly"
+          ]
+        },
+        {
+          "id": "yellow-plaid-skirt",
+          "name": "Sunshine plaid skirt",
+          "description": "Sunshine plaid skirt, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/yellow-plaid-skirt/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:copenhagen",
+            "illustrated",
+            "painterly"
           ]
         }
       ],
@@ -1598,6 +1682,21 @@
             "clipart"
           ],
           "enabled": false
+        },
+        {
+          "id": "cherry-cardigan",
+          "name": "Cherry picnic cardigan",
+          "description": "Cherry picnic cardigan, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/cherry-cardigan/default.png",
+          "slot": "outerwear",
+          "tags": [
+            "destination:tokyo",
+            "destination:kyoto",
+            "destination:copenhagen",
+            "destination:new-orleans",
+            "illustrated",
+            "painterly"
+          ]
         }
       ],
       "shoes": [
@@ -1977,6 +2076,49 @@
             "destination:all",
             "illustrated",
             "clipart"
+          ]
+        },
+        {
+          "id": "black-combat-boots",
+          "name": "City explorer boots",
+          "description": "City explorer boots, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/black-combat-boots/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:new-york",
+            "destination:copenhagen",
+            "illustrated",
+            "painterly"
+          ]
+        },
+        {
+          "id": "purple-converse",
+          "name": "Purple high-top sneakers",
+          "description": "Purple high-top sneakers, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-converse/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "destination:seoul",
+            "destination:new-orleans",
+            "illustrated",
+            "painterly"
+          ]
+        },
+        {
+          "id": "red-converse",
+          "name": "Red high-top sneakers",
+          "description": "Red high-top sneakers, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/red-converse/default.png",
+          "slot": "shoes",
+          "tags": [
+            "destination:tokyo",
+            "destination:mumbai",
+            "destination:new-orleans",
+            "illustrated",
+            "painterly"
           ]
         }
       ],
@@ -2469,6 +2611,64 @@
             "destination:all",
             "illustrated",
             "clipart"
+          ]
+        },
+        {
+          "id": "purple-fanny-pack",
+          "name": "Purple adventure pack",
+          "description": "Purple adventure pack, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/purple-fanny-pack/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "destination:seoul",
+            "destination:salvador",
+            "illustrated",
+            "painterly"
+          ]
+        },
+        {
+          "id": "red-flat-cap",
+          "name": "Red city cap",
+          "description": "Red city cap, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/red-flat-cap/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "destination:london",
+            "destination:new-orleans",
+            "illustrated",
+            "painterly",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "tokyo-bucket-hat",
+          "name": "Tokyo patch bucket hat",
+          "description": "Tokyo patch bucket hat, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/tokyo-bucket-hat/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "destination:honolulu",
+            "destination:accra",
+            "illustrated",
+            "painterly",
+            "style:hat"
+          ]
+        },
+        {
+          "id": "tokyo-tote-bag",
+          "name": "Tokyo flower tote",
+          "description": "Tokyo flower tote, ready for a real-life travel adventure.",
+          "imageUrl": "/little-jetter/catalog/tokyo/tokyo-tote-bag/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:tokyo",
+            "destination:kyoto",
+            "destination:mumbai",
+            "illustrated",
+            "painterly"
           ]
         }
       ],
