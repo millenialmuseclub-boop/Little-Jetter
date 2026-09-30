@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-24T23:32:59.194Z",
+  "generatedAt": "2026-09-30T16:37:39.590Z",
   "template": {
     "id": "little-jetter-neutral-v1",
     "width": 600,
@@ -14,8 +14,8 @@
     }
   },
   "summary": {
-    "total": 291,
-    "accepted": 266,
+    "total": 294,
+    "accepted": 269,
     "rejected": 25,
     "heads": 30,
     "enabledOuterwear": 14,
@@ -1042,6 +1042,27 @@
         2898
       ],
       "sha256": "5e36c2b6f88ad8846a76d08ca8921c8e153281f11a7b171f5d9b3d7f54834f7a"
+    },
+    {
+      "kind": "garment",
+      "id": "all:tops:citrus-pocket-shirt:default",
+      "destinationId": "all",
+      "group": "tops",
+      "itemId": "citrus-pocket-shirt",
+      "variantId": "default",
+      "slot": "top",
+      "imageUrl": "/little-jetter/catalog/postcard-picnic/citrus-pocket-shirt/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0473,
+      "alphaComponents": [
+        1021
+      ],
+      "sha256": "122d276b2c1d0cccd0b295e87d0cf1b5adfcdef34701ad8ca87b54a4b22ee3f4"
     },
     {
       "kind": "garment",
@@ -2323,6 +2344,27 @@
         1060
       ],
       "sha256": "193acb017e7fa0c37766f54d51958154e045dde97d3cd83f1b82c148acc409fb"
+    },
+    {
+      "kind": "garment",
+      "id": "all:bottoms:sea-glass-shorts:default",
+      "destinationId": "all",
+      "group": "bottoms",
+      "itemId": "sea-glass-shorts",
+      "variantId": "default",
+      "slot": "bottom",
+      "imageUrl": "/little-jetter/catalog/postcard-picnic/sea-glass-shorts/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.0245,
+      "alphaComponents": [
+        530
+      ],
+      "sha256": "feb6b8abe5a9fb12b936e7fde7881e870f27494e6a6ec7ee2e139c15171e87c9"
     },
     {
       "kind": "garment",
@@ -4284,6 +4326,27 @@
         842
       ],
       "sha256": "9791990b6ee2d05bb94e08a1e1d40db915d0602cbfa9de07866824e2f242fc29"
+    },
+    {
+      "kind": "garment",
+      "id": "all:accessories:postcard-satchel:default",
+      "destinationId": "all",
+      "group": "accessories",
+      "itemId": "postcard-satchel",
+      "variantId": "default",
+      "slot": "accessory",
+      "imageUrl": "/little-jetter/catalog/postcard-picnic/postcard-satchel/default.png",
+      "enabled": true,
+      "status": "accepted",
+      "failures": [],
+      "width": 600,
+      "height": 900,
+      "hasAlpha": true,
+      "visiblePixelRatio": 0.034,
+      "alphaComponents": [
+        735
+      ],
+      "sha256": "04b1b417013cb95b40fbad8ed4e24db49ba44b35e89878360e64df5e7f552048"
     },
     {
       "kind": "garment",

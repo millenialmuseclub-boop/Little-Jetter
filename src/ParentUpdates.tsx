@@ -36,7 +36,7 @@ export function ParentUpdates() {
   }
 
   return <section aria-label="App updates"><h3>App updates</h3>
-    <p>The latest play changes are included in this TestFlight build. Updates are optional.</p>
+    <p>Get new play updates when you are ready. Updates are optional, and saved adventures stay on this device.</p>
     <p>By choosing “Check for updates”, you agree to connect to Little Jetter’s Cloudflare file storage to check for and download an update. Normal connection information, such as an IP address and requested files, is sent. No stories, outfits, journal entries, device ID, or advertising ID are sent. Background checks are off.</p>
     <button type="button" disabled={busy} onClick={ready ? install : check}>{busy ? 'Please wait…' : ready ? 'Restart and use update' : 'Check for updates'}</button>
     <p role="status" aria-live="polite">{message}</p>

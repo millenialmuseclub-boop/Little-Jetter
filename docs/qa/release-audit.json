@@ -1,13 +1,13 @@
 {
   "destinations": 43,
-  "referencedImages": 506,
+  "referencedImages": 512,
   "missing": [],
   "wardrobeItems": {
-    "tops": 52,
-    "bottoms": 28,
+    "tops": 53,
+    "bottoms": 29,
     "layers": 34,
     "shoes": 29,
-    "accessories": 41,
+    "accessories": 42,
     "buddies": 3
   }
 }

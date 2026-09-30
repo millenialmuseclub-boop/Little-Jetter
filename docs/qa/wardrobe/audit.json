@@ -1,6 +1,21 @@
 [
   {
     "group": "tops",
+    "id": "citrus-pocket-shirt",
+    "url": "/little-jetter/catalog/postcard-picnic/citrus-pocket-shirt/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 68782,
+    "bounds": {
+      "left": 203,
+      "top": 315,
+      "right": 397,
+      "bottom": 489
+    }
+  },
+  {
+    "group": "tops",
     "id": "stripe",
     "url": "/little-jetter/catalog/tokyo/stripe/coral.png",
     "issues": [],
@@ -912,6 +927,21 @@
       "top": 315,
       "right": 391,
       "bottom": 489
+    }
+  },
+  {
+    "group": "bottoms",
+    "id": "sea-glass-shorts",
+    "url": "/little-jetter/catalog/postcard-picnic/sea-glass-shorts/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 43287,
+    "bounds": {
+      "left": 224,
+      "top": 470,
+      "right": 375,
+      "bottom": 576
     }
   },
   {
@@ -2277,6 +2307,21 @@
       "top": 599,
       "right": 356,
       "bottom": 809
+    }
+  },
+  {
+    "group": "accessories",
+    "id": "postcard-satchel",
+    "url": "/little-jetter/catalog/postcard-picnic/postcard-satchel/default.png",
+    "issues": [],
+    "width": 600,
+    "height": 900,
+    "bytes": 65525,
+    "bounds": {
+      "left": 285,
+      "top": 330,
+      "right": 457,
+      "bottom": 569
     }
   },
   {

@@ -17,6 +17,18 @@
     "all": {
       "tops": [
         {
+          "id": "citrus-pocket-shirt",
+          "name": "Citrus-pocket shirt",
+          "description": "A tiny orange for a sunny adventure",
+          "imageUrl": "/little-jetter/catalog/postcard-picnic/citrus-pocket-shirt/default.png",
+          "slot": "top",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "capsule:postcard-picnic"
+          ]
+        },
+        {
           "id": "stripe",
           "name": "Striped tee",
           "description": "Easy for a busy day",
@@ -799,6 +811,18 @@
         }
       ],
       "bottoms": [
+        {
+          "id": "sea-glass-shorts",
+          "name": "Sea-glass shorts",
+          "description": "Soft green shorts with a little sunshine",
+          "imageUrl": "/little-jetter/catalog/postcard-picnic/sea-glass-shorts/default.png",
+          "slot": "bottom",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "capsule:postcard-picnic"
+          ]
+        },
         {
           "id": "travel-jeans",
           "name": "Cuffed travel jeans",
@@ -2123,6 +2147,18 @@
         }
       ],
       "accessories": [
+        {
+          "id": "postcard-satchel",
+          "name": "Postcard satchel",
+          "description": "An imaginary home for tiny travel treasures",
+          "imageUrl": "/little-jetter/catalog/postcard-picnic/postcard-satchel/default.png",
+          "slot": "accessory",
+          "tags": [
+            "destination:all",
+            "illustrated",
+            "capsule:postcard-picnic"
+          ]
+        },
         {
           "id": "travel-cap",
           "name": "Explorer cap",

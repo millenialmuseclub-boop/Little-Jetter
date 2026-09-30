@@ -103,6 +103,11 @@
 .little-jetter-shell{overflow-x:clip!important}
 .little-side-rail{overflow:visible!important;flex-basis:62px!important}
 .little-category-rail-btn{width:62px!important}
+.little-picnic-card{margin:12px 0;padding:18px;border:2px solid #d5dec5;border-radius:18px;background:#fffaf0;color:#173a47}
+.little-picnic-card h3{margin:4px 0 8px;font-size:24px}.little-picnic-card p{font-size:15px;line-height:1.5;margin:8px 0 12px}.little-picnic-card>small{font-size:13px;font-weight:700;color:#496257}
+.little-picnic-pieces{display:flex;justify-content:center;gap:10px;margin-bottom:10px}.little-picnic-pieces img{width:28%;height:94px;object-fit:contain}
+.little-picnic-card button{min-height:48px;padding:10px 16px;border:2px solid #173a47;border-radius:12px;background:#173a47;color:#fffaf0;font:inherit;font-weight:700;cursor:pointer}
+.little-picnic-card button:focus-visible{outline:3px solid #ad4937;outline-offset:4px}.little-dress-up-idea{margin-top:18px;padding-top:16px;border-top:1px dashed #9cae9b}.little-dress-up-idea button{background:transparent;color:#173a47}.little-dress-up-idea p{min-height:3em}
 .little-place-filters summary::marker{content:''}
 .little-place-filters summary::-webkit-details-marker{display:none}
 .little-kindness-prompt{flex-wrap:wrap}.little-kindness-prompt strong{font-size:17px}

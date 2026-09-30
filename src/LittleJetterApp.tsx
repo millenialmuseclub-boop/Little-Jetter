@@ -10,6 +10,14 @@ import { DOLL_LAYER_ORDER } from './data/garmentManifest';
 import { ParentUpdates } from './ParentUpdates';
 import { equipPiece } from './wardrobeLogic';
 
+const DRESS_UP_IDEAS = [
+  'Dress for a picnic with your travel buddy. What would you pack?',
+  'Pick two favorite colors and build a look around them.',
+  'Imagine a rainy-day treasure hunt. What keeps your traveler cozy?',
+  'Make an outfit for a train ride to a make-believe place.',
+  'Choose something your buddy would love. Tell a story about your trip.',
+];
+
 type ExploreContent = {
   gastronomy?: { name: string; blurb: string }[];
   vocabulary?: { term: string; meaning: string }[];
@@ -432,6 +440,7 @@ export function LittleJetterApp() {
   // child can wear a bag/sunglasses and a hat at the same time instead of
   // the two competing for one slot.
   const [hatPick, setHatPick] = useState('none');
+  const [dressUpIdea, setDressUpIdea] = useState(0);
   const [activeAvatarSheet, setActiveAvatarSheet] = useState<AvatarFeature | null>(null);
   const [headFilter, setHeadFilter] = useState<(typeof HEAD_FILTERS)[number]['id']>('all');
   const [exploreView, setExploreView] = useState<'journal' | 'gastronomy' | 'memory' | 'words' | 'sites'>('journal');
@@ -878,6 +887,14 @@ export function LittleJetterApp() {
     triggerCelebration([30, 40, 30, 40, 60]);
   }
 
+  function wearPostcardPicnic() {
+    setPicks(current => ({ ...current, tops: 'citrus-pocket-shirt', bottoms: 'sea-glass-shorts', layers: 'none', shoes: 'cream-sneakers', accessories: 'postcard-satchel' }));
+    setHatPick('none');
+    setGarmentColors({}); setGarmentScale({}); setGarmentOffset({}); setGarmentRotation({}); setResizeTarget(null);
+    showTravelConfirmation('Postcard Picnic is on! Mix in any pieces you like.');
+    triggerCelebration(18);
+  }
+
   const chosen = (group: PickGroup) => {
     if (picks[group] === 'none') return { id: 'none', name: 'Nothing yet', description: 'Choose a piece', note: 'Choose a piece', imageUrl: '', slot: 'top' as const, tags: [] };
     const item = catalogItemFor(selected.id, group, picks[group]) ?? wardrobe[group][0];
@@ -1204,6 +1221,19 @@ export function LittleJetterApp() {
                 </aside>
                 <div className="little-closet">
                   <div className="little-surprise-bar"><div><small>My paper-doll closet</small><strong>Tap a piece to dress your doll.</strong></div><div className="little-look-actions"><button type="button" onClick={surpriseMe}>Surprise me</button><button type="button" onClick={clearLook}>Clear look</button><button type="button" onClick={saveLook}>Save my look</button></div></div>
+                  <section className="little-picnic-card" aria-labelledby="picnic-title">
+                    <div className="little-picnic-pieces" aria-hidden="true">
+                      {['citrus-pocket-shirt', 'sea-glass-shorts', 'postcard-satchel'].map(id => {
+                        const item = Object.values(wardrobe).flat().find(piece => piece.id === id);
+                        const thumbnail = item?.imageUrl && (wardrobeThumbnails as Record<string, string>)[item.imageUrl];
+                        return thumbnail ? <img key={id} src={thumbnail} alt="" loading="lazy" /> : null;
+                      })}
+                    </div>
+                    <small>A little outfit adventure</small><h3 id="picnic-title">Postcard Picnic</h3>
+                    <p>A citrus pocket, sunshine shorts, and a bag for pretend treasures.</p>
+                    <button type="button" onClick={wearPostcardPicnic}>Try this outfit</button>
+                    <div className="little-dress-up-idea"><strong>Let’s pretend…</strong><p role="status" aria-live="polite">{DRESS_UP_IDEAS[dressUpIdea]}</p><button type="button" onClick={() => setDressUpIdea(current => (current + 1) % DRESS_UP_IDEAS.length)}>Another idea</button></div>
+                  </section>
                   <details className="little-task-drawer little-my-looks"><summary><strong>My saved looks</strong><b>Open</b></summary><div>{savedLooks.length ? savedLooks.map((look) => <button type="button" onClick={() => restoreLook(look)} key={look.id}><strong>{look.name}</strong><small>Tap to wear again</small></button>) : <p>Save a look and it will wait here on this device.</p>}</div></details>
                   <button type="button" className="little-next" onClick={() => showStep('explore')}>Let’s explore <span>→</span></button>
                 </div>
